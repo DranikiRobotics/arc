@@ -39,7 +39,6 @@ pub fn mass_impl<T: Into<TokenStream>>(cfg: T, input: T) -> TokenStream {
         }
         results = temp_results;
     }
-    println!("{:#?}", &results);
     let single_str = results.join("\n");
     syn::parse_str::<TokenStream>(&single_str).unwrap()
 }
