@@ -1,0 +1,13 @@
+[package]
+name = "libtrig-macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "libtrig_macros"
+proc-macro = true
+path = "lib.rs"
+
+[dependencies.mc]
+package = "libtrig-macros-core"
+path = "./libtrig-macros-core"
