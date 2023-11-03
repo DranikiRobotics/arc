@@ -3,9 +3,17 @@ name = "libtrig"
 version = "0.1.0"
 edition = "2021"
 
+[dependencies.macros]
+package = "libtrig-macros"
+path = "./core/macros"
+
+[dependencies.math]
+package = "libtrig-llm"
+path = "./core/llm"
+
 [lib]
 path = "./libtrig/main.rs"
 
-[dependencies.macros]
-package = "libtrig-macros"
-path = "./macros"
+[[bin]]
+path = "./example.rs"
+name = "example"

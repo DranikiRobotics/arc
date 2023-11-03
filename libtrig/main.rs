@@ -1,8 +1,23 @@
+#![feature(const_mut_refs)]
+
+#![no_std]
+
+#![warn(missing_docs, unused, clippy::all)]
+#![doc = include_str!("./README.md")]
+
 pub(crate) mod vectors;
+pub(crate) mod traits;
+pub(crate) mod coords;
 pub(crate) mod angle;
+pub(crate) mod types;
+pub mod odo;
+
+pub mod prelude {
+    //! Re-exports all the traits.
+    pub use super::traits::*;
+}
 
 pub use vectors::*;
+pub use coords::*;
 pub use angle::*;
-
-pub type Float = f64;
-pub type Int = i32;
+pub use types::*;
