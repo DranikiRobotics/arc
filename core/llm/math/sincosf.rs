@@ -131,18 +131,19 @@ pub fn sincosf(x: Radian32) -> (Float32, Float32) {
 #[cfg(test)]
 mod tests {
     use super::sincosf;
+    use super::Float32;
     use crate::_eqf;
 
     #[test]
     fn with_pi() {
-        let (s, c) = sincosf(core::Float32::consts::PI);
+        let (s, c) = sincosf(core::f32::consts::PI);
         _eqf(s.abs(), 0.0).unwrap();
         _eqf(c, -1.0).unwrap();
     }
 
     #[test]
     fn rotational_symmetry() {
-        use core::Float32::consts::PI;
+        use core::f32::consts::PI;
         const N: usize = 24;
         for n in 0..N {
             let theta = 2. * PI * (n as Float32) / (N as Float32);

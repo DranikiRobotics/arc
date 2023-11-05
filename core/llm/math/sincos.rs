@@ -66,12 +66,13 @@ pub fn sincos(x: Radian64) -> (Float64, Float64) {
 #[cfg(test)]
 mod tests {
     use super::sincos;
+    use super::Float64;
 
     const TOLERANCE: Float64 = 1e-6;
 
     #[test]
     fn with_pi() {
-        let (s, c) = sincos(core::Float64::consts::PI);
+        let (s, c) = sincos(core::f64::consts::PI);
         assert!(
             (s - 0.0).abs() < TOLERANCE,
             "|{} - {}| = {} >= {}",
@@ -92,7 +93,7 @@ mod tests {
 
     #[test]
     fn rotational_symmetry() {
-        use core::Float64::consts::PI;
+        use core::f64::consts::PI;
         const N: usize = 24;
         for n in 0..N {
             let theta = 2. * PI * (n as Float64) / (N as Float64);

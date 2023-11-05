@@ -140,17 +140,17 @@ pub fn atan(x: Float64) -> Radian64 {
 #[cfg(test)]
 mod tests {
     use super::atan;
-    use core::Float64;
+    use core::f64;
 
     #[test]
     fn sanity_check() {
         for (input, answer) in [
-            (3.0_f64.sqrt() / 3.0, Float64::consts::FRAC_PI_6),
-            (1.0, Float64::consts::FRAC_PI_4),
-            (3.0_f64.sqrt(), Float64::consts::FRAC_PI_3),
-            (-3.0_f64.sqrt() / 3.0, -Float64::consts::FRAC_PI_6),
-            (-1.0, -Float64::consts::FRAC_PI_4),
-            (-3.0_f64.sqrt(), -Float64::consts::FRAC_PI_3),
+            (3.0_f64.sqrt() / 3.0, f64::consts::FRAC_PI_6),
+            (1.0, f64::consts::FRAC_PI_4),
+            (3.0_f64.sqrt(), f64::consts::FRAC_PI_3),
+            (-3.0_f64.sqrt() / 3.0, -f64::consts::FRAC_PI_6),
+            (-1.0, -f64::consts::FRAC_PI_4),
+            (-3.0_f64.sqrt(), -f64::consts::FRAC_PI_3),
         ]
         .iter()
         {
@@ -171,16 +171,16 @@ mod tests {
 
     #[test]
     fn infinity() {
-        assert_eq!(atan(Float64::INFINITY), Float64::consts::FRAC_PI_2);
+        assert_eq!(atan(f64::INFINITY), f64::consts::FRAC_PI_2);
     }
 
     #[test]
     fn minus_infinity() {
-        assert_eq!(atan(Float64::NEG_INFINITY), -Float64::consts::FRAC_PI_2);
+        assert_eq!(atan(f64::NEG_INFINITY), -f64::consts::FRAC_PI_2);
     }
 
     #[test]
     fn nan() {
-        assert!(atan(Float64::NAN).is_nan());
+        assert!(atan(f64::NAN).is_nan());
     }
 }

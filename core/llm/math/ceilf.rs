@@ -45,7 +45,7 @@ pub fn ceilf(x: Float32) -> Float32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::Float32::*;
+    use core::f32::*;
 
     #[test]
     fn sanity_check() {

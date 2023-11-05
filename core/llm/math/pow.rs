@@ -415,9 +415,10 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
 #[cfg(test)]
 mod tests {
     extern crate core;
+    use super::Float64;
 
-    use self::core::Float64::consts::{E, PI};
-    use self::core::Float64::{EPSILON, INFINITY, MAX, MIN, MIN_POSITIVE, NAN, NEG_INFINITY};
+    use self::core::f64::consts::{E, PI};
+    use self::core::f64::{EPSILON, INFINITY, MAX, MIN, MIN_POSITIVE, NAN, NEG_INFINITY};
     use super::pow;
 
     const POS_ZERO: &[Float64] = &[0.0];

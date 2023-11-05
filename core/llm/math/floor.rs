@@ -62,7 +62,7 @@ pub fn floor(x: Float64) -> Float64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::Float64::*;
+    use core::f64::*;
 
     #[test]
     fn sanity_check() {
