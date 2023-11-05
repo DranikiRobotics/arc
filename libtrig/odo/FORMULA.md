@@ -42,7 +42,7 @@ Forward Movement Update: The change in forward position (Δy)
 can be calculated using the average encoder counts from the two parallel dead wheels:
 
 ```rust,ignore,no_run
-    Δy = (FLCount + FRCount + ICount) * DCForward / 2
+    Δy = (FLCount + FRCount) * DCForward / 2
 ```
 
 Updating Orientation: The change in orientation (Δθ)
@@ -50,7 +50,7 @@ can be calculated using the difference in encoder counts between the front-left 
 The distance between these wheels is known as the "track width" (W):
 
 ```rust,ignore,no_run
-    Δθ = (FLCount - FRCount + ICount) * DCAngle / 2
+    Δθ = (FLCount - FRCount) * DCAngle / W
 ```
 
 Combining Updates:
