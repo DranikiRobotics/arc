@@ -1,15 +1,16 @@
 #![allow(unreachable_code)]
-use core::f64;
 
-const TOINT: f64 = 1. / f64::EPSILON;
+use crate::Float64;
 
-/// Ceil (f64)
+const TOINT: Float64 = 1. / Float64::EPSILON;
+
+/// Ceil
 ///
 /// Finds the nearest integer greater than or equal to `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn ceil(x: f64) -> f64 {
+pub fn ceil(x: Float64) -> Float64 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
-    // `f64.ceil` native instruction, so we can leverage this for both code size
+    // `Float64.ceil` native instruction, so we can leverage this for both code size
     // and speed.
     llvm_intrinsically_optimized! {
         #[cfg(target_arch = "wasm32")] {
@@ -24,7 +25,7 @@ pub fn ceil(x: f64) -> f64 {
         //basic implementation taken from https://github.com/rust-lang/libm/issues/219
         use super::fabs;
         if fabs(x).to_bits() < 4503599627370496.0_f64.to_bits() {
-            let truncated = x as i64 as f64;
+            let truncated = x as i64 as Float64;
             if truncated < x {
                 return truncated + 1.0;
             } else {
@@ -36,7 +37,7 @@ pub fn ceil(x: f64) -> f64 {
     }
     let u: u64 = x.to_bits();
     let e: i64 = (u >> 52 & 0x7ff) as i64;
-    let y: f64;
+    let y: Float64;
 
     if e >= 0x3ff + 52 || x == 0. {
         return x;
@@ -62,7 +63,7 @@ pub fn ceil(x: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::f64::*;
+    use core::Float64::*;
 
     #[test]
     fn sanity_check() {

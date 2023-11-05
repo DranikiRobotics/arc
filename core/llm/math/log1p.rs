@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/s_log1p.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -8,8 +8,9 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
-/* double log1p(double x)
+*/
+/**
+ * double log1p(double x)
  * Return the natural logarithm of 1+x.
  *
  * Method :
@@ -51,33 +52,34 @@
  *                         return log(u)*(x/(u-1.0));
  *
  *       See HP-15C Advanced Functions Handbook, p.193.
- */
+*/
 
-use core::f64;
+use crate::{Float64, Float32};
 
-const LN2_HI: f64 = 6.93147180369123816490e-01; /* 3fe62e42 fee00000 */
-const LN2_LO: f64 = 1.90821492927058770002e-10; /* 3dea39ef 35793c76 */
-const LG1: f64 = 6.666666666666735130e-01; /* 3FE55555 55555593 */
-const LG2: f64 = 3.999999999940941908e-01; /* 3FD99999 9997FA04 */
-const LG3: f64 = 2.857142874366239149e-01; /* 3FD24924 94229359 */
-const LG4: f64 = 2.222219843214978396e-01; /* 3FCC71C5 1D8E78AF */
-const LG5: f64 = 1.818357216161805012e-01; /* 3FC74664 96CB03DE */
-const LG6: f64 = 1.531383769920937332e-01; /* 3FC39A09 D078C69F */
-const LG7: f64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
+const LN2_HI: Float64 = 6.93147180369123816490e-01; /* 3fe62e42 fee00000 */
+const LN2_LO: Float64 = 1.90821492927058770002e-10; /* 3dea39ef 35793c76 */
+const LG1: Float64 = 6.666666666666735130e-01; /* 3FE55555 55555593 */
+const LG2: Float64 = 3.999999999940941908e-01; /* 3FD99999 9997FA04 */
+const LG3: Float64 = 2.857142874366239149e-01; /* 3FD24924 94229359 */
+const LG4: Float64 = 2.222219843214978396e-01; /* 3FCC71C5 1D8E78AF */
+const LG5: Float64 = 1.818357216161805012e-01; /* 3FC74664 96CB03DE */
+const LG6: Float64 = 1.531383769920937332e-01; /* 3FC39A09 D078C69F */
+const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
 
+/// Return the natural logarithm of `1+x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log1p(x: f64) -> f64 {
+pub fn log1p(x: Float64) -> Float64 {
     let mut ui: u64 = x.to_bits();
-    let hfsq: f64;
-    let mut f: f64 = 0.;
-    let mut c: f64 = 0.;
-    let s: f64;
-    let z: f64;
-    let r: f64;
-    let w: f64;
-    let t1: f64;
-    let t2: f64;
-    let dk: f64;
+    let hfsq: Float64;
+    let mut f: Float64 = 0.;
+    let mut c: Float64 = 0.;
+    let s: Float64;
+    let z: Float64;
+    let r: Float64;
+    let w: Float64;
+    let t1: Float64;
+    let t2: Float64;
+    let dk: Float64;
     let hx: u32;
     let mut hu: u32;
     let mut k: i32;
@@ -97,7 +99,7 @@ pub fn log1p(x: f64) -> f64 {
             /* |x| < 2**-53 */
             /* underflow if subnormal */
             if (hx & 0x7ff00000) == 0 {
-                force_eval!(x as f32);
+                force_eval!(x as Float32);
             }
             return x;
         }
@@ -118,18 +120,18 @@ pub fn log1p(x: f64) -> f64 {
         /* correction term ~ log(1+x)-log(u), avoid underflow in c/u */
         if k < 54 {
             c = if k >= 2 {
-                1. - (f64::from_bits(ui) - x)
+                1. - (Float64::from_bits(ui) - x)
             } else {
-                x - (f64::from_bits(ui) - 1.)
+                x - (Float64::from_bits(ui) - 1.)
             };
-            c /= f64::from_bits(ui);
+            c /= Float64::from_bits(ui);
         } else {
             c = 0.;
         }
         /* reduce u into [sqrt(2)/2, sqrt(2)] */
         hu = (hu & 0x000fffff) + 0x3fe6a09e;
         ui = (hu as u64) << 32 | (ui & 0xffffffff);
-        f = f64::from_bits(ui) - 1.;
+        f = Float64::from_bits(ui) - 1.;
     }
     hfsq = 0.5 * f * f;
     s = f / (2.0 + f);
@@ -138,6 +140,6 @@ pub fn log1p(x: f64) -> f64 {
     t1 = w * (LG2 + w * (LG4 + w * LG6));
     t2 = z * (LG1 + w * (LG3 + w * (LG5 + w * LG7)));
     r = t2 + t1;
-    dk = k as f64;
+    dk = k as Float64;
     s * (hfsq + r) + (dk * LN2_LO + c) - hfsq + f + dk * LN2_HI
 }

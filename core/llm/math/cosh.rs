@@ -1,24 +1,26 @@
+use crate::{Float64, Radian64};
+
 use super::exp;
 use super::expm1;
 use super::k_expo2;
 
-/// Hyperbolic cosine (f64)
+/// Hyperbolic cosine
 ///
 /// Computes the hyperbolic cosine of the argument x.
 /// Is defined as `(exp(x) + exp(-x))/2`
 /// Angles are specified in radians.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn cosh(mut x: f64) -> f64 {
+pub fn cosh(mut x: Radian64) -> Float64 {
     /* |x| */
     let mut ix = x.to_bits();
     ix &= 0x7fffffffffffffff;
-    x = f64::from_bits(ix);
+    x = Float64::from_bits(ix);
     let w = ix >> 32;
 
     /* |x| < log(2) */
     if w < 0x3fe62e42 {
         if w < 0x3ff00000 - (26 << 20) {
-            let x1p120 = f64::from_bits(0x4770000000000000);
+            let x1p120 = Float64::from_bits(0x4770000000000000);
             force_eval!(x + x1p120);
             return 1.;
         }

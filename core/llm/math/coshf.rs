@@ -1,20 +1,22 @@
+use crate::{Float32, Radian32};
+
 use super::expf;
 use super::expm1f;
 use super::k_expo2f;
 
-/// Hyperbolic cosine (f64)
+/// Hyperbolic cosine
 ///
 /// Computes the hyperbolic cosine of the argument x.
 /// Is defined as `(exp(x) + exp(-x))/2`
 /// Angles are specified in radians.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn coshf(mut x: f32) -> f32 {
-    let x1p120 = f32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120
+pub fn coshf(mut x: Radian32) -> Float32 {
+    let x1p120 = Float32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120
 
     /* |x| */
     let mut ix = x.to_bits();
     ix &= 0x7fffffff;
-    x = f32::from_bits(ix);
+    x = Float32::from_bits(ix);
     let w = ix;
 
     /* |x| < log(2) */

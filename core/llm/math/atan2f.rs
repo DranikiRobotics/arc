@@ -1,8 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_atan2f.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -11,21 +8,26 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+*/
+
+use crate::{Float32, Radian32};
 
 use super::atanf;
 use super::fabsf;
 
-const PI: f32 = 3.1415927410e+00; /* 0x40490fdb */
-const PI_LO: f32 = -8.7422776573e-08; /* 0xb3bbbd2e */
+const PI: Float32 = 3.1415927410e+00; /* 0x40490fdb */
+const PI_LO: Float32 = -8.7422776573e-08; /* 0xb3bbbd2e */
 
-/// Arctangent of y/x (f32)
+/// Arctangent of y/x
 ///
 /// Computes the inverse tangent (arc tangent) of `y/x`.
 /// Produces the correct result even for angles near pi/2 or -pi/2 (that is, when `x` is near 0).
 /// Returns a value in radians, in the range of -pi to pi.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn atan2f(y: f32, x: f32) -> f32 {
+pub fn atan2f(y: Float32, x: Float32) -> Radian32 {
     if x.is_nan() || y.is_nan() {
         return x + y;
     }

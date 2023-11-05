@@ -1,5 +1,8 @@
+use crate::Float32;
+
+/// Return the remainder and part of the quotient of `x` and `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn remquof(mut x: f32, mut y: f32) -> (f32, i32) {
+pub fn remquof(mut x: Float32, mut y: Float32) -> (Float32, i32) {
     let ux: u32 = x.to_bits();
     let mut uy: u32 = y.to_bits();
     let mut ex = ((ux >> 23) & 0xff) as i32;
@@ -79,7 +82,7 @@ pub fn remquof(mut x: f32, mut y: f32) -> (f32, i32) {
     } else {
         uxi >>= -ex + 1;
     }
-    x = f32::from_bits(uxi);
+    x = Float32::from_bits(uxi);
     if sy {
         y = -y;
     }

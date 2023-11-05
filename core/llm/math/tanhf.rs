@@ -1,12 +1,15 @@
+use crate::{Float32, Radian32};
+
 use super::expm1f;
 
+/// Returns the hyperbolic tangent of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn tanhf(mut x: f32) -> f32 {
+pub fn tanhf(mut x: Radian32) -> Float32 {
     /* x = |x| */
     let mut ix = x.to_bits();
     let sign = (ix >> 31) != 0;
     ix &= 0x7fffffff;
-    x = f32::from_bits(ix);
+    x = Float32::from_bits(ix);
     let w = ix;
 
     let tt = if w > 0x3f0c9f54 {

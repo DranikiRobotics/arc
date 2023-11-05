@@ -1,22 +1,27 @@
-use super::expm1;
+use crate::{Float64, Float32, Radian64};
 
-/* tanh(x) = (exp(x) - exp(-x))/(exp(x) + exp(-x))
+/**
+ * tanh(x) = (exp(x) - exp(-x))/(exp(x) + exp(-x))
  *         = (exp(2*x) - 1)/(exp(2*x) - 1 + 2)
  *         = (1 - exp(-2*x))/(exp(-2*x) - 1 + 2)
- */
+*/
+
+use super::expm1;
+
+/// Returns the hyperbolic tangent of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn tanh(mut x: f64) -> f64 {
-    let mut uf: f64 = x;
-    let mut ui: u64 = f64::to_bits(uf);
+pub fn tanh(mut x: Radian64) -> Float64 {
+    let mut uf: Float64 = x;
+    let mut ui: u64 = Float64::to_bits(uf);
 
     let w: u32;
     let sign: bool;
-    let mut t: f64;
+    let mut t: Float64;
 
     /* x = |x| */
     sign = ui >> 63 != 0;
     ui &= !1 / 2;
-    uf = f64::from_bits(ui);
+    uf = Float64::from_bits(ui);
     x = uf;
     w = (ui >> 32) as u32;
 
@@ -41,7 +46,7 @@ pub fn tanh(mut x: f64) -> f64 {
     } else {
         /* |x| is subnormal */
         /* note: the branch above would not raise underflow in [0x1p-1023,0x1p-1022) */
-        force_eval!(x as f32);
+        force_eval!(x as Float32);
         t = x;
     }
 

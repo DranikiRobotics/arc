@@ -1,8 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_lgammaf_r.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -11,77 +8,82 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+*/
+
+use crate::{Float64, Float32};
 
 use super::{floorf, k_cosf, k_sinf, logf};
 
-const PI: f32 = 3.1415927410e+00; /* 0x40490fdb */
-const A0: f32 = 7.7215664089e-02; /* 0x3d9e233f */
-const A1: f32 = 3.2246702909e-01; /* 0x3ea51a66 */
-const A2: f32 = 6.7352302372e-02; /* 0x3d89f001 */
-const A3: f32 = 2.0580807701e-02; /* 0x3ca89915 */
-const A4: f32 = 7.3855509982e-03; /* 0x3bf2027e */
-const A5: f32 = 2.8905137442e-03; /* 0x3b3d6ec6 */
-const A6: f32 = 1.1927076848e-03; /* 0x3a9c54a1 */
-const A7: f32 = 5.1006977446e-04; /* 0x3a05b634 */
-const A8: f32 = 2.2086278477e-04; /* 0x39679767 */
-const A9: f32 = 1.0801156895e-04; /* 0x38e28445 */
-const A10: f32 = 2.5214456400e-05; /* 0x37d383a2 */
-const A11: f32 = 4.4864096708e-05; /* 0x383c2c75 */
-const TC: f32 = 1.4616321325e+00; /* 0x3fbb16c3 */
-const TF: f32 = -1.2148628384e-01; /* 0xbdf8cdcd */
+const PI: Float32 = 3.1415927410e+00; /* 0x40490fdb */
+const A0: Float32 = 7.7215664089e-02; /* 0x3d9e233f */
+const A1: Float32 = 3.2246702909e-01; /* 0x3ea51a66 */
+const A2: Float32 = 6.7352302372e-02; /* 0x3d89f001 */
+const A3: Float32 = 2.0580807701e-02; /* 0x3ca89915 */
+const A4: Float32 = 7.3855509982e-03; /* 0x3bf2027e */
+const A5: Float32 = 2.8905137442e-03; /* 0x3b3d6ec6 */
+const A6: Float32 = 1.1927076848e-03; /* 0x3a9c54a1 */
+const A7: Float32 = 5.1006977446e-04; /* 0x3a05b634 */
+const A8: Float32 = 2.2086278477e-04; /* 0x39679767 */
+const A9: Float32 = 1.0801156895e-04; /* 0x38e28445 */
+const A10: Float32 = 2.5214456400e-05; /* 0x37d383a2 */
+const A11: Float32 = 4.4864096708e-05; /* 0x383c2c75 */
+const TC: Float32 = 1.4616321325e+00; /* 0x3fbb16c3 */
+const TF: Float32 = -1.2148628384e-01; /* 0xbdf8cdcd */
 /* TT = -(tail of TF) */
-const TT: f32 = 6.6971006518e-09; /* 0x31e61c52 */
-const T0: f32 = 4.8383611441e-01; /* 0x3ef7b95e */
-const T1: f32 = -1.4758771658e-01; /* 0xbe17213c */
-const T2: f32 = 6.4624942839e-02; /* 0x3d845a15 */
-const T3: f32 = -3.2788541168e-02; /* 0xbd064d47 */
-const T4: f32 = 1.7970675603e-02; /* 0x3c93373d */
-const T5: f32 = -1.0314224288e-02; /* 0xbc28fcfe */
-const T6: f32 = 6.1005386524e-03; /* 0x3bc7e707 */
-const T7: f32 = -3.6845202558e-03; /* 0xbb7177fe */
-const T8: f32 = 2.2596477065e-03; /* 0x3b141699 */
-const T9: f32 = -1.4034647029e-03; /* 0xbab7f476 */
-const T10: f32 = 8.8108185446e-04; /* 0x3a66f867 */
-const T11: f32 = -5.3859531181e-04; /* 0xba0d3085 */
-const T12: f32 = 3.1563205994e-04; /* 0x39a57b6b */
-const T13: f32 = -3.1275415677e-04; /* 0xb9a3f927 */
-const T14: f32 = 3.3552918467e-04; /* 0x39afe9f7 */
-const U0: f32 = -7.7215664089e-02; /* 0xbd9e233f */
-const U1: f32 = 6.3282704353e-01; /* 0x3f2200f4 */
-const U2: f32 = 1.4549225569e+00; /* 0x3fba3ae7 */
-const U3: f32 = 9.7771751881e-01; /* 0x3f7a4bb2 */
-const U4: f32 = 2.2896373272e-01; /* 0x3e6a7578 */
-const U5: f32 = 1.3381091878e-02; /* 0x3c5b3c5e */
-const V1: f32 = 2.4559779167e+00; /* 0x401d2ebe */
-const V2: f32 = 2.1284897327e+00; /* 0x4008392d */
-const V3: f32 = 7.6928514242e-01; /* 0x3f44efdf */
-const V4: f32 = 1.0422264785e-01; /* 0x3dd572af */
-const V5: f32 = 3.2170924824e-03; /* 0x3b52d5db */
-const S0: f32 = -7.7215664089e-02; /* 0xbd9e233f */
-const S1: f32 = 2.1498242021e-01; /* 0x3e5c245a */
-const S2: f32 = 3.2577878237e-01; /* 0x3ea6cc7a */
-const S3: f32 = 1.4635047317e-01; /* 0x3e15dce6 */
-const S4: f32 = 2.6642270386e-02; /* 0x3cda40e4 */
-const S5: f32 = 1.8402845599e-03; /* 0x3af135b4 */
-const S6: f32 = 3.1947532989e-05; /* 0x3805ff67 */
-const R1: f32 = 1.3920053244e+00; /* 0x3fb22d3b */
-const R2: f32 = 7.2193557024e-01; /* 0x3f38d0c5 */
-const R3: f32 = 1.7193385959e-01; /* 0x3e300f6e */
-const R4: f32 = 1.8645919859e-02; /* 0x3c98bf54 */
-const R5: f32 = 7.7794247773e-04; /* 0x3a4beed6 */
-const R6: f32 = 7.3266842264e-06; /* 0x36f5d7bd */
-const W0: f32 = 4.1893854737e-01; /* 0x3ed67f1d */
-const W1: f32 = 8.3333335817e-02; /* 0x3daaaaab */
-const W2: f32 = -2.7777778450e-03; /* 0xbb360b61 */
-const W3: f32 = 7.9365057172e-04; /* 0x3a500cfd */
-const W4: f32 = -5.9518753551e-04; /* 0xba1c065c */
-const W5: f32 = 8.3633989561e-04; /* 0x3a5b3dd2 */
-const W6: f32 = -1.6309292987e-03; /* 0xbad5c4e8 */
+const TT: Float32 = 6.6971006518e-09; /* 0x31e61c52 */
+const T0: Float32 = 4.8383611441e-01; /* 0x3ef7b95e */
+const T1: Float32 = -1.4758771658e-01; /* 0xbe17213c */
+const T2: Float32 = 6.4624942839e-02; /* 0x3d845a15 */
+const T3: Float32 = -3.2788541168e-02; /* 0xbd064d47 */
+const T4: Float32 = 1.7970675603e-02; /* 0x3c93373d */
+const T5: Float32 = -1.0314224288e-02; /* 0xbc28fcfe */
+const T6: Float32 = 6.1005386524e-03; /* 0x3bc7e707 */
+const T7: Float32 = -3.6845202558e-03; /* 0xbb7177fe */
+const T8: Float32 = 2.2596477065e-03; /* 0x3b141699 */
+const T9: Float32 = -1.4034647029e-03; /* 0xbab7f476 */
+const T10: Float32 = 8.8108185446e-04; /* 0x3a66f867 */
+const T11: Float32 = -5.3859531181e-04; /* 0xba0d3085 */
+const T12: Float32 = 3.1563205994e-04; /* 0x39a57b6b */
+const T13: Float32 = -3.1275415677e-04; /* 0xb9a3f927 */
+const T14: Float32 = 3.3552918467e-04; /* 0x39afe9f7 */
+const U0: Float32 = -7.7215664089e-02; /* 0xbd9e233f */
+const U1: Float32 = 6.3282704353e-01; /* 0x3f2200f4 */
+const U2: Float32 = 1.4549225569e+00; /* 0x3fba3ae7 */
+const U3: Float32 = 9.7771751881e-01; /* 0x3f7a4bb2 */
+const U4: Float32 = 2.2896373272e-01; /* 0x3e6a7578 */
+const U5: Float32 = 1.3381091878e-02; /* 0x3c5b3c5e */
+const V1: Float32 = 2.4559779167e+00; /* 0x401d2ebe */
+const V2: Float32 = 2.1284897327e+00; /* 0x4008392d */
+const V3: Float32 = 7.6928514242e-01; /* 0x3f44efdf */
+const V4: Float32 = 1.0422264785e-01; /* 0x3dd572af */
+const V5: Float32 = 3.2170924824e-03; /* 0x3b52d5db */
+const S0: Float32 = -7.7215664089e-02; /* 0xbd9e233f */
+const S1: Float32 = 2.1498242021e-01; /* 0x3e5c245a */
+const S2: Float32 = 3.2577878237e-01; /* 0x3ea6cc7a */
+const S3: Float32 = 1.4635047317e-01; /* 0x3e15dce6 */
+const S4: Float32 = 2.6642270386e-02; /* 0x3cda40e4 */
+const S5: Float32 = 1.8402845599e-03; /* 0x3af135b4 */
+const S6: Float32 = 3.1947532989e-05; /* 0x3805ff67 */
+const R1: Float32 = 1.3920053244e+00; /* 0x3fb22d3b */
+const R2: Float32 = 7.2193557024e-01; /* 0x3f38d0c5 */
+const R3: Float32 = 1.7193385959e-01; /* 0x3e300f6e */
+const R4: Float32 = 1.8645919859e-02; /* 0x3c98bf54 */
+const R5: Float32 = 7.7794247773e-04; /* 0x3a4beed6 */
+const R6: Float32 = 7.3266842264e-06; /* 0x36f5d7bd */
+const W0: Float32 = 4.1893854737e-01; /* 0x3ed67f1d */
+const W1: Float32 = 8.3333335817e-02; /* 0x3daaaaab */
+const W2: Float32 = -2.7777778450e-03; /* 0xbb360b61 */
+const W3: Float32 = 7.9365057172e-04; /* 0x3a500cfd */
+const W4: Float32 = -5.9518753551e-04; /* 0xba1c065c */
+const W5: Float32 = 8.3633989561e-04; /* 0x3a5b3dd2 */
+const W6: Float32 = -1.6309292987e-03; /* 0xbad5c4e8 */
 
 /* sin(PI*x) assuming x > 2^-100, if sin(PI*x)==0 the sign is arbitrary */
-fn sin_pi(mut x: f32) -> f32 {
-    let mut y: f64;
+fn sin_pi(mut x: Float32) -> Float32 {
+    let mut y: Float64;
     let mut n: isize;
 
     /* spurious inexact if odd int */
@@ -89,7 +91,7 @@ fn sin_pi(mut x: f32) -> f32 {
 
     n = (x * 4.0) as isize;
     n = div!(n + 1, 2);
-    y = (x as f64) - (n as f64) * 0.5;
+    y = (x as Float64) - (n as Float64) * 0.5;
     y *= 3.14159265358979323846;
     match n {
         1 => k_cosf(y),
@@ -99,20 +101,24 @@ fn sin_pi(mut x: f32) -> f32 {
     }
 }
 
+/// Natural logarithm of gamma function
+/// 
+/// Returns the natural logarithm of the absolute value of the gamma function of x,
+/// and the sign of the gamma function of x
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn lgammaf_r(mut x: f32) -> (f32, i32) {
+pub fn lgammaf_r(mut x: Float32) -> (Float32, i32) {
     let u = x.to_bits();
-    let mut t: f32;
-    let y: f32;
-    let mut z: f32;
-    let nadj: f32;
-    let p: f32;
-    let p1: f32;
-    let p2: f32;
-    let p3: f32;
-    let q: f32;
-    let mut r: f32;
-    let w: f32;
+    let mut t: Float32;
+    let y: Float32;
+    let mut z: Float32;
+    let nadj: Float32;
+    let p: Float32;
+    let p1: Float32;
+    let p2: Float32;
+    let p3: Float32;
+    let q: Float32;
+    let mut r: Float32;
+    let w: Float32;
     let ix: u32;
     let i: i32;
     let sign: bool;
@@ -214,7 +220,7 @@ pub fn lgammaf_r(mut x: f32) -> (f32, i32) {
     } else if ix < 0x41000000 {
         /* x < 8.0 */
         i = x as i32;
-        y = x - (i as f32);
+        y = x - (i as Float32);
         p = y * (S0 + y * (S1 + y * (S2 + y * (S3 + y * (S4 + y * (S5 + y * S6))))));
         q = 1.0 + y * (R1 + y * (R2 + y * (R3 + y * (R4 + y * (R5 + y * R6)))));
         r = 0.5 * y + p / q;

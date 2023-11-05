@@ -1,8 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_sqrtf.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -11,12 +8,18 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+*/
 
+use crate::Float32;
+
+/// Returns the square root of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sqrtf(x: f32) -> f32 {
+pub fn sqrtf(x: Float32) -> Float32 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
-    // `f32.sqrt` native instruction, so we can leverage this for both code size
+    // `Float32.sqrt` native instruction, so we can leverage this for both code size
     // and speed.
     llvm_intrinsically_optimized! {
         #[cfg(target_arch = "wasm32")] {
@@ -44,9 +47,9 @@ pub fn sqrtf(x: f32) -> f32 {
     }
     #[cfg(not(target_feature = "sse"))]
     {
-        const TINY: f32 = 1.0e-30;
+        const TINY: Float32 = 1.0e-30;
 
-        let mut z: f32;
+        let mut z: Float32;
         let sign: i32 = 0x80000000u32 as i32;
         let mut ix: i32;
         let mut s: i32;
@@ -124,7 +127,7 @@ pub fn sqrtf(x: f32) -> f32 {
 
         ix = (q >> 1) + 0x3f000000;
         ix += m << 23;
-        f32::from_bits(ix as u32)
+        Float32::from_bits(ix as u32)
     }
 }
 
@@ -157,13 +160,13 @@ mod tests {
         let values = [
             3.14159265359f32,
             10000.0f32,
-            f32::from_bits(0x0000000f),
+            Float32::from_bits(0x0000000f),
             INFINITY,
         ];
         let results = [1071833029u32, 1120403456u32, 456082799u32, 2139095040u32];
 
         for i in 0..values.len() {
-            let bits = f32::to_bits(sqrtf(values[i]));
+            let bits = Float32::to_bits(sqrtf(values[i]));
             assert_eq!(results[i], bits);
         }
     }

@@ -1,14 +1,16 @@
+use crate::{Float32, Radian32};
+
 use super::{log1pf, logf, sqrtf};
 
-const LN2: f32 = 0.693147180559945309417232121458176568;
+const LN2: Float32 = 0.693147180559945309417232121458176568;
 
-/// Inverse hyperbolic cosine (f32)
+/// Inverse hyperbolic cosine
 ///
 /// Calculates the inverse hyperbolic cosine of `x`.
 /// Is defined as `log(x + sqrt(x*x-1))`.
 /// `x` must be a number greater than or equal to 1.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn acoshf(x: f32) -> f32 {
+pub fn acoshf(x: Float32) -> Radian32 {
     let u = x.to_bits();
     let a = u & 0x7fffffff;
 

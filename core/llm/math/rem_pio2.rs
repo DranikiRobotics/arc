@@ -9,48 +9,51 @@
 // is preserved.
 // ====================================================
 //
-// Optimized by Bruce D. Evans. */
+// Optimized by Bruce D. Evans.
+
+use crate::Float64;
+
 use super::rem_pio2_large;
 
 // #if FLT_EVAL_METHOD==0 || FLT_EVAL_METHOD==1
 // #define EPS DBL_EPSILON
-const EPS: f64 = 2.2204460492503131e-16;
+const EPS: Float64 = 2.2204460492503131e-16;
 // #elif FLT_EVAL_METHOD==2
 // #define EPS LDBL_EPSILON
 // #endif
 
 // TODO: Support FLT_EVAL_METHOD?
 
-const TO_INT: f64 = 1.5 / EPS;
+const TO_INT: Float64 = 1.5 / EPS;
 /// 53 bits of 2/pi
-const INV_PIO2: f64 = 6.36619772367581382433e-01; /* 0x3FE45F30, 0x6DC9C883 */
+const INV_PIO2: Float64 = 6.36619772367581382433e-01; /* 0x3FE45F30, 0x6DC9C883 */
 /// first 33 bits of pi/2
-const PIO2_1: f64 = 1.57079632673412561417e+00; /* 0x3FF921FB, 0x54400000 */
+const PIO2_1: Float64 = 1.57079632673412561417e+00; /* 0x3FF921FB, 0x54400000 */
 /// pi/2 - PIO2_1
-const PIO2_1T: f64 = 6.07710050650619224932e-11; /* 0x3DD0B461, 0x1A626331 */
+const PIO2_1T: Float64 = 6.07710050650619224932e-11; /* 0x3DD0B461, 0x1A626331 */
 /// second 33 bits of pi/2
-const PIO2_2: f64 = 6.07710050630396597660e-11; /* 0x3DD0B461, 0x1A600000 */
+const PIO2_2: Float64 = 6.07710050630396597660e-11; /* 0x3DD0B461, 0x1A600000 */
 /// pi/2 - (PIO2_1+PIO2_2)
-const PIO2_2T: f64 = 2.02226624879595063154e-21; /* 0x3BA3198A, 0x2E037073 */
+const PIO2_2T: Float64 = 2.02226624879595063154e-21; /* 0x3BA3198A, 0x2E037073 */
 /// third 33 bits of pi/2
-const PIO2_3: f64 = 2.02226624871116645580e-21; /* 0x3BA3198A, 0x2E000000 */
+const PIO2_3: Float64 = 2.02226624871116645580e-21; /* 0x3BA3198A, 0x2E000000 */
 /// pi/2 - (PIO2_1+PIO2_2+PIO2_3)
-const PIO2_3T: f64 = 8.47842766036889956997e-32; /* 0x397B839A, 0x252049C1 */
+const PIO2_3T: Float64 = 8.47842766036889956997e-32; /* 0x397B839A, 0x252049C1 */
 
-// return the remainder of x rem pi/2 in y[0]+y[1]
-// use rem_pio2_large() for large x
-//
-// caller must handle the case when reduction is not needed: |x| ~<= pi/4 */
+/// return the remainder of x rem pi/2 in y[0]+y[1]
+/// use rem_pio2_large() for large x
+///
+/// caller must handle the case when reduction is not needed: |x| ~<= pi/4 */
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub(crate) fn rem_pio2(x: f64) -> (i32, f64, f64) {
-    let x1p24 = f64::from_bits(0x4170000000000000);
+pub(crate) fn rem_pio2(x: Float64) -> (i32, Float64, Float64) {
+    let x1p24 = Float64::from_bits(0x4170000000000000);
 
-    let sign = (f64::to_bits(x) >> 63) as i32;
-    let ix = (f64::to_bits(x) >> 32) as u32 & 0x7fffffff;
+    let sign = (Float64::to_bits(x) >> 63) as i32;
+    let ix = (Float64::to_bits(x) >> 32) as u32 & 0x7fffffff;
 
-    fn medium(x: f64, ix: u32) -> (i32, f64, f64) {
+    fn medium(x: Float64, ix: u32) -> (i32, Float64, Float64) {
         /* rint(x/(pi/2)), Assume round-to-nearest. */
-        let tmp = x as f64 * INV_PIO2 + TO_INT;
+        let tmp = x as Float64 * INV_PIO2 + TO_INT;
         // force rounding of tmp to it's storage format on x87 to avoid
         // excess precision issues.
         #[cfg(all(target_arch = "x86", not(target_feature = "sse2")))]
@@ -60,7 +63,7 @@ pub(crate) fn rem_pio2(x: f64) -> (i32, f64, f64) {
         let mut r = x - f_n * PIO2_1;
         let mut w = f_n * PIO2_1T; /* 1st round, good to 85 bits */
         let mut y0 = r - w;
-        let ui = f64::to_bits(y0);
+        let ui = Float64::to_bits(y0);
         let ey = (ui >> 52) as i32 & 0x7ff;
         let ex = (ix >> 20) as i32;
         if ex - ey > 16 {
@@ -70,7 +73,7 @@ pub(crate) fn rem_pio2(x: f64) -> (i32, f64, f64) {
             r = t - w;
             w = f_n * PIO2_2T - ((t - r) - w);
             y0 = r - w;
-            let ey = (f64::to_bits(y0) >> 52) as i32 & 0x7ff;
+            let ey = (Float64::to_bits(y0) >> 52) as i32 & 0x7ff;
             if ex - ey > 49 {
                 /* 3rd round, good to 151 bits, covers all cases */
                 let t = r;
@@ -166,13 +169,13 @@ pub(crate) fn rem_pio2(x: f64) -> (i32, f64, f64) {
         return (0, y0, y1);
     }
     /* set z = scalbn(|x|,-ilogb(x)+23) */
-    let mut ui = f64::to_bits(x);
+    let mut ui = Float64::to_bits(x);
     ui &= (!1) >> 12;
     ui |= (0x3ff + 23) << 52;
-    let mut z = f64::from_bits(ui);
+    let mut z = Float64::from_bits(ui);
     let mut tx = [0.0; 3];
     for i in 0..2 {
-        i!(tx,i, =, z as i32 as f64);
+        i!(tx,i, =, z as i32 as Float64);
         z = (z - i!(tx, i)) * x1p24;
     }
     i!(tx,2, =, z);

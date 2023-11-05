@@ -1,6 +1,5 @@
-#![allow(unused_unsafe)]
 /* origin: FreeBSD /usr/src/lib/msun/src/k_rem_pio2.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -9,7 +8,9 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+
+use crate::Float64;
 
 use super::floor;
 use super::scalbn;
@@ -120,7 +121,7 @@ const IPIO2: [i32; 690] = [
     0x5B2746, 0xED3400, 0x7700D2, 0x55F4FC, 0x4D5901, 0x8071E0,
 ];
 
-const PIO2: [f64; 8] = [
+const PIO2: [Float64; 8] = [
     1.57079625129699707031e+00, /* 0x3FF921FB, 0x40000000 */
     7.54978941586159635335e-08, /* 0x3E74442D, 0x00000000 */
     5.39030252995776476554e-15, /* 0x3CF84698, 0x80000000 */
@@ -131,7 +132,7 @@ const PIO2: [f64; 8] = [
     2.16741683877804819444e-51, /* 0x3569F31D, 0x00000000 */
 ];
 
-// fn rem_pio2_large(x : &[f64], y : &mut [f64], e0 : i32, prec : usize) -> i32
+// fn rem_pio2_large(x : &[Float64], y : &mut [Float64], e0 : i32, prec : usize) -> i32
 //
 // Input parameters:
 //      x[]     The input value (must be positive) is broken into nx
@@ -223,22 +224,22 @@ const PIO2: [f64; 8] = [
 /// more accurately, = 0 mod 8 ). Thus the number of operations are
 /// independent of the exponent of the input.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> i32 {
-    let x1p24 = f64::from_bits(0x4170000000000000); // 0x1p24 === 2 ^ 24
-    let x1p_24 = f64::from_bits(0x3e70000000000000); // 0x1p_24 === 2 ^ (-24)
+pub(crate) fn rem_pio2_large(x: &[Float64], y: &mut [Float64], e0: i32, prec: usize) -> i32 {
+    let x1p24 = Float64::from_bits(0x4170000000000000); // 0x1p24 === 2 ^ 24
+    let x1p_24 = Float64::from_bits(0x3e70000000000000); // 0x1p_24 === 2 ^ (-24)
 
     #[cfg(all(target_pointer_width = "64", feature = "checked"))]
     assert!(e0 <= 16360);
 
     let nx = x.len();
 
-    let mut fw: f64;
+    let mut fw: Float64;
     let mut n: i32;
     let mut ih: i32;
-    let mut z: f64;
-    let mut f: [f64; 20] = [0.; 20];
-    let mut fq: [f64; 20] = [0.; 20];
-    let mut q: [f64; 20] = [0.; 20];
+    let mut z: Float64;
+    let mut f: [Float64; 20] = [0.; 20];
+    let mut fq: [Float64; 20] = [0.; 20];
+    let mut q: [Float64; 20] = [0.; 20];
     let mut iq: [i32; 20] = [0; 20];
 
     /* initialize jk*/
@@ -261,7 +262,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         i!(f, i, =, if j < 0 {
             0.
         } else {
-            i!(IPIO2, j as usize) as f64
+            i!(IPIO2, j as usize) as Float64
         });
         j += 1;
     }
@@ -282,7 +283,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         let mut i = 0i32;
         z = i!(q, jz);
         for j in (1..=jz).rev() {
-            fw = (x1p_24 * z) as i32 as f64;
+            fw = (x1p_24 * z) as i32 as Float64;
             i!(iq, i as usize, =, (z - x1p24 * fw) as i32);
             z = i!(q, j - 1) + fw;
             i += 1;
@@ -292,7 +293,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         z = scalbn(z, q0); /* actual value of z */
         z -= 8.0 * floor(z * 0.125); /* trim off integer >= 8 */
         n = z as i32;
-        z -= n as f64;
+        z -= n as Float64;
         ih = 0;
         if q0 > 0 {
             /* need iq[jz-1] to determine n */
@@ -357,7 +358,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
 
                 for i in (jz + 1)..=(jz + k) {
                     /* add q[jz+1] to q[jz+k] */
-                    i!(f, jx + i, =, i!(IPIO2, jv + i) as f64);
+                    i!(f, jx + i, =, i!(IPIO2, jv + i) as Float64);
                     fw = 0f64;
                     for j in 0..=jx {
                         fw += i!(x, j) * i!(f, jx + i - j);
@@ -384,7 +385,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
         /* break z into 24-bit if necessary */
         z = scalbn(z, -q0);
         if z >= x1p24 {
-            fw = (x1p_24 * z) as i32 as f64;
+            fw = (x1p_24 * z) as i32 as Float64;
             i!(iq, jz, =, (z - x1p24 * fw) as i32);
             jz += 1;
             q0 += 24;
@@ -397,7 +398,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
     /* convert integer "bit" chunk to floating-point value */
     fw = scalbn(1., q0);
     for i in (0..=jz).rev() {
-        i!(q, i, =, fw * (i!(iq, i) as f64));
+        i!(q, i, =, fw * (i!(iq, i) as Float64));
         fw *= x1p_24;
     }
 
@@ -427,7 +428,7 @@ pub(crate) fn rem_pio2_large(x: &[f64], y: &mut [f64], e0: i32, prec: usize) -> 
                 fw += i!(fq, i);
             }
             // TODO: drop excess precision here once double_t is used
-            fw = fw as f64;
+            fw = fw as Float64;
             i!(y, 0, =, if ih == 0 { fw } else { -fw });
             fw = i!(fq, 0) - fw;
             for i in 1..=jz {

@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/s_cbrt.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -10,35 +10,36 @@
  * ====================================================
  *
  * Optimized by Bruce D. Evans.
- */
-/* cbrt(x)
+*/
+/**
+ * cbrt(x)
  * Return cube root of x
- */
+*/
 
-use core::f64;
+use crate::Float64;
 
 const B1: u32 = 715094163; /* B1 = (1023-1023/3-0.03306235651)*2**20 */
 const B2: u32 = 696219795; /* B2 = (1023-1023/3-54/3-0.03306235651)*2**20 */
 
 /* |1/cbrt(x) - p(x)| < 2**-23.5 (~[-7.93e-8, 7.929e-8]). */
-const P0: f64 = 1.87595182427177009643; /* 0x3ffe03e6, 0x0f61e692 */
-const P1: f64 = -1.88497979543377169875; /* 0xbffe28e0, 0x92f02420 */
-const P2: f64 = 1.621429720105354466140; /* 0x3ff9f160, 0x4a49d6c2 */
-const P3: f64 = -0.758397934778766047437; /* 0xbfe844cb, 0xbee751d9 */
-const P4: f64 = 0.145996192886612446982; /* 0x3fc2b000, 0xd4e4edd7 */
+const P0: Float64 = 1.87595182427177009643; /* 0x3ffe03e6, 0x0f61e692 */
+const P1: Float64 = -1.88497979543377169875; /* 0xbffe28e0, 0x92f02420 */
+const P2: Float64 = 1.621429720105354466140; /* 0x3ff9f160, 0x4a49d6c2 */
+const P3: Float64 = -0.758397934778766047437; /* 0xbfe844cb, 0xbee751d9 */
+const P4: Float64 = 0.145996192886612446982; /* 0x3fc2b000, 0xd4e4edd7 */
 
-// Cube root (f64)
+// Cube root
 ///
 /// Computes the cube root of the argument.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn cbrt(x: f64) -> f64 {
-    let x1p54 = f64::from_bits(0x4350000000000000); // 0x1p54 === 2 ^ 54
+pub fn cbrt(x: Float64) -> Float64 {
+    let x1p54 = Float64::from_bits(0x4350000000000000); // 0x1p54 === 2 ^ 54
 
     let mut ui: u64 = x.to_bits();
-    let mut r: f64;
-    let s: f64;
-    let mut t: f64;
-    let w: f64;
+    let mut r: Float64;
+    let s: Float64;
+    let mut t: Float64;
+    let w: Float64;
     let mut hx: u32 = (ui >> 32) as u32 & 0x7fffffff;
 
     if hx >= 0x7ff00000 {
@@ -74,7 +75,7 @@ pub fn cbrt(x: f64) -> f64 {
     }
     ui &= 1 << 63;
     ui |= (hx as u64) << 32;
-    t = f64::from_bits(ui);
+    t = Float64::from_bits(ui);
 
     /*
      * New cbrt to 23 bits:
@@ -101,7 +102,7 @@ pub fn cbrt(x: f64) -> f64 {
      */
     ui = t.to_bits();
     ui = (ui + 0x80000000) & 0xffffffffc0000000;
-    t = f64::from_bits(ui);
+    t = Float64::from_bits(ui);
 
     /* one step Newton iteration to 53 bits with error < 0.667 ulps */
     s = t * t; /* t*t is exact */

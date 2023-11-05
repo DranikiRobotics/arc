@@ -1,13 +1,13 @@
-use core::f64;
+use crate::Float64;
 
 use super::sqrt;
 
-const SPLIT: f64 = 134217728. + 1.; // 0x1p27 + 1 === (2 ^ 27) + 1
+const SPLIT: Float64 = 134217728. + 1.; // 0x1p27 + 1 === (2 ^ 27) + 1
 
-fn sq(x: f64) -> (f64, f64) {
-    let xh: f64;
-    let xl: f64;
-    let xc: f64;
+fn sq(x: Float64) -> (Float64, Float64) {
+    let xh: Float64;
+    let xl: Float64;
+    let xc: Float64;
 
     xc = x * SPLIT;
     xh = x - xc + xc;
@@ -17,17 +17,18 @@ fn sq(x: f64) -> (f64, f64) {
     (hi, lo)
 }
 
+/// Calculate the length of the hypotenuse of a right-angle triangle given legs of length x and y.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn hypot(mut x: f64, mut y: f64) -> f64 {
-    let x1p700 = f64::from_bits(0x6bb0000000000000); // 0x1p700 === 2 ^ 700
-    let x1p_700 = f64::from_bits(0x1430000000000000); // 0x1p-700 === 2 ^ -700
+pub fn hypot(mut x: Float64, mut y: Float64) -> Float64 {
+    let x1p700 = Float64::from_bits(0x6bb0000000000000); // 0x1p700 === 2 ^ 700
+    let x1p_700 = Float64::from_bits(0x1430000000000000); // 0x1p-700 === 2 ^ -700
 
     let mut uxi = x.to_bits();
     let mut uyi = y.to_bits();
     let uti;
     let ex: i64;
     let ey: i64;
-    let mut z: f64;
+    let mut z: Float64;
 
     /* arrange |x| >= |y| */
     uxi &= -1i64 as u64 >> 1;
@@ -41,8 +42,8 @@ pub fn hypot(mut x: f64, mut y: f64) -> f64 {
     /* special cases */
     ex = (uxi >> 52) as i64;
     ey = (uyi >> 52) as i64;
-    x = f64::from_bits(uxi);
-    y = f64::from_bits(uyi);
+    x = Float64::from_bits(uxi);
+    y = Float64::from_bits(uyi);
     /* note: hypot(inf,nan) == inf */
     if ey == 0x7ff {
         return y;

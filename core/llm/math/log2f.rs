@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_log2f.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -8,36 +8,37 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
-/*
+*/
+/**
  * See comments in log2.c.
- */
+*/
 
-use core::f32;
+use crate::Float32;
 
-const IVLN2HI: f32 = 1.4428710938e+00; /* 0x3fb8b000 */
-const IVLN2LO: f32 = -1.7605285393e-04; /* 0xb9389ad4 */
+const IVLN2HI: Float32 = 1.4428710938e+00; /* 0x3fb8b000 */
+const IVLN2LO: Float32 = -1.7605285393e-04; /* 0xb9389ad4 */
 /* |(log(1+s)-log(1-s))/s - Lg(s)| < 2**-34.24 (~[-4.95e-11, 4.97e-11]). */
-const LG1: f32 = 0.66666662693; /* 0xaaaaaa.0p-24 */
-const LG2: f32 = 0.40000972152; /* 0xccce13.0p-25 */
-const LG3: f32 = 0.28498786688; /* 0x91e9ee.0p-25 */
-const LG4: f32 = 0.24279078841; /* 0xf89e26.0p-26 */
+const LG1: Float32 = 0.66666662693; /* 0xaaaaaa.0p-24 */
+const LG2: Float32 = 0.40000972152; /* 0xccce13.0p-25 */
+const LG3: Float32 = 0.28498786688; /* 0x91e9ee.0p-25 */
+const LG4: Float32 = 0.24279078841; /* 0xf89e26.0p-26 */
 
+/// Returns the base 2 logarithm of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log2f(mut x: f32) -> f32 {
-    let x1p25f = f32::from_bits(0x4c000000); // 0x1p25f === 2 ^ 25
+pub fn log2f(mut x: Float32) -> Float32 {
+    let x1p25f = Float32::from_bits(0x4c000000); // 0x1p25f === 2 ^ 25
 
     let mut ui: u32 = x.to_bits();
-    let hfsq: f32;
-    let f: f32;
-    let s: f32;
-    let z: f32;
-    let r: f32;
-    let w: f32;
-    let t1: f32;
-    let t2: f32;
-    let mut hi: f32;
-    let lo: f32;
+    let hfsq: Float32;
+    let f: Float32;
+    let s: Float32;
+    let z: Float32;
+    let r: Float32;
+    let w: Float32;
+    let t1: Float32;
+    let t2: Float32;
+    let mut hi: Float32;
+    let lo: Float32;
     let mut ix: u32;
     let mut k: i32;
 
@@ -67,7 +68,7 @@ pub fn log2f(mut x: f32) -> f32 {
     k += (ix >> 23) as i32 - 0x7f;
     ix = (ix & 0x007fffff) + 0x3f3504f3;
     ui = ix;
-    x = f32::from_bits(ui);
+    x = Float32::from_bits(ui);
 
     f = x - 1.0;
     s = f / (2.0 + f);
@@ -81,7 +82,7 @@ pub fn log2f(mut x: f32) -> f32 {
     hi = f - hfsq;
     ui = hi.to_bits();
     ui &= 0xfffff000;
-    hi = f32::from_bits(ui);
+    hi = Float32::from_bits(ui);
     lo = f - hi - hfsq + s * (hfsq + r);
-    (lo + hi) * IVLN2LO + lo * IVLN2HI + hi * IVLN2HI + k as f32
+    (lo + hi) * IVLN2LO + lo * IVLN2HI + hi * IVLN2HI + k as Float32
 }

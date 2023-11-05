@@ -152,6 +152,8 @@ mod lgamma;
 mod lgamma_r;
 mod lgammaf;
 mod lgammaf_r;
+mod ln;
+mod lnf;
 mod log;
 mod log10;
 mod log10f;
@@ -268,6 +270,8 @@ pub use self::lgamma::lgamma;
 pub use self::lgamma_r::lgamma_r;
 pub use self::lgammaf::lgammaf;
 pub use self::lgammaf_r::lgammaf_r;
+pub use self::ln::ln;
+pub use self::lnf::lnf;
 pub use self::log::log;
 pub use self::log10::log10;
 pub use self::log10f::log10f;
@@ -338,33 +342,35 @@ use self::rem_pio2::rem_pio2;
 use self::rem_pio2_large::rem_pio2_large;
 use self::rem_pio2f::rem_pio2f;
 
+use crate::Float64;
+
 #[inline]
-fn get_high_word(x: f64) -> u32 {
+fn get_high_word(x: Float64) -> u32 {
     (x.to_bits() >> 32) as u32
 }
 
 #[inline]
-fn get_low_word(x: f64) -> u32 {
+fn get_low_word(x: Float64) -> u32 {
     x.to_bits() as u32
 }
 
 #[inline]
-fn with_set_high_word(f: f64, hi: u32) -> f64 {
+fn with_set_high_word(f: Float64, hi: u32) -> Float64 {
     let mut tmp = f.to_bits();
     tmp &= 0x00000000_ffffffff;
     tmp |= (hi as u64) << 32;
-    f64::from_bits(tmp)
+    Float64::from_bits(tmp)
 }
 
 #[inline]
-fn with_set_low_word(f: f64, lo: u32) -> f64 {
+fn with_set_low_word(f: Float64, lo: u32) -> Float64 {
     let mut tmp = f.to_bits();
     tmp &= 0xffffffff_00000000;
     tmp |= lo as u64;
-    f64::from_bits(tmp)
+    Float64::from_bits(tmp)
 }
 
 #[inline]
-fn combine_words(hi: u32, lo: u32) -> f64 {
-    f64::from_bits((hi as u64) << 32 | lo as u64)
+fn combine_words(hi: u32, lo: u32) -> Float64 {
+    Float64::from_bits((hi as u64) << 32 | lo as u64)
 }

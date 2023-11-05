@@ -1,8 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_jnf.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -11,18 +8,26 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+*/
+
+use crate::Float32;
 
 use super::{fabsf, j0f, j1f, logf, y0f, y1f};
 
-pub fn jnf(n: i32, mut x: f32) -> f32 {
+/// Bessel function of the first kind of order zero
+/// 
+/// Calculates the Bessel function of the first kind of order zero of `x`.
+pub fn jnf(n: i32, mut x: Float32) -> Float32 {
     let mut ix: u32;
     let mut nm1: i32;
     let mut sign: bool;
     let mut i: i32;
-    let mut a: f32;
-    let mut b: f32;
-    let mut temp: f32;
+    let mut a: Float32;
+    let mut b: Float32;
+    let mut temp: Float32;
 
     ix = x.to_bits();
     sign = (ix >> 31) != 0;
@@ -52,7 +57,7 @@ pub fn jnf(n: i32, mut x: f32) -> f32 {
     if ix == 0 || ix == 0x7f800000 {
         /* if x is 0 or inf */
         b = 0.0;
-    } else if (nm1 as f32) < x {
+    } else if (nm1 as Float32) < x {
         /* Safe to use J(n+1,x)=2n/x *J(n,x)-J(n-1,x) */
         a = j0f(x);
         b = j1f(x);
@@ -60,15 +65,14 @@ pub fn jnf(n: i32, mut x: f32) -> f32 {
         while i < nm1 {
             i += 1;
             temp = b;
-            b = b * (2.0 * (i as f32) / x) - a;
+            b = b * (2.0 * (i as Float32) / x) - a;
             a = temp;
         }
     } else {
         if ix < 0x35800000 {
-            /* x < 2**-20 */
-            /* x is tiny, return the first Taylor expansion of J(n,x)
-             * J(n,x) = 1/n!*(x/2)^n  - ...
-             */
+            // x < 2**-20
+            //x is tiny, return the first Taylor expansion of J(n,x)
+            // J(n,x) = 1/n!*(x/2)^n  - ...
             if nm1 > 8 {
                 /* underflow */
                 nm1 = 8;
@@ -78,53 +82,52 @@ pub fn jnf(n: i32, mut x: f32) -> f32 {
             a = 1.0;
             i = 2;
             while i <= nm1 + 1 {
-                a *= i as f32; /* a = n! */
+                a *= i as Float32; /* a = n! */
                 b *= temp; /* b = (x/2)^n */
                 i += 1;
             }
             b = b / a;
         } else {
-            /* use backward recurrence */
-            /*                      x      x^2      x^2
-             *  J(n,x)/J(n-1,x) =  ----   ------   ------   .....
-             *                      2n  - 2(n+1) - 2(n+2)
-             *
-             *                      1      1        1
-             *  (for large x)   =  ----  ------   ------   .....
-             *                      2n   2(n+1)   2(n+2)
-             *                      -- - ------ - ------ -
-             *                       x     x         x
-             *
-             * Let w = 2n/x and h=2/x, then the above quotient
-             * is equal to the continued fraction:
-             *                  1
-             *      = -----------------------
-             *                     1
-             *         w - -----------------
-             *                        1
-             *              w+h - ---------
-             *                     w+2h - ...
-             *
-             * To determine how many terms needed, let
-             * Q(0) = w, Q(1) = w(w+h) - 1,
-             * Q(k) = (w+k*h)*Q(k-1) - Q(k-2),
-             * When Q(k) > 1e4      good for single
-             * When Q(k) > 1e9      good for double
-             * When Q(k) > 1e17     good for quadruple
-             */
+            // use backward recurrence
+            //                       x      x^2      x^2
+            //  J(n,x)/J(n-1,x) =  ----   ------   ------   .....
+            //                      2n  - 2(n+1) - 2(n+2)
+            //
+            //                      1      1        1
+            //  (for large x)   =  ----  ------   ------   .....
+            //                      2n   2(n+1)   2(n+2)
+            //                      -- - ------ - ------ -
+            //                       x     x         x
+            //
+            // Let w = 2n/x and h=2/x, then the above quotient
+            // is equal to the continued fraction:
+            //                  1
+            //      = -----------------------
+            //                     1
+            //         w - -----------------
+            //                        1
+            //              w+h - ---------
+            //                     w+2h - ...
+            //
+            // To determine how many terms needed, let
+            // Q(0) = w, Q(1) = w(w+h) - 1,
+            // Q(k) = (w+k*h)*Q(k-1) - Q(k-2),
+            // When Q(k) > 1e4      good for single
+            // When Q(k) > 1e9      good for double
+            // When Q(k) > 1e17     good for quadruple
             /* determine k */
-            let mut t: f32;
-            let mut q0: f32;
-            let mut q1: f32;
-            let mut w: f32;
-            let h: f32;
-            let mut z: f32;
-            let mut tmp: f32;
-            let nf: f32;
+            let mut t: Float32;
+            let mut q0: Float32;
+            let mut q1: Float32;
+            let mut w: Float32;
+            let h: Float32;
+            let mut z: Float32;
+            let mut tmp: Float32;
+            let nf: Float32;
             let mut k: i32;
 
-            nf = (nm1 as f32) + 1.0;
-            w = 2.0 * (nf as f32) / x;
+            nf = (nm1 as Float32) + 1.0;
+            w = 2.0 * (nf as Float32) / x;
             h = 2.0 / x;
             z = w + h;
             q0 = w;
@@ -140,25 +143,24 @@ pub fn jnf(n: i32, mut x: f32) -> f32 {
             t = 0.0;
             i = k;
             while i >= 0 {
-                t = 1.0 / (2.0 * ((i as f32) + nf) / x - t);
+                t = 1.0 / (2.0 * ((i as Float32) + nf) / x - t);
                 i -= 1;
             }
             a = t;
             b = 1.0;
-            /*  estimate log((2/x)^n*n!) = n*log(2/x)+n*ln(n)
-             *  Hence, if n*(log(2n/x)) > ...
-             *  single 8.8722839355e+01
-             *  double 7.09782712893383973096e+02
-             *  long double 1.1356523406294143949491931077970765006170e+04
-             *  then recurrent value may overflow and the result is
-             *  likely underflow to zero
-             */
+            //  estimate log((2/x)^n*n!) = n*log(2/x)+n*ln(n)
+            //  Hence, if n*(log(2n/x)) > ...
+            //  single 8.8722839355e+01
+            //  double 7.09782712893383973096e+02
+            //  long double 1.1356523406294143949491931077970765006170e+04
+            //  then recurrent value may overflow and the result is
+            //  likely underflow to zero
             tmp = nf * logf(fabsf(w));
             if tmp < 88.721679688 {
                 i = nm1;
                 while i > 0 {
                     temp = b;
-                    b = 2.0 * (i as f32) * b / x - a;
+                    b = 2.0 * (i as Float32) * b / x - a;
                     a = temp;
                     i -= 1;
                 }
@@ -166,10 +168,10 @@ pub fn jnf(n: i32, mut x: f32) -> f32 {
                 i = nm1;
                 while i > 0 {
                     temp = b;
-                    b = 2.0 * (i as f32) * b / x - a;
+                    b = 2.0 * (i as Float32) * b / x - a;
                     a = temp;
                     /* scale b to avoid spurious overflow */
-                    let x1p60 = f32::from_bits(0x5d800000); // 0x1p60 == 2^60
+                    let x1p60 = Float32::from_bits(0x5d800000); // 0x1p60 == 2^60
                     if b > x1p60 {
                         a /= b;
                         t /= b;
@@ -195,15 +197,18 @@ pub fn jnf(n: i32, mut x: f32) -> f32 {
     }
 }
 
-pub fn ynf(n: i32, x: f32) -> f32 {
+/// Bessel function of the second kind of order zero
+/// 
+/// Calculates the Bessel function of the second kind of order zero of `x`.
+pub fn ynf(n: i32, x: Float32) -> Float32 {
     let mut ix: u32;
     let mut ib: u32;
     let nm1: i32;
     let mut sign: bool;
     let mut i: i32;
-    let mut a: f32;
-    let mut b: f32;
-    let mut temp: f32;
+    let mut a: Float32;
+    let mut b: Float32;
+    let mut temp: Float32;
 
     ix = x.to_bits();
     sign = (ix >> 31) != 0;
@@ -246,7 +251,7 @@ pub fn ynf(n: i32, x: f32) -> f32 {
     while i < nm1 && ib != 0xff800000 {
         i += 1;
         temp = b;
-        b = (2.0 * (i as f32) / x) * b - a;
+        b = (2.0 * (i as Float32) / x) * b - a;
         ib = b.to_bits();
         a = temp;
     }

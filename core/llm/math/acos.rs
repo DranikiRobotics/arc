@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_acos.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -9,7 +9,8 @@
  * is preserved.
  * ====================================================
  */
-/* acos(x)
+/**
+ * acos(x)
  * Method :
  *      acos(x)  = pi/2 - asin(x)
  *      acos(-x) = pi/2 + asin(x)
@@ -31,42 +32,44 @@
  *      if |x|>1, return NaN with invalid signal.
  *
  * Function needed: sqrt
- */
+*/
+
+use crate::{Float64, Radian64};
 
 use super::sqrt;
 
-const PIO2_HI: f64 = 1.57079632679489655800e+00; /* 0x3FF921FB, 0x54442D18 */
-const PIO2_LO: f64 = 6.12323399573676603587e-17; /* 0x3C91A626, 0x33145C07 */
-const PS0: f64 = 1.66666666666666657415e-01; /* 0x3FC55555, 0x55555555 */
-const PS1: f64 = -3.25565818622400915405e-01; /* 0xBFD4D612, 0x03EB6F7D */
-const PS2: f64 = 2.01212532134862925881e-01; /* 0x3FC9C155, 0x0E884455 */
-const PS3: f64 = -4.00555345006794114027e-02; /* 0xBFA48228, 0xB5688F3B */
-const PS4: f64 = 7.91534994289814532176e-04; /* 0x3F49EFE0, 0x7501B288 */
-const PS5: f64 = 3.47933107596021167570e-05; /* 0x3F023DE1, 0x0DFDF709 */
-const QS1: f64 = -2.40339491173441421878e+00; /* 0xC0033A27, 0x1C8A2D4B */
-const QS2: f64 = 2.02094576023350569471e+00; /* 0x40002AE5, 0x9C598AC8 */
-const QS3: f64 = -6.88283971605453293030e-01; /* 0xBFE6066C, 0x1B8D0159 */
-const QS4: f64 = 7.70381505559019352791e-02; /* 0x3FB3B8C5, 0xB12E9282 */
+const PIO2_HI: Float64 = 1.57079632679489655800e+00; /* 0x3FF921FB, 0x54442D18 */
+const PIO2_LO: Float64 = 6.12323399573676603587e-17; /* 0x3C91A626, 0x33145C07 */
+const PS0: Float64 = 1.66666666666666657415e-01; /* 0x3FC55555, 0x55555555 */
+const PS1: Float64 = -3.25565818622400915405e-01; /* 0xBFD4D612, 0x03EB6F7D */
+const PS2: Float64 = 2.01212532134862925881e-01; /* 0x3FC9C155, 0x0E884455 */
+const PS3: Float64 = -4.00555345006794114027e-02; /* 0xBFA48228, 0xB5688F3B */
+const PS4: Float64 = 7.91534994289814532176e-04; /* 0x3F49EFE0, 0x7501B288 */
+const PS5: Float64 = 3.47933107596021167570e-05; /* 0x3F023DE1, 0x0DFDF709 */
+const QS1: Float64 = -2.40339491173441421878e+00; /* 0xC0033A27, 0x1C8A2D4B */
+const QS2: Float64 = 2.02094576023350569471e+00; /* 0x40002AE5, 0x9C598AC8 */
+const QS3: Float64 = -6.88283971605453293030e-01; /* 0xBFE6066C, 0x1B8D0159 */
+const QS4: Float64 = 7.70381505559019352791e-02; /* 0x3FB3B8C5, 0xB12E9282 */
 
-fn r(z: f64) -> f64 {
-    let p: f64 = z * (PS0 + z * (PS1 + z * (PS2 + z * (PS3 + z * (PS4 + z * PS5)))));
-    let q: f64 = 1.0 + z * (QS1 + z * (QS2 + z * (QS3 + z * QS4)));
+fn r(z: Float64) -> Float64 {
+    let p: Float64 = z * (PS0 + z * (PS1 + z * (PS2 + z * (PS3 + z * (PS4 + z * PS5)))));
+    let q: Float64 = 1.0 + z * (QS1 + z * (QS2 + z * (QS3 + z * QS4)));
     p / q
 }
 
-/// Arccosine (f64)
+/// Arccosine
 ///
 /// Computes the inverse cosine (arc cosine) of the input value.
 /// Arguments must be in the range -1 to 1.
 /// Returns values in radians, in the range of 0 to pi.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn acos(x: f64) -> f64 {
-    let x1p_120f = f64::from_bits(0x3870000000000000); // 0x1p-120 === 2 ^ -120
-    let z: f64;
-    let w: f64;
-    let s: f64;
-    let c: f64;
-    let df: f64;
+pub fn acos(x: Float64) -> Radian64 {
+    let x1p_120f = Float64::from_bits(0x3870000000000000); // 0x1p-120 === 2 ^ -120
+    let z: Float64;
+    let w: Float64;
+    let s: Float64;
+    let c: Float64;
+    let df: Float64;
     let hx: u32;
     let ix: u32;
 
@@ -104,7 +107,7 @@ pub fn acos(x: f64) -> f64 {
     z = (1.0 - x) * 0.5;
     s = sqrt(z);
     // Set the low 4 bytes to zero
-    df = f64::from_bits(s.to_bits() & 0xff_ff_ff_ff_00_00_00_00);
+    df = Float64::from_bits(s.to_bits() & 0xff_ff_ff_ff_00_00_00_00);
 
     c = (z - df * df) / (s + df);
     w = r(z) * s + c;

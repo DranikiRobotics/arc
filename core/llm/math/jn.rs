@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_jn.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -8,8 +8,8 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
-/*
+*/
+/**
  * jn(n, x), yn(n, x)
  * floating point Bessel's function of the 1st and 2nd kind
  * of order n
@@ -32,21 +32,26 @@
  *      yn(n,x) is similar in all respects, except
  *      that forward recursion is used for all
  *      values of n>1.
- */
+*/
+
+use crate::Float64;
 
 use super::{cos, fabs, get_high_word, get_low_word, j0, j1, log, sin, sqrt, y0, y1};
 
-const INVSQRTPI: f64 = 5.64189583547756279280e-01; /* 0x3FE20DD7, 0x50429B6D */
+const INVSQRTPI: Float64 = 5.64189583547756279280e-01; /* 0x3FE20DD7, 0x50429B6D */
 
-pub fn jn(n: i32, mut x: f64) -> f64 {
+/// Bessel function of the first kind of order zero of `x`.
+/// 
+/// Calculates the Bessel function of the first kind of order zero of `x`.
+pub fn jn(n: i32, mut x: Float64) -> Float64 {
     let mut ix: u32;
     let lx: u32;
     let nm1: i32;
     let mut i: i32;
     let mut sign: bool;
-    let mut a: f64;
-    let mut b: f64;
-    let mut temp: f64;
+    let mut a: Float64;
+    let mut b: Float64;
+    let mut temp: Float64;
 
     ix = get_high_word(x);
     lx = get_low_word(x);
@@ -82,7 +87,7 @@ pub fn jn(n: i32, mut x: f64) -> f64 {
     if (ix | lx) == 0 || ix == 0x7ff00000 {
         /* if x is 0 or inf */
         b = 0.0;
-    } else if (nm1 as f64) < x {
+    } else if (nm1 as Float64) < x {
         /* Safe to use J(n+1,x)=2n/x *J(n,x)-J(n-1,x) */
         if ix >= 0x52d00000 {
             /* x > 2**302 */
@@ -113,7 +118,7 @@ pub fn jn(n: i32, mut x: f64) -> f64 {
             while i < nm1 {
                 i += 1;
                 temp = b;
-                b = b * (2.0 * (i as f64) / x) - a; /* avoid underflow */
+                b = b * (2.0 * (i as Float64) / x) - a; /* avoid underflow */
                 a = temp;
             }
         }
@@ -132,7 +137,7 @@ pub fn jn(n: i32, mut x: f64) -> f64 {
                 a = 1.0;
                 i = 2;
                 while i <= nm1 + 1 {
-                    a *= i as f64; /* a = n! */
+                    a *= i as Float64; /* a = n! */
                     b *= temp; /* b = (x/2)^n */
                     i += 1;
                 }
@@ -168,18 +173,18 @@ pub fn jn(n: i32, mut x: f64) -> f64 {
              * When Q(k) > 1e17     good for quadruple
              */
             /* determine k */
-            let mut t: f64;
-            let mut q0: f64;
-            let mut q1: f64;
-            let mut w: f64;
-            let h: f64;
-            let mut z: f64;
-            let mut tmp: f64;
-            let nf: f64;
+            let mut t: Float64;
+            let mut q0: Float64;
+            let mut q1: Float64;
+            let mut w: Float64;
+            let h: Float64;
+            let mut z: Float64;
+            let mut tmp: Float64;
+            let nf: Float64;
 
             let mut k: i32;
 
-            nf = (nm1 as f64) + 1.0;
+            nf = (nm1 as Float64) + 1.0;
             w = 2.0 * nf / x;
             h = 2.0 / x;
             z = w + h;
@@ -196,7 +201,7 @@ pub fn jn(n: i32, mut x: f64) -> f64 {
             t = 0.0;
             i = k;
             while i >= 0 {
-                t = 1.0 / (2.0 * ((i as f64) + nf) / x - t);
+                t = 1.0 / (2.0 * ((i as Float64) + nf) / x - t);
                 i -= 1;
             }
             a = t;
@@ -214,7 +219,7 @@ pub fn jn(n: i32, mut x: f64) -> f64 {
                 i = nm1;
                 while i > 0 {
                     temp = b;
-                    b = b * (2.0 * (i as f64)) / x - a;
+                    b = b * (2.0 * (i as Float64)) / x - a;
                     a = temp;
                     i -= 1;
                 }
@@ -222,10 +227,10 @@ pub fn jn(n: i32, mut x: f64) -> f64 {
                 i = nm1;
                 while i > 0 {
                     temp = b;
-                    b = b * (2.0 * (i as f64)) / x - a;
+                    b = b * (2.0 * (i as Float64)) / x - a;
                     a = temp;
                     /* scale b to avoid spurious overflow */
-                    let x1p500 = f64::from_bits(0x5f30000000000000); // 0x1p500 == 2^500
+                    let x1p500 = Float64::from_bits(0x5f30000000000000); // 0x1p500 == 2^500
                     if b > x1p500 {
                         a /= b;
                         t /= b;
@@ -251,16 +256,19 @@ pub fn jn(n: i32, mut x: f64) -> f64 {
     }
 }
 
-pub fn yn(n: i32, x: f64) -> f64 {
+/// Bessel function of the second kind of order zero of `x`.
+/// 
+/// Calculates the Bessel function of the second kind of order zero of `x`.
+pub fn yn(n: i32, x: Float64) -> Float64 {
     let mut ix: u32;
     let lx: u32;
     let mut ib: u32;
     let nm1: i32;
     let mut sign: bool;
     let mut i: i32;
-    let mut a: f64;
-    let mut b: f64;
-    let mut temp: f64;
+    let mut a: Float64;
+    let mut b: Float64;
+    let mut temp: Float64;
 
     ix = get_high_word(x);
     lx = get_low_word(x);
@@ -329,7 +337,7 @@ pub fn yn(n: i32, x: f64) -> f64 {
         while i < nm1 && ib != 0xfff00000 {
             i += 1;
             temp = b;
-            b = (2.0 * (i as f64) / x) * b - a;
+            b = (2.0 * (i as Float64) / x) * b - a;
             ib = get_high_word(b);
             a = temp;
         }

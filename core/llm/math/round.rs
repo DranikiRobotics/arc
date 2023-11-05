@@ -1,10 +1,12 @@
+use crate::Float64;
+
 use super::copysign;
 use super::trunc;
-use core::f64;
 
+/// Rounds `x` to the nearest integer in the direction of the current rounding mode.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn round(x: f64) -> f64 {
-    trunc(x + copysign(0.5 - 0.25 * f64::EPSILON, x))
+pub fn round(x: Float64) -> Float64 {
+    trunc(x + copysign(0.5 - 0.25 * Float64::EPSILON, x))
 }
 
 #[cfg(test)]

@@ -1,6 +1,6 @@
-use core::f32;
+use crate::Float32;
 
-/// Positive difference (f32)
+/// Positive difference
 ///
 /// Determines the positive difference between arguments, returning:
 /// * x - y	if x > y, or
@@ -9,7 +9,7 @@ use core::f32;
 ///
 /// A range error may occur.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fdimf(x: f32, y: f32) -> f32 {
+pub fn fdimf(x: Float32, y: Float32) -> Float32 {
     if x.is_nan() {
         x
     } else if y.is_nan() {

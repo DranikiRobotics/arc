@@ -1,6 +1,9 @@
+use crate::Float32;
+
+/// Round to nearest integer, rounding halfway cases away from zero.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn rintf(x: f32) -> f32 {
-    let one_over_e = 1.0 / f32::EPSILON;
+pub fn rintf(x: Float32) -> Float32 {
+    let one_over_e = 1.0 / Float32::EPSILON;
     let as_u32: u32 = x.to_bits();
     let exponent: u32 = as_u32 >> 23 & 0xff;
     let is_positive = (as_u32 >> 31) == 0;

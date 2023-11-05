@@ -9,43 +9,48 @@
 // is preserved.
 // ====================================================
 
+use crate::{Float64, Radian64};
+
 use super::{k_cos, k_sin, rem_pio2};
 
-// sin(x)
-// Return sine function of x.
-//
-// kernel function:
-//      k_sin            ... sine function on [-pi/4,pi/4]
-//      k_cos            ... cose function on [-pi/4,pi/4]
-//      rem_pio2         ... argument reduction routine
-//
-// Method.
-//      Let S,C and T denote the sin, cos and tan respectively on
-//      [-PI/4, +PI/4]. Reduce the argument x to y1+y2 = x-k*pi/2
-//      in [-pi/4 , +pi/4], and let n = k mod 4.
-//      We have
-//
-//          n        sin(x)      cos(x)        tan(x)
-//     ----------------------------------------------------------
-//          0          S           C             T
-//          1          C          -S            -1/T
-//          2         -S          -C             T
-//          3         -C           S            -1/T
-//     ----------------------------------------------------------
-//
-// Special cases:
-//      Let trig be any of sin, cos, or tan.
-//      trig(+-INF)  is NaN, with signals;
-//      trig(NaN)    is that NaN;
-//
-// Accuracy:
-//      TRIG(x) returns trig(x) nearly rounded
+/// Returns the sine function of x.
+///
+/// ### Info:
+/// 
+/// ```text
+/// kernel function:
+///      k_sin            ... sine function on [-pi/4,pi/4]
+///      k_cos            ... cose function on [-pi/4,pi/4]
+///      rem_pio2         ... argument reduction routine
+///
+/// Method.
+///      Let S,C and T denote the sin, cos and tan respectively on
+///      [-PI/4, +PI/4]. Reduce the argument x to y1+y2 = x-k*pi/2
+///      in [-pi/4 , +pi/4], and let n = k mod 4.
+///      We have
+///
+///          n        sin(x)      cos(x)        tan(x)
+///     ----------------------------------------------------------
+///          0          S           C             T
+///          1          C          -S            -1/T
+///          2         -S          -C             T
+///          3         -C           S            -1/T
+///     ----------------------------------------------------------
+///
+/// Special cases:
+///      Let trig be any of sin, cos, or tan.
+///      trig(+-INF)  is NaN, with signals;
+///      trig(NaN)    is that NaN;
+///
+/// Accuracy:
+///      TRIG(x) returns trig(x) nearly rounded
+/// ```
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sin(x: f64) -> f64 {
-    let x1p120 = f64::from_bits(0x4770000000000000); // 0x1p120f === 2 ^ 120
+pub fn sin(x: Radian64) -> Float64 {
+    let x1p120 = Float64::from_bits(0x4770000000000000); // 0x1p120f === 2 ^ 120
 
     /* High word of x. */
-    let ix = (f64::to_bits(x) >> 32) as u32 & 0x7fffffff;
+    let ix = (Float64::to_bits(x) >> 32) as u32 & 0x7fffffff;
 
     /* |x| ~< pi/4 */
     if ix <= 0x3fe921fb {
@@ -79,8 +84,8 @@ pub fn sin(x: f64) -> f64 {
 
 #[test]
 fn test_near_pi() {
-    let x = f64::from_bits(0x400921fb000FD5DD); // 3.141592026217707
-    let sx = f64::from_bits(0x3ea50d15ced1a4a2); // 6.273720864039205e-7
+    let x = Float64::from_bits(0x400921fb000FD5DD); // 3.141592026217707
+    let sx = Float64::from_bits(0x3ea50d15ced1a4a2); // 6.273720864039205e-7
     let result = sin(x);
     #[cfg(all(target_arch = "x86", not(target_feature = "sse2")))]
     let result = force_eval!(result);

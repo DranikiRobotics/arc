@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/s_atan.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -8,8 +8,9 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
-/* atan(x)
+*/
+/**
+ * atan(x)
  * Method
  *   1. Reduce x to positive by atan(x) = -atan(-x).
  *   2. According to the integer k=4t+0.25 chopped, t=x, the argument
@@ -27,26 +28,27 @@
  * constants. The decimal values may be used, provided that the
  * compiler will convert from decimal to binary accurately enough
  * to produce the hexadecimal values shown.
- */
+*/
+
+use crate::{Float64, Float32, Radian64};
 
 use super::fabs;
-use core::f64;
 
-const ATANHI: [f64; 4] = [
+const ATANHI: [Float64; 4] = [
     4.63647609000806093515e-01, /* atan(0.5)hi 0x3FDDAC67, 0x0561BB4F */
     7.85398163397448278999e-01, /* atan(1.0)hi 0x3FE921FB, 0x54442D18 */
     9.82793723247329054082e-01, /* atan(1.5)hi 0x3FEF730B, 0xD281F69B */
     1.57079632679489655800e+00, /* atan(inf)hi 0x3FF921FB, 0x54442D18 */
 ];
 
-const ATANLO: [f64; 4] = [
+const ATANLO: [Float64; 4] = [
     2.26987774529616870924e-17, /* atan(0.5)lo 0x3C7A2B7F, 0x222F65E2 */
     3.06161699786838301793e-17, /* atan(1.0)lo 0x3C81A626, 0x33145C07 */
     1.39033110312309984516e-17, /* atan(1.5)lo 0x3C700788, 0x7AF0CBBD */
     6.12323399573676603587e-17, /* atan(inf)lo 0x3C91A626, 0x33145C07 */
 ];
 
-const AT: [f64; 11] = [
+const AT: [Float64; 11] = [
     3.33333333333329318027e-01,  /* 0x3FD55555, 0x5555550D */
     -1.99999999998764832476e-01, /* 0xBFC99999, 0x9998EBC4 */
     1.42857142725034663711e-01,  /* 0x3FC24924, 0x920083FF */
@@ -60,12 +62,12 @@ const AT: [f64; 11] = [
     1.62858201153657823623e-02,  /* 0x3F90AD3A, 0xE322DA11 */
 ];
 
-/// Arctangent (f64)
+/// Arctangent
 ///
 /// Computes the inverse tangent (arc tangent) of the input value.
 /// Returns a value in radians, in the range of -pi/2 to pi/2.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn atan(x: f64) -> f64 {
+pub fn atan(x: Float64) -> Radian64 {
     let mut x = x;
     let mut ix = (x.to_bits() >> 32) as u32;
     let sign = ix >> 31;
@@ -75,7 +77,7 @@ pub fn atan(x: f64) -> f64 {
             return x;
         }
 
-        let z = ATANHI[3] + f64::from_bits(0x0380_0000); // 0x1p-120f
+        let z = ATANHI[3] + Float64::from_bits(0x0380_0000); // 0x1p-120f
         return if sign != 0 { -z } else { z };
     }
 
@@ -85,7 +87,7 @@ pub fn atan(x: f64) -> f64 {
             /* |x| < 2^-27 */
             if ix < 0x0010_0000 {
                 /* raise underflow for subnormal x */
-                force_eval!(x as f32);
+                force_eval!(x as Float32);
             }
 
             return x;
@@ -138,17 +140,17 @@ pub fn atan(x: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::atan;
-    use core::f64;
+    use core::Float64;
 
     #[test]
     fn sanity_check() {
         for (input, answer) in [
-            (3.0_f64.sqrt() / 3.0, f64::consts::FRAC_PI_6),
-            (1.0, f64::consts::FRAC_PI_4),
-            (3.0_f64.sqrt(), f64::consts::FRAC_PI_3),
-            (-3.0_f64.sqrt() / 3.0, -f64::consts::FRAC_PI_6),
-            (-1.0, -f64::consts::FRAC_PI_4),
-            (-3.0_f64.sqrt(), -f64::consts::FRAC_PI_3),
+            (3.0_f64.sqrt() / 3.0, Float64::consts::FRAC_PI_6),
+            (1.0, Float64::consts::FRAC_PI_4),
+            (3.0_f64.sqrt(), Float64::consts::FRAC_PI_3),
+            (-3.0_f64.sqrt() / 3.0, -Float64::consts::FRAC_PI_6),
+            (-1.0, -Float64::consts::FRAC_PI_4),
+            (-3.0_f64.sqrt(), -Float64::consts::FRAC_PI_3),
         ]
         .iter()
         {
@@ -169,16 +171,16 @@ mod tests {
 
     #[test]
     fn infinity() {
-        assert_eq!(atan(f64::INFINITY), f64::consts::FRAC_PI_2);
+        assert_eq!(atan(Float64::INFINITY), Float64::consts::FRAC_PI_2);
     }
 
     #[test]
     fn minus_infinity() {
-        assert_eq!(atan(f64::NEG_INFINITY), -f64::consts::FRAC_PI_2);
+        assert_eq!(atan(Float64::NEG_INFINITY), -Float64::consts::FRAC_PI_2);
     }
 
     #[test]
     fn nan() {
-        assert!(atan(f64::NAN).is_nan());
+        assert!(atan(Float64::NAN).is_nan());
     }
 }

@@ -1,8 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/s_atanf.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -11,25 +8,30 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+*/
+
+use crate::{Float32, Radian32};
 
 use super::fabsf;
 
-const ATAN_HI: [f32; 4] = [
+const ATAN_HI: [Float32; 4] = [
     4.6364760399e-01, /* atan(0.5)hi 0x3eed6338 */
     7.8539812565e-01, /* atan(1.0)hi 0x3f490fda */
     9.8279368877e-01, /* atan(1.5)hi 0x3f7b985e */
     1.5707962513e+00, /* atan(inf)hi 0x3fc90fda */
 ];
 
-const ATAN_LO: [f32; 4] = [
+const ATAN_LO: [Float32; 4] = [
     5.0121582440e-09, /* atan(0.5)lo 0x31ac3769 */
     3.7748947079e-08, /* atan(1.0)lo 0x33222168 */
     3.4473217170e-08, /* atan(1.5)lo 0x33140fb4 */
     7.5497894159e-08, /* atan(inf)lo 0x33a22168 */
 ];
 
-const A_T: [f32; 5] = [
+const A_T: [Float32; 5] = [
     3.3333328366e-01,
     -1.9999158382e-01,
     1.4253635705e-01,
@@ -37,15 +39,15 @@ const A_T: [f32; 5] = [
     6.1687607318e-02,
 ];
 
-/// Arctangent (f32)
+/// Arctangent
 ///
 /// Computes the inverse tangent (arc tangent) of the input value.
 /// Returns a value in radians, in the range of -pi/2 to pi/2.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn atanf(mut x: f32) -> f32 {
-    let x1p_120 = f32::from_bits(0x03800000); // 0x1p-120 === 2 ^ (-120)
+pub fn atanf(mut x: Float32) -> Radian32 {
+    let x1p_120 = Float32::from_bits(0x03800000); // 0x1p-120 === 2 ^ (-120)
 
-    let z: f32;
+    let z: Float32;
 
     let mut ix = x.to_bits();
     let sign = (ix >> 31) != 0;

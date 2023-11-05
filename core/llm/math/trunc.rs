@@ -1,16 +1,18 @@
-use core::f64;
+use crate::Float64;
 
+/// Returns the integer part of self.
+/// This means that non-integer numbers are always truncated towards zero.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn trunc(x: f64) -> f64 {
+pub fn trunc(x: Float64) -> Float64 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
-    // `f64.trunc` native instruction, so we can leverage this for both code size
+    // `Float64.trunc` native instruction, so we can leverage this for both code size
     // and speed.
     llvm_intrinsically_optimized! {
         #[cfg(target_arch = "wasm32")] {
             return unsafe { ::core::intrinsics::truncf64(x) }
         }
     }
-    let x1p120 = f64::from_bits(0x4770000000000000); // 0x1p120f === 2 ^ 120
+    let x1p120 = Float64::from_bits(0x4770000000000000); // 0x1p120f === 2 ^ 120
 
     let mut i: u64 = x.to_bits();
     let mut e: i64 = (i >> 52 & 0x7ff) as i64 - 0x3ff + 12;
@@ -28,7 +30,7 @@ pub fn trunc(x: f64) -> f64 {
     }
     force_eval!(x + x1p120);
     i &= !m;
-    f64::from_bits(i)
+    Float64::from_bits(i)
 }
 
 #[cfg(test)]

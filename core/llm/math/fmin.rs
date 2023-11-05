@@ -1,5 +1,8 @@
+use crate::Float64;
+
+/// Returns the minimum of two numbers.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fmin(x: f64, y: f64) -> f64 {
+pub fn fmin(x: Float64, y: Float64) -> Float64 {
     // IEEE754 says: minNum(x, y) is the canonicalized number x if x < y, y if y < x, the
     // canonicalized number if one operand is a number and the other a quiet NaN. Otherwise it
     // is either x or y, canonicalized (this means results might differ among implementations).

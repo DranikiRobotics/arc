@@ -1,8 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_j0f.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -11,19 +8,24 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+*/
+
+use crate::Float32;
 
 use super::{cosf, fabsf, logf, sinf, sqrtf};
 
-const INVSQRTPI: f32 = 5.6418961287e-01; /* 0x3f106ebb */
-const TPI: f32 = 6.3661974669e-01; /* 0x3f22f983 */
+const INVSQRTPI: Float32 = 5.6418961287e-01; /* 0x3f106ebb */
+const TPI: Float32 = 6.3661974669e-01; /* 0x3f22f983 */
 
-fn common(ix: u32, x: f32, y0: bool) -> f32 {
-    let z: f32;
-    let s: f32;
-    let mut c: f32;
-    let mut ss: f32;
-    let mut cc: f32;
+fn common(ix: u32, x: Float32, y0: bool) -> Float32 {
+    let z: Float32;
+    let s: Float32;
+    let mut c: Float32;
+    let mut ss: Float32;
+    let mut cc: Float32;
     /*
      * j0(x) = 1/sqrt(pi) * (P(0,x)*cc - Q(0,x)*ss) / sqrt(x)
      * y0(x) = 1/sqrt(pi) * (P(0,x)*ss + Q(0,x)*cc) / sqrt(x)
@@ -53,19 +55,22 @@ fn common(ix: u32, x: f32, y0: bool) -> f32 {
 }
 
 /* R0/S0 on [0, 2.00] */
-const R02: f32 = 1.5625000000e-02; /* 0x3c800000 */
-const R03: f32 = -1.8997929874e-04; /* 0xb947352e */
-const R04: f32 = 1.8295404516e-06; /* 0x35f58e88 */
-const R05: f32 = -4.6183270541e-09; /* 0xb19eaf3c */
-const S01: f32 = 1.5619102865e-02; /* 0x3c7fe744 */
-const S02: f32 = 1.1692678527e-04; /* 0x38f53697 */
-const S03: f32 = 5.1354652442e-07; /* 0x3509daa6 */
-const S04: f32 = 1.1661400734e-09; /* 0x30a045e8 */
+const R02: Float32 = 1.5625000000e-02; /* 0x3c800000 */
+const R03: Float32 = -1.8997929874e-04; /* 0xb947352e */
+const R04: Float32 = 1.8295404516e-06; /* 0x35f58e88 */
+const R05: Float32 = -4.6183270541e-09; /* 0xb19eaf3c */
+const S01: Float32 = 1.5619102865e-02; /* 0x3c7fe744 */
+const S02: Float32 = 1.1692678527e-04; /* 0x38f53697 */
+const S03: Float32 = 5.1354652442e-07; /* 0x3509daa6 */
+const S04: Float32 = 1.1661400734e-09; /* 0x30a045e8 */
 
-pub fn j0f(mut x: f32) -> f32 {
-    let z: f32;
-    let r: f32;
-    let s: f32;
+/// Bessel function of the first kind of order zero
+/// 
+/// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/j0.html)
+pub fn j0f(mut x: Float32) -> Float32 {
+    let z: Float32;
+    let r: Float32;
+    let s: Float32;
     let mut ix: u32;
 
     ix = x.to_bits();
@@ -95,22 +100,25 @@ pub fn j0f(mut x: f32) -> f32 {
     return 1.0 - x;
 }
 
-const U00: f32 = -7.3804296553e-02; /* 0xbd9726b5 */
-const U01: f32 = 1.7666645348e-01; /* 0x3e34e80d */
-const U02: f32 = -1.3818567619e-02; /* 0xbc626746 */
-const U03: f32 = 3.4745343146e-04; /* 0x39b62a69 */
-const U04: f32 = -3.8140706238e-06; /* 0xb67ff53c */
-const U05: f32 = 1.9559013964e-08; /* 0x32a802ba */
-const U06: f32 = -3.9820518410e-11; /* 0xae2f21eb */
-const V01: f32 = 1.2730483897e-02; /* 0x3c509385 */
-const V02: f32 = 7.6006865129e-05; /* 0x389f65e0 */
-const V03: f32 = 2.5915085189e-07; /* 0x348b216c */
-const V04: f32 = 4.4111031494e-10; /* 0x2ff280c2 */
+const U00: Float32 = -7.3804296553e-02; /* 0xbd9726b5 */
+const U01: Float32 = 1.7666645348e-01; /* 0x3e34e80d */
+const U02: Float32 = -1.3818567619e-02; /* 0xbc626746 */
+const U03: Float32 = 3.4745343146e-04; /* 0x39b62a69 */
+const U04: Float32 = -3.8140706238e-06; /* 0xb67ff53c */
+const U05: Float32 = 1.9559013964e-08; /* 0x32a802ba */
+const U06: Float32 = -3.9820518410e-11; /* 0xae2f21eb */
+const V01: Float32 = 1.2730483897e-02; /* 0x3c509385 */
+const V02: Float32 = 7.6006865129e-05; /* 0x389f65e0 */
+const V03: Float32 = 2.5915085189e-07; /* 0x348b216c */
+const V04: Float32 = 4.4111031494e-10; /* 0x2ff280c2 */
 
-pub fn y0f(x: f32) -> f32 {
-    let z: f32;
-    let u: f32;
-    let v: f32;
+/// Bessel function of the second kind of order zero
+/// 
+/// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/y0.html)
+pub fn y0f(x: Float32) -> Float32 {
+    let z: Float32;
+    let u: Float32;
+    let v: Float32;
     let ix: u32;
 
     ix = x.to_bits();
@@ -148,7 +156,7 @@ pub fn y0f(x: f32) -> f32 {
  * and
  *      | pzero(x)-1-R/S | <= 2  ** ( -60.26)
  */
-const PR8: [f32; 6] = [
+const PR8: [Float32; 6] = [
     /* for x in [inf, 8]=1/[0,0.125] */
     0.0000000000e+00,  /* 0x00000000 */
     -7.0312500000e-02, /* 0xbd900000 */
@@ -157,14 +165,14 @@ const PR8: [f32; 6] = [
     -2.4852163086e+03, /* 0xc51b5376 */
     -5.2530439453e+03, /* 0xc5a4285a */
 ];
-const PS8: [f32; 5] = [
+const PS8: [Float32; 5] = [
     1.1653436279e+02, /* 0x42e91198 */
     3.8337448730e+03, /* 0x456f9beb */
     4.0597855469e+04, /* 0x471e95db */
     1.1675296875e+05, /* 0x47e4087c */
     4.7627726562e+04, /* 0x473a0bba */
 ];
-const PR5: [f32; 6] = [
+const PR5: [Float32; 6] = [
     /* for x in [8,4.5454]=1/[0.125,0.22001] */
     -1.1412546255e-11, /* 0xad48c58a */
     -7.0312492549e-02, /* 0xbd8fffff */
@@ -173,7 +181,7 @@ const PR5: [f32; 6] = [
     -3.3123129272e+02, /* 0xc3a59d9b */
     -3.4643338013e+02, /* 0xc3ad3779 */
 ];
-const PS5: [f32; 5] = [
+const PS5: [Float32; 5] = [
     6.0753936768e+01, /* 0x42730408 */
     1.0512523193e+03, /* 0x44836813 */
     5.9789707031e+03, /* 0x45bad7c4 */
@@ -181,7 +189,7 @@ const PS5: [f32; 5] = [
     2.4060581055e+03, /* 0x451660ee */
 ];
 
-const PR3: [f32; 6] = [
+const PR3: [Float32; 6] = [
     /* for x in [4.547,2.8571]=1/[0.2199,0.35001] */
     -2.5470459075e-09, /* 0xb12f081b */
     -7.0311963558e-02, /* 0xbd8fffb8 */
@@ -190,7 +198,7 @@ const PR3: [f32; 6] = [
     -5.8079170227e+01, /* 0xc2685112 */
     -3.1447946548e+01, /* 0xc1fb9565 */
 ];
-const PS3: [f32; 5] = [
+const PS3: [Float32; 5] = [
     3.5856033325e+01, /* 0x420f6c94 */
     3.6151397705e+02, /* 0x43b4c1ca */
     1.1936077881e+03, /* 0x44953373 */
@@ -198,7 +206,7 @@ const PS3: [f32; 5] = [
     1.7358093262e+02, /* 0x432d94b8 */
 ];
 
-const PR2: [f32; 6] = [
+const PR2: [Float32; 6] = [
     /* for x in [2.8570,2]=1/[0.3499,0.5] */
     -8.8753431271e-08, /* 0xb3be98b7 */
     -7.0303097367e-02, /* 0xbd8ffb12 */
@@ -207,7 +215,7 @@ const PR2: [f32; 6] = [
     -1.1193166733e+01, /* 0xc1331736 */
     -3.2336456776e+00, /* 0xc04ef40d */
 ];
-const PS2: [f32; 5] = [
+const PS2: [Float32; 5] = [
     2.2220300674e+01, /* 0x41b1c32d */
     1.3620678711e+02, /* 0x430834f0 */
     2.7047027588e+02, /* 0x43873c32 */
@@ -215,12 +223,12 @@ const PS2: [f32; 5] = [
     1.4657617569e+01, /* 0x416a859a */
 ];
 
-fn pzerof(x: f32) -> f32 {
-    let p: &[f32; 6];
-    let q: &[f32; 5];
-    let z: f32;
-    let r: f32;
-    let s: f32;
+fn pzerof(x: Float32) -> Float32 {
+    let p: &[Float32; 6];
+    let q: &[Float32; 5];
+    let z: Float32;
+    let r: Float32;
+    let s: Float32;
     let mut ix: u32;
 
     ix = x.to_bits();
@@ -255,7 +263,7 @@ fn pzerof(x: f32) -> f32 {
  * and
  *      | qzero(x)/s +1.25-R/S | <= 2  ** ( -61.22)
  */
-const QR8: [f32; 6] = [
+const QR8: [Float32; 6] = [
     /* for x in [inf, 8]=1/[0,0.125] */
     0.0000000000e+00, /* 0x00000000 */
     7.3242187500e-02, /* 0x3d960000 */
@@ -264,7 +272,7 @@ const QR8: [f32; 6] = [
     8.8591972656e+03, /* 0x460a6cca */
     3.7014625000e+04, /* 0x471096a0 */
 ];
-const QS8: [f32; 6] = [
+const QS8: [Float32; 6] = [
     1.6377603149e+02,  /* 0x4323c6aa */
     8.0983447266e+03,  /* 0x45fd12c2 */
     1.4253829688e+05,  /* 0x480b3293 */
@@ -273,7 +281,7 @@ const QS8: [f32; 6] = [
     -3.4389928125e+05, /* 0xc8a7eb69 */
 ];
 
-const QR5: [f32; 6] = [
+const QR5: [Float32; 6] = [
     /* for x in [8,4.5454]=1/[0.125,0.22001] */
     1.8408595828e-11, /* 0x2da1ec79 */
     7.3242180049e-02, /* 0x3d95ffff */
@@ -282,7 +290,7 @@ const QR5: [f32; 6] = [
     1.0272437744e+03, /* 0x448067cd */
     1.9899779053e+03, /* 0x44f8bf4b */
 ];
-const QS5: [f32; 6] = [
+const QS5: [Float32; 6] = [
     8.2776611328e+01,  /* 0x42a58da0 */
     2.0778142090e+03,  /* 0x4501dd07 */
     1.8847289062e+04,  /* 0x46933e94 */
@@ -291,7 +299,7 @@ const QS5: [f32; 6] = [
     -5.3543427734e+03, /* 0xc5a752be */
 ];
 
-const QR3: [f32; 6] = [
+const QR3: [Float32; 6] = [
     /* for x in [4.547,2.8571]=1/[0.2199,0.35001] */
     4.3774099900e-09, /* 0x3196681b */
     7.3241114616e-02, /* 0x3d95ff70 */
@@ -300,7 +308,7 @@ const QR3: [f32; 6] = [
     1.7080809021e+02, /* 0x432acedf */
     1.6673394775e+02, /* 0x4326bbe4 */
 ];
-const QS3: [f32; 6] = [
+const QS3: [Float32; 6] = [
     4.8758872986e+01,  /* 0x42430916 */
     7.0968920898e+02,  /* 0x44316c1c */
     3.7041481934e+03,  /* 0x4567825f */
@@ -309,7 +317,7 @@ const QS3: [f32; 6] = [
     -1.4924745178e+02, /* 0xc3153f59 */
 ];
 
-const QR2: [f32; 6] = [
+const QR2: [Float32; 6] = [
     /* for x in [2.8570,2]=1/[0.3499,0.5] */
     1.5044444979e-07, /* 0x342189db */
     7.3223426938e-02, /* 0x3d95f62a */
@@ -318,7 +326,7 @@ const QR2: [f32; 6] = [
     3.1666231155e+01, /* 0x41fd5471 */
     1.6252708435e+01, /* 0x4182058c */
 ];
-const QS2: [f32; 6] = [
+const QS2: [Float32; 6] = [
     3.0365585327e+01,  /* 0x41f2ecb8 */
     2.6934811401e+02,  /* 0x4386ac8f */
     8.4478375244e+02,  /* 0x44533229 */
@@ -327,12 +335,12 @@ const QS2: [f32; 6] = [
     -5.3109550476e+00, /* 0xc0a9f358 */
 ];
 
-fn qzerof(x: f32) -> f32 {
-    let p: &[f32; 6];
-    let q: &[f32; 6];
-    let s: f32;
-    let r: f32;
-    let z: f32;
+fn qzerof(x: Float32) -> Float32 {
+    let p: &[Float32; 6];
+    let q: &[Float32; 6];
+    let s: Float32;
+    let r: Float32;
+    let z: Float32;
     let mut ix: u32;
 
     ix = x.to_bits();

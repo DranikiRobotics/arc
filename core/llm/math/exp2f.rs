@@ -1,5 +1,5 @@
-// origin: FreeBSD /usr/src/lib/msun/src/s_exp2f.c
-//-
+/* origin: FreeBSD /usr/src/lib/msun/src/s_exp2f.c */
+//
 // Copyright (c) 2005 David Schultz <das@FreeBSD.ORG>
 // All rights reserved.
 //
@@ -23,6 +23,9 @@
 // LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
+//
+
+use crate::{Float64, Float32};
 
 const TBLSIZE: usize = 16;
 
@@ -70,24 +73,24 @@ static EXP2FT: [u64; TBLSIZE] = [
 //      Tang, P.  Table-driven Implementation of the Exponential Function
 //      in IEEE Floating-Point Arithmetic.  TOMS 15(2), 144-157 (1989).
 
-/// Exponential, base 2 (f32)
+/// Exponential, base 2
 ///
 /// Calculate `2^x`, that is, 2 raised to the power `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn exp2f(mut x: f32) -> f32 {
-    let redux = f32::from_bits(0x4b400000) / TBLSIZE as f32;
-    let p1 = f32::from_bits(0x3f317218);
-    let p2 = f32::from_bits(0x3e75fdf0);
-    let p3 = f32::from_bits(0x3d6359a4);
-    let p4 = f32::from_bits(0x3c1d964e);
+pub fn exp2f(mut x: Float32) -> Float32 {
+    let redux = Float32::from_bits(0x4b400000) / TBLSIZE as Float32;
+    let p1 = Float32::from_bits(0x3f317218);
+    let p2 = Float32::from_bits(0x3e75fdf0);
+    let p3 = Float32::from_bits(0x3d6359a4);
+    let p4 = Float32::from_bits(0x3c1d964e);
 
     // double_t t, r, z;
     // uint32_t ix, i0, k;
 
-    let x1p127 = f32::from_bits(0x7f000000);
+    let x1p127 = Float32::from_bits(0x7f000000);
 
     /* Filter out exceptional cases. */
-    let ui = f32::to_bits(x);
+    let ui = Float32::to_bits(x);
     let ix = ui & 0x7fffffff;
     if ix > 0x42fc0000 {
         /* |x| > 126 */
@@ -103,7 +106,7 @@ pub fn exp2f(mut x: f32) -> f32 {
         if ui >= 0x80000000 {
             /* x < -126 */
             if ui >= 0xc3160000 || (ui & 0x0000ffff != 0) {
-                force_eval!(f32::from_bits(0x80000001) / x);
+                force_eval!(Float32::from_bits(0x80000001) / x);
             }
             if ui >= 0xc3160000 {
                 /* x <= -150 */
@@ -116,20 +119,20 @@ pub fn exp2f(mut x: f32) -> f32 {
     }
 
     /* Reduce x, computing z, i0, and k. */
-    let ui = f32::to_bits(x + redux);
+    let ui = Float32::to_bits(x + redux);
     let mut i0 = ui;
     i0 += TBLSIZE as u32 / 2;
     let k = i0 / TBLSIZE as u32;
-    let ukf = f64::from_bits(((0x3ff + k) as u64) << 52);
+    let ukf = Float64::from_bits(((0x3ff + k) as u64) << 52);
     i0 &= TBLSIZE as u32 - 1;
-    let mut uf = f32::from_bits(ui);
+    let mut uf = Float32::from_bits(ui);
     uf -= redux;
-    let z: f64 = (x - uf) as f64;
+    let z: Float64 = (x - uf) as Float64;
     /* Compute r = exp2(y) = exp2ft[i0] * p(z). */
-    let r: f64 = f64::from_bits(i!(EXP2FT, i0 as usize));
-    let t: f64 = r as f64 * z;
-    let r: f64 = r + t * (p1 as f64 + z * p2 as f64) + t * (z * z) * (p3 as f64 + z * p4 as f64);
+    let r: Float64 = Float64::from_bits(i!(EXP2FT, i0 as usize));
+    let t: Float64 = r as Float64 * z;
+    let r: Float64 = r + t * (p1 as Float64 + z * p2 as Float64) + t * (z * z) * (p3 as Float64 + z * p4 as Float64);
 
     /* Scale by 2**k */
-    (r * ukf) as f32
+    (r * ukf) as Float32
 }

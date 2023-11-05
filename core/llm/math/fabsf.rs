@@ -1,17 +1,20 @@
-/// Absolute value (magnitude) (f32)
+use crate::Float32;
+
+/// Absolute value (magnitude)
+/// 
 /// Calculates the absolute value (magnitude) of the argument `x`,
 /// by direct manipulation of the bit representation of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fabsf(x: f32) -> f32 {
+pub fn fabsf(x: Float32) -> Float32 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
-    // `f32.abs` native instruction, so we can leverage this for both code size
+    // `Float32.abs` native instruction, so we can leverage this for both code size
     // and speed.
     llvm_intrinsically_optimized! {
         #[cfg(target_arch = "wasm32")] {
             return unsafe { ::core::intrinsics::fabsf32(x) }
         }
     }
-    f32::from_bits(x.to_bits() & 0x7fffffff)
+    Float32::from_bits(x.to_bits() & 0x7fffffff)
 }
 
 // PowerPC tests are failing on LLVM 13: https://github.com/rust-lang/rust/issues/88520
@@ -19,7 +22,7 @@ pub fn fabsf(x: f32) -> f32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::f32::*;
+    use core::Float32::*;
 
     #[test]
     fn sanity_check() {

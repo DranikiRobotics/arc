@@ -17,7 +17,7 @@ mod types;
 mod math;
 
 pub use self::math::*;
-pub use types::*;
+pub use self::types::*;
 
 /// Approximate equality with 1 ULP of tolerance
 #[doc(hidden)]
@@ -38,7 +38,7 @@ pub fn _eqf(a: Float32, b: Float32) -> Result<(), u32> {
 
 #[doc(hidden)]
 #[inline]
-pub fn _eq(a: Float, b: Float) -> Result<(), u64> {
+pub fn _eq(a: Float64, b: Float64) -> Result<(), u64> {
     if a.is_nan() && b.is_nan() {
         Ok(())
     } else {

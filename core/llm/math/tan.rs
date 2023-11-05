@@ -9,50 +9,55 @@
 // is preserved.
 // ====================================================
 
+use crate::{Float64, Float32, Radian64};
+
 use super::{k_tan, rem_pio2};
 
-// tan(x)
-// Return tangent function of x.
-//
-// kernel function:
-//      k_tan           ... tangent function on [-pi/4,pi/4]
-//      rem_pio2        ... argument reduction routine
-//
-// Method.
-//      Let S,C and T denote the sin, cos and tan respectively on
-//      [-PI/4, +PI/4]. Reduce the argument x to y1+y2 = x-k*pi/2
-//      in [-pi/4 , +pi/4], and let n = k mod 4.
-//      We have
-//
-//          n        sin(x)      cos(x)        tan(x)
-//     ----------------------------------------------------------
-//          0          S           C             T
-//          1          C          -S            -1/T
-//          2         -S          -C             T
-//          3         -C           S            -1/T
-//     ----------------------------------------------------------
-//
-// Special cases:
-//      Let trig be any of sin, cos, or tan.
-//      trig(+-INF)  is NaN, with signals;
-//      trig(NaN)    is that NaN;
-//
-// Accuracy:
-//      TRIG(x) returns trig(x) nearly rounded
+/// Returns tangent of `x`.
+///
+/// ### Info:
+/// 
+/// ```text
+/// kernel function:
+///      k_tan           ... tangent function on [-pi/4,pi/4]
+///      rem_pio2        ... argument reduction routine
+///
+/// Method.
+///      Let S,C and T denote the sin, cos and tan respectively on
+///      [-PI/4, +PI/4]. Reduce the argument x to y1+y2 = x-k*pi/2
+///      in [-pi/4 , +pi/4], and let n = k mod 4.
+///      We have
+///
+///          n        sin(x)      cos(x)        tan(x)
+///     ----------------------------------------------------------
+///          0          S           C             T
+///          1          C          -S            -1/T
+///          2         -S          -C             T
+///          3         -C           S            -1/T
+///     ----------------------------------------------------------
+///
+/// Special cases:
+///      Let trig be any of sin, cos, or tan.
+///      trig(+-INF)  is NaN, with signals;
+///      trig(NaN)    is that NaN;
+///
+/// Accuracy:
+///      TRIG(x) returns trig(x) nearly rounded
+/// ```
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn tan(x: f64) -> f64 {
-    let x1p120 = f32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120
+pub fn tan(x: Radian64) -> Float64 {
+    let x1p120 = Float32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120
 
-    let ix = (f64::to_bits(x) >> 32) as u32 & 0x7fffffff;
+    let ix = (Float64::to_bits(x) >> 32) as u32 & 0x7fffffff;
     /* |x| ~< pi/4 */
     if ix <= 0x3fe921fb {
         if ix < 0x3e400000 {
             /* |x| < 2**-27 */
             /* raise inexact if x!=0 and underflow if subnormal */
             force_eval!(if ix < 0x00100000 {
-                x / x1p120 as f64
+                x / x1p120 as Float64
             } else {
-                x + x1p120 as f64
+                x + x1p120 as Float64
             });
             return x;
         }

@@ -1,5 +1,8 @@
+use crate::Float64;
+
+/// Return the remainder and part of the quotient of `x` and `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn remquo(mut x: f64, mut y: f64) -> (f64, i32) {
+pub fn remquo(mut x: Float64, mut y: Float64) -> (Float64, i32) {
     let ux: u64 = x.to_bits();
     let mut uy: u64 = y.to_bits();
     let mut ex = ((ux >> 52) & 0x7ff) as i32;
@@ -80,7 +83,7 @@ pub fn remquo(mut x: f64, mut y: f64) -> (f64, i32) {
     } else {
         uxi >>= -ex + 1;
     }
-    x = f64::from_bits(uxi);
+    x = Float64::from_bits(uxi);
     if sy {
         y = -y;
     }
@@ -91,11 +94,7 @@ pub fn remquo(mut x: f64, mut y: f64) -> (f64, i32) {
     }
     q &= 0x7fffffff;
     let quo = if sx ^ sy { -(q as i32) } else { q as i32 };
-    if sx {
-        (-x, quo)
-    } else {
-        (x, quo)
-    }
+    (if sx { -x } else { x }, quo)
 }
 
 #[cfg(test)]

@@ -1,10 +1,12 @@
+use crate::Float32;
+
 use super::copysignf;
 use super::truncf;
-use core::f32;
 
+/// Rounds `x` to the nearest integer in the direction of the current rounding mode.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn roundf(x: f32) -> f32 {
-    truncf(x + copysignf(0.5 - 0.25 * f32::EPSILON, x))
+pub fn roundf(x: Float32) -> Float32 {
+    truncf(x + copysignf(0.5 - 0.25 * Float32::EPSILON, x))
 }
 
 // PowerPC tests are failing on LLVM 13: https://github.com/rust-lang/rust/issues/88520

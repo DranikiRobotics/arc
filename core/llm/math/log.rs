@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_log.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -8,8 +8,9 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
-/* log(x)
+*/
+/**
+ * log(x)
  * Return the logarithm of x
  *
  * Method :
@@ -58,21 +59,24 @@
  * constants. The decimal values may be used, provided that the
  * compiler will convert from decimal to binary accurately enough
  * to produce the hexadecimal values shown.
- */
+*/
 
-const LN2_HI: f64 = 6.93147180369123816490e-01; /* 3fe62e42 fee00000 */
-const LN2_LO: f64 = 1.90821492927058770002e-10; /* 3dea39ef 35793c76 */
-const LG1: f64 = 6.666666666666735130e-01; /* 3FE55555 55555593 */
-const LG2: f64 = 3.999999999940941908e-01; /* 3FD99999 9997FA04 */
-const LG3: f64 = 2.857142874366239149e-01; /* 3FD24924 94229359 */
-const LG4: f64 = 2.222219843214978396e-01; /* 3FCC71C5 1D8E78AF */
-const LG5: f64 = 1.818357216161805012e-01; /* 3FC74664 96CB03DE */
-const LG6: f64 = 1.531383769920937332e-01; /* 3FC39A09 D078C69F */
-const LG7: f64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
+use crate::Float64;
 
+const LN2_HI: Float64 = 6.93147180369123816490e-01; /* 3fe62e42 fee00000 */
+const LN2_LO: Float64 = 1.90821492927058770002e-10; /* 3dea39ef 35793c76 */
+const LG1: Float64 = 6.666666666666735130e-01; /* 3FE55555 55555593 */
+const LG2: Float64 = 3.999999999940941908e-01; /* 3FD99999 9997FA04 */
+const LG3: Float64 = 2.857142874366239149e-01; /* 3FD24924 94229359 */
+const LG4: Float64 = 2.222219843214978396e-01; /* 3FCC71C5 1D8E78AF */
+const LG5: Float64 = 1.818357216161805012e-01; /* 3FC74664 96CB03DE */
+const LG6: Float64 = 1.531383769920937332e-01; /* 3FC39A09 D078C69F */
+const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
+
+/// Returns the logarithm of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log(mut x: f64) -> f64 {
-    let x1p54 = f64::from_bits(0x4350000000000000); // 0x1p54 === 2 ^ 54
+pub fn log(mut x: Float64) -> Float64 {
+    let x1p54 = Float64::from_bits(0x4350000000000000); // 0x1p54 === 2 ^ 54
 
     let mut ui = x.to_bits();
     let mut hx: u32 = (ui >> 32) as u32;
@@ -102,16 +106,16 @@ pub fn log(mut x: f64) -> f64 {
     k += ((hx >> 20) as i32) - 0x3ff;
     hx = (hx & 0x000fffff) + 0x3fe6a09e;
     ui = ((hx as u64) << 32) | (ui & 0xffffffff);
-    x = f64::from_bits(ui);
+    x = Float64::from_bits(ui);
 
-    let f: f64 = x - 1.0;
-    let hfsq: f64 = 0.5 * f * f;
-    let s: f64 = f / (2.0 + f);
-    let z: f64 = s * s;
-    let w: f64 = z * z;
-    let t1: f64 = w * (LG2 + w * (LG4 + w * LG6));
-    let t2: f64 = z * (LG1 + w * (LG3 + w * (LG5 + w * LG7)));
-    let r: f64 = t2 + t1;
-    let dk: f64 = k as f64;
+    let f: Float64 = x - 1.0;
+    let hfsq: Float64 = 0.5 * f * f;
+    let s: Float64 = f / (2.0 + f);
+    let z: Float64 = s * s;
+    let w: Float64 = z * z;
+    let t1: Float64 = w * (LG2 + w * (LG4 + w * LG6));
+    let t2: Float64 = z * (LG1 + w * (LG3 + w * (LG5 + w * LG7)));
+    let r: Float64 = t2 + t1;
+    let dk: Float64 = k as Float64;
     s * (hfsq + r) + dk * LN2_LO - hfsq + f + dk * LN2_HI
 }

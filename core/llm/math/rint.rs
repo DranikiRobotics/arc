@@ -1,6 +1,9 @@
+use crate::Float64;
+
+/// Round to nearest integer, rounding halfway cases away from zero.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn rint(x: f64) -> f64 {
-    let one_over_e = 1.0 / f64::EPSILON;
+pub fn rint(x: Float64) -> Float64 {
+    let one_over_e = 1.0 / Float64::EPSILON;
     let as_u64: u64 = x.to_bits();
     let exponent: u64 = as_u64 >> 52 & 0x7ff;
     let is_positive = (as_u64 >> 63) == 0;

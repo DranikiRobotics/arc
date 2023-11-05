@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/s_sin.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -8,14 +8,17 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+
+use crate::{Float64, Radian64};
 
 use super::{get_high_word, k_cos, k_sin, rem_pio2};
 
+/// Simultaneously computes the sine and cosine of the argument x.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sincos(x: f64) -> (f64, f64) {
-    let s: f64;
-    let c: f64;
+pub fn sincos(x: Radian64) -> (Float64, Float64) {
+    let s: Float64;
+    let c: Float64;
     let mut ix: u32;
 
     ix = get_high_word(x);
@@ -26,7 +29,7 @@ pub fn sincos(x: f64) -> (f64, f64) {
         /* if |x| < 2**-27 * sqrt(2) */
         if ix < 0x3e46a09e {
             /* raise inexact if x!=0 and underflow if subnormal */
-            let x1p120 = f64::from_bits(0x4770000000000000); // 0x1p120 == 2^120
+            let x1p120 = Float64::from_bits(0x4770000000000000); // 0x1p120 == 2^120
             if ix < 0x00100000 {
                 force_eval!(x / x1p120);
             } else {
@@ -64,11 +67,11 @@ pub fn sincos(x: f64) -> (f64, f64) {
 mod tests {
     use super::sincos;
 
-    const TOLERANCE: f64 = 1e-6;
+    const TOLERANCE: Float64 = 1e-6;
 
     #[test]
     fn with_pi() {
-        let (s, c) = sincos(core::f64::consts::PI);
+        let (s, c) = sincos(core::Float64::consts::PI);
         assert!(
             (s - 0.0).abs() < TOLERANCE,
             "|{} - {}| = {} >= {}",
@@ -89,10 +92,10 @@ mod tests {
 
     #[test]
     fn rotational_symmetry() {
-        use core::f64::consts::PI;
+        use core::Float64::consts::PI;
         const N: usize = 24;
         for n in 0..N {
-            let theta = 2. * PI * (n as f64) / (N as f64);
+            let theta = 2. * PI * (n as Float64) / (N as Float64);
             let (s, c) = sincos(theta);
             let (s_plus, c_plus) = sincos(theta + 2. * PI);
             let (s_minus, c_minus) = sincos(theta - 2. * PI);

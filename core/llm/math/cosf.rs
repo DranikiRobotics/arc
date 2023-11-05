@@ -1,9 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/s_cosf.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- * Optimized by Bruce D. Evans.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -12,23 +8,33 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+ * Optimized by Bruce D. Evans.
+*/
+
+use crate::{Float64, Float32};
 
 use super::{k_cosf, k_sinf, rem_pio2f};
 
 use core::f64::consts::FRAC_PI_2;
 
 /* Small multiples of pi/2 rounded to double precision. */
-const C1_PIO2: f64 = 1. * FRAC_PI_2; /* 0x3FF921FB, 0x54442D18 */
-const C2_PIO2: f64 = 2. * FRAC_PI_2; /* 0x400921FB, 0x54442D18 */
-const C3_PIO2: f64 = 3. * FRAC_PI_2; /* 0x4012D97C, 0x7F3321D2 */
-const C4_PIO2: f64 = 4. * FRAC_PI_2; /* 0x401921FB, 0x54442D18 */
+const C1_PIO2: Float64 = 1. * FRAC_PI_2; /* 0x3FF921FB, 0x54442D18 */
+const C2_PIO2: Float64 = 2. * FRAC_PI_2; /* 0x400921FB, 0x54442D18 */
+const C3_PIO2: Float64 = 3. * FRAC_PI_2; /* 0x4012D97C, 0x7F3321D2 */
+const C4_PIO2: Float64 = 4. * FRAC_PI_2; /* 0x401921FB, 0x54442D18 */
 
+/// Cosine
+/// 
+/// Computes the cosine of a number (in radians).
+/// Returns a number between -1 and 1.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn cosf(x: f32) -> f32 {
-    let x64 = x as f64;
+pub fn cosf(x: Float32) -> Float32 {
+    let x64 = x as Float64;
 
-    let x1p120 = f32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120
+    let x1p120 = Float32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120
 
     let mut ix = x.to_bits();
     let sign = (ix >> 31) != 0;

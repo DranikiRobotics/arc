@@ -23,37 +23,38 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
+*/
 
-use core::f32;
+use crate::{Float64, Float32};
+
 use core::ptr::read_volatile;
 
 use super::fenv::{
     feclearexcept, fegetround, feraiseexcept, fetestexcept, FE_INEXACT, FE_TONEAREST, FE_UNDERFLOW,
 };
 
-/*
+/**
  * Fused multiply-add: Compute x * y + z with a single rounding error.
  *
  * A double has more than twice as much precision than a float, so
  * direct double-precision arithmetic suffices, except where double
  * rounding occurs.
- */
+*/
 
-/// Floating multiply add (f32)
+/// Floating multiply add
 ///
 /// Computes `(x*y)+z`, rounded as one ternary operation:
 /// Computes the value (as if) to infinite precision and rounds once to the result format,
 /// according to the rounding mode characterized by the value of FLT_ROUNDS.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fmaf(x: f32, y: f32, mut z: f32) -> f32 {
-    let xy: f64;
-    let mut result: f64;
+pub fn fmaf(x: Float32, y: Float32, mut z: Float32) -> Float32 {
+    let xy: Float64;
+    let mut result: Float64;
     let mut ui: u64;
     let e: i32;
 
-    xy = x as f64 * y as f64;
-    result = xy + z as f64;
+    xy = x as Float64 * y as Float64;
+    result = xy + z as Float64;
     ui = result.to_bits();
     e = (ui >> 52) as i32 & 0x7ff;
     /* Common case: The double precision result is fine. */
@@ -63,7 +64,7 @@ pub fn fmaf(x: f32, y: f32, mut z: f32) -> f32 {
         /* NaN */
         e == 0x7ff ||
         /* exact */
-        (result - xy == z as f64 && result - z as f64 == xy) ||
+        (result - xy == z as Float64 && result - z as Float64 == xy) ||
         /* not round-to-nearest */
         fegetround() != FE_TONEAREST
     {
@@ -74,44 +75,42 @@ pub fn fmaf(x: f32, y: f32, mut z: f32) -> f32 {
         if e < 0x3ff - 126 && e >= 0x3ff - 149 && fetestexcept(FE_INEXACT) != 0 {
             feclearexcept(FE_INEXACT);
             // prevent `xy + vz` from being CSE'd with `xy + z` above
-            let vz: f32 = unsafe { read_volatile(&z) };
-            result = xy + vz as f64;
+            let vz: Float32 = unsafe { read_volatile(&z) };
+            result = xy + vz as Float64;
             if fetestexcept(FE_INEXACT) != 0 {
                 feraiseexcept(FE_UNDERFLOW);
             } else {
                 feraiseexcept(FE_INEXACT);
             }
         }
-        z = result as f32;
+        z = result as Float32;
         return z;
     }
 
-    /*
-     * If result is inexact, and exactly halfway between two float values,
-     * we need to adjust the low-order bit in the direction of the error.
-     */
+    // If result is inexact, and exactly halfway between two float values,
+    // we need to adjust the low-order bit in the direction of the error.
     let neg = ui >> 63 != 0;
-    let err = if neg == (z as f64 > xy) {
-        xy - result + z as f64
+    let err = if neg == (z as Float64 > xy) {
+        xy - result + z as Float64
     } else {
-        z as f64 - result + xy
+        z as Float64 - result + xy
     };
     if neg == (err < 0.0) {
         ui += 1;
     } else {
         ui -= 1;
     }
-    f64::from_bits(ui) as f32
+    Float64::from_bits(ui) as Float32
 }
 
 #[cfg(test)]
 mod tests {
     #[test]
     fn issue_263() {
-        let a = f32::from_bits(1266679807);
-        let b = f32::from_bits(1300234242);
-        let c = f32::from_bits(1115553792);
-        let expected = f32::from_bits(1501560833);
+        let a = Float32::from_bits(1266679807);
+        let b = Float32::from_bits(1300234242);
+        let c = Float32::from_bits(1115553792);
+        let expected = Float32::from_bits(1501560833);
         assert_eq!(super::fmaf(a, b, c), expected);
     }
 }

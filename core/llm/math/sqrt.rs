@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_sqrt.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -9,7 +9,8 @@
  * is preserved.
  * ====================================================
  */
-/* sqrt(x)
+/**
+ * sqrt(x)
  * Return correctly rounded sqrt.
  *           ------------------------------------------
  *           |  Use the hardware sqrt if you have one |
@@ -74,19 +75,20 @@
  *      sqrt(inf) = inf
  *      sqrt(-ve) = NaN         ... with invalid signal
  *      sqrt(NaN) = NaN         ... with invalid signal for signaling NaN
- */
+*/
 
-use core::f64;
+use crate::Float64;
 
+/// Returns the square root of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sqrt(x: f64) -> f64 {
+pub fn sqrt(x: Float64) -> Float64 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
-    // `f64.sqrt` native instruction, so we can leverage this for both code size
+    // `Float64.sqrt` native instruction, so we can leverage this for both code size
     // and speed.
     llvm_intrinsically_optimized! {
         #[cfg(target_arch = "wasm32")] {
             return if x < 0.0 {
-                f64::NAN
+                ::core::f64::NAN
             } else {
                 unsafe { ::core::intrinsics::sqrtf64(x) }
             }
@@ -111,9 +113,9 @@ pub fn sqrt(x: f64) -> f64 {
     {
         use core::num::Wrapping;
 
-        const TINY: f64 = 1.0e-300;
+        const TINY: Float64 = 1.0e-300;
 
-        let mut z: f64;
+        let mut z: Float64;
         let sign: Wrapping<u32> = Wrapping(0x80000000);
         let mut ix0: i32;
         let mut s0: i32;
@@ -236,7 +238,7 @@ pub fn sqrt(x: f64) -> f64 {
             ix1 |= sign;
         }
         ix0 += m << 20;
-        f64::from_bits((ix0 as u64) << 32 | ix1.0 as u64)
+        Float64::from_bits((ix0 as u64) << 32 | ix1.0 as u64)
     }
 }
 
@@ -264,7 +266,7 @@ mod tests {
 
     #[test]
     fn conformance_tests() {
-        let values = [3.14159265359, 10000.0, f64::from_bits(0x0000000f), INFINITY];
+        let values = [3.14159265359, 10000.0, Float64::from_bits(0x0000000f), INFINITY];
         let results = [
             4610661241675116657u64,
             4636737291354636288u64,
@@ -273,7 +275,7 @@ mod tests {
         ];
 
         for i in 0..values.len() {
-            let bits = f64::to_bits(sqrt(values[i]));
+            let bits = Float64::to_bits(sqrt(values[i]));
             assert_eq!(results[i], bits);
         }
     }

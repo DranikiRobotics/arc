@@ -1,6 +1,6 @@
-use core::f64;
+use crate::Float64;
 
-/// Positive difference (f64)
+/// Positive difference
 ///
 /// Determines the positive difference between arguments, returning:
 /// * x - y	if x > y, or
@@ -9,7 +9,7 @@ use core::f64;
 ///
 /// A range error may occur.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fdim(x: f64, y: f64) -> f64 {
+pub fn fdim(x: Float64, y: Float64) -> Float64 {
     if x.is_nan() {
         x
     } else if y.is_nan() {

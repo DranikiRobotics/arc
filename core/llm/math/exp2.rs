@@ -24,6 +24,8 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
+use crate::{Float64, Float32};
+
 use super::scalbn;
 
 const TBLSIZE: usize = 256;
@@ -319,28 +321,28 @@ static TBL: [u64; TBLSIZE * 2] = [
 //      Gal, S. and Bachelis, B.  An Accurate Elementary Mathematical Library
 //      for the IEEE Floating Point Standard.  TOMS 17(1), 26-46 (1991).
 
-/// Exponential, base 2 (f64)
+/// Exponential, base 2
 ///
 /// Calculate `2^x`, that is, 2 raised to the power `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn exp2(mut x: f64) -> f64 {
-    let redux = f64::from_bits(0x4338000000000000) / TBLSIZE as f64;
-    let p1 = f64::from_bits(0x3fe62e42fefa39ef);
-    let p2 = f64::from_bits(0x3fcebfbdff82c575);
-    let p3 = f64::from_bits(0x3fac6b08d704a0a6);
-    let p4 = f64::from_bits(0x3f83b2ab88f70400);
-    let p5 = f64::from_bits(0x3f55d88003875c74);
+pub fn exp2(mut x: Float64) -> Float64 {
+    let redux = Float64::from_bits(0x4338000000000000) / TBLSIZE as Float64;
+    let p1 = Float64::from_bits(0x3fe62e42fefa39ef);
+    let p2 = Float64::from_bits(0x3fcebfbdff82c575);
+    let p3 = Float64::from_bits(0x3fac6b08d704a0a6);
+    let p4 = Float64::from_bits(0x3f83b2ab88f70400);
+    let p5 = Float64::from_bits(0x3f55d88003875c74);
 
     // double_t r, t, z;
     // uint32_t ix, i0;
     // union {double f; uint64_t i;} u = {x};
     // union {uint32_t u; int32_t i;} k;
-    let x1p1023 = f64::from_bits(0x7fe0000000000000);
-    let x1p52 = f64::from_bits(0x4330000000000000);
-    let _0x1p_149 = f64::from_bits(0xb6a0000000000000);
+    let x1p1023 = Float64::from_bits(0x7fe0000000000000);
+    let x1p52 = Float64::from_bits(0x4330000000000000);
+    let _0x1p_149 = Float64::from_bits(0xb6a0000000000000);
 
     /* Filter out exceptional cases. */
-    let ui = f64::to_bits(x);
+    let ui = Float64::to_bits(x);
     let ix = ui >> 32 & 0x7fffffff;
     if ix >= 0x408ff000 {
         /* |x| >= 1022 or nan */
@@ -358,7 +360,7 @@ pub fn exp2(mut x: f64) -> f64 {
             /* x <= -1022 */
             /* underflow */
             if x <= -1075.0 || x - x1p52 + x1p52 != x {
-                force_eval!((_0x1p_149 / x) as f32);
+                force_eval!((_0x1p_149 / x) as Float32);
             }
             if x <= -1075.0 {
                 return 0.0;
@@ -370,18 +372,18 @@ pub fn exp2(mut x: f64) -> f64 {
     }
 
     /* Reduce x, computing z, i0, and k. */
-    let ui = f64::to_bits(x + redux);
+    let ui = Float64::to_bits(x + redux);
     let mut i0 = ui as u32;
     i0 = i0.wrapping_add(TBLSIZE as u32 / 2);
     let ku = i0 / TBLSIZE as u32 * TBLSIZE as u32;
     let ki = div!(ku as i32, TBLSIZE as i32);
     i0 %= TBLSIZE as u32;
-    let uf = f64::from_bits(ui) - redux;
+    let uf = Float64::from_bits(ui) - redux;
     let mut z = x - uf;
 
     /* Compute r = exp2(y) = exp2t[i0] * p(z - eps[i]). */
-    let t = f64::from_bits(i!(TBL, 2 * i0 as usize)); /* exp2t[i0] */
-    z -= f64::from_bits(i!(TBL, 2 * i0 as usize + 1)); /* eps[i0]   */
+    let t = Float64::from_bits(i!(TBL, 2 * i0 as usize)); /* exp2t[i0] */
+    z -= Float64::from_bits(i!(TBL, 2 * i0 as usize + 1)); /* eps[i0]   */
     let r = t + t * z * (p1 + z * (p2 + z * (p3 + z * (p4 + z * p5))));
 
     scalbn(r, ki)
@@ -390,5 +392,5 @@ pub fn exp2(mut x: f64) -> f64 {
 #[test]
 fn i0_wrap_test() {
     let x = -3.0 / 256.0;
-    assert_eq!(exp2(x), f64::from_bits(0x3fefbdba3692d514));
+    assert_eq!(exp2(x), Float64::from_bits(0x3fefbdba3692d514));
 }

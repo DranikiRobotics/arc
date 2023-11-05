@@ -1,5 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_atan2.c */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -9,8 +9,9 @@
  * is preserved.
  * ====================================================
  *
- */
-/* atan2(y,x)
+*/
+/**
+ * atan2(y,x)
  * Method :
  *      1. Reduce y to positive by atan2(y,x)=-atan2(-y,x).
  *      2. Reduce x to positive by (if x and y are unexceptional):
@@ -35,21 +36,23 @@
  * constants. The decimal values may be used, provided that the
  * compiler will convert from decimal to binary accurately enough
  * to produce the hexadecimal values shown.
- */
+*/
+
+use crate::{Float64, Radian64};
 
 use super::atan;
 use super::fabs;
 
-const PI: f64 = 3.1415926535897931160E+00; /* 0x400921FB, 0x54442D18 */
-const PI_LO: f64 = 1.2246467991473531772E-16; /* 0x3CA1A626, 0x33145C07 */
+const PI: Float64 = 3.1415926535897931160E+00; /* 0x400921FB, 0x54442D18 */
+const PI_LO: Float64 = 1.2246467991473531772E-16; /* 0x3CA1A626, 0x33145C07 */
 
-/// Arctangent of y/x (f64)
+/// Arctangent of y/x
 ///
 /// Computes the inverse tangent (arc tangent) of `y/x`.
 /// Produces the correct result even for angles near pi/2 or -pi/2 (that is, when `x` is near 0).
 /// Returns a value in radians, in the range of -pi to pi.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn atan2(y: f64, x: f64) -> f64 {
+pub fn atan2(y: Float64, x: Float64) -> Radian64 {
     if x.is_nan() || y.is_nan() {
         return x + y;
     }

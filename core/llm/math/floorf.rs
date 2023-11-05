@@ -1,12 +1,12 @@
-use core::f32;
+use crate::Float32;
 
-/// Floor (f32)
+/// Floor
 ///
 /// Finds the nearest integer less than or equal to `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn floorf(x: f32) -> f32 {
+pub fn floorf(x: Float32) -> Float32 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
-    // `f32.floor` native instruction, so we can leverage this for both code size
+    // `Float32.floor` native instruction, so we can leverage this for both code size
     // and speed.
     llvm_intrinsically_optimized! {
         #[cfg(target_arch = "wasm32")] {
@@ -24,20 +24,20 @@ pub fn floorf(x: f32) -> f32 {
         if (ui & m) == 0 {
             return x;
         }
-        force_eval!(x + f32::from_bits(0x7b800000));
+        force_eval!(x + Float32::from_bits(0x7b800000));
         if ui >> 31 != 0 {
             ui += m;
         }
         ui &= !m;
     } else {
-        force_eval!(x + f32::from_bits(0x7b800000));
+        force_eval!(x + Float32::from_bits(0x7b800000));
         if ui >> 31 == 0 {
             ui = 0;
         } else if ui << 1 != 0 {
             return -1.0;
         }
     }
-    f32::from_bits(ui)
+    Float32::from_bits(ui)
 }
 
 // PowerPC tests are failing on LLVM 13: https://github.com/rust-lang/rust/issues/88520
@@ -45,7 +45,7 @@ pub fn floorf(x: f32) -> f32 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::f32::*;
+    use core::Float32::*;
 
     #[test]
     fn sanity_check() {

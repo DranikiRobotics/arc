@@ -1,8 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_logf.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -11,19 +8,25 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+*/
 
-const LN2_HI: f32 = 6.9313812256e-01; /* 0x3f317180 */
-const LN2_LO: f32 = 9.0580006145e-06; /* 0x3717f7d1 */
+use crate::Float32;
+
+const LN2_HI: Float32 = 6.9313812256e-01; /* 0x3f317180 */
+const LN2_LO: Float32 = 9.0580006145e-06; /* 0x3717f7d1 */
 /* |(log(1+s)-log(1-s))/s - Lg(s)| < 2**-34.24 (~[-4.95e-11, 4.97e-11]). */
-const LG1: f32 = 0.66666662693; /*  0xaaaaaa.0p-24*/
-const LG2: f32 = 0.40000972152; /*  0xccce13.0p-25 */
-const LG3: f32 = 0.28498786688; /*  0x91e9ee.0p-25 */
-const LG4: f32 = 0.24279078841; /*  0xf89e26.0p-26 */
+const LG1: Float32 = 0.66666662693; /*  0xaaaaaa.0p-24*/
+const LG2: Float32 = 0.40000972152; /*  0xccce13.0p-25 */
+const LG3: Float32 = 0.28498786688; /*  0x91e9ee.0p-25 */
+const LG4: Float32 = 0.24279078841; /*  0xf89e26.0p-26 */
 
+/// Returns the logarithm of `x`
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn logf(mut x: f32) -> f32 {
-    let x1p25 = f32::from_bits(0x4c000000); // 0x1p25f === 2 ^ 25
+pub fn logf(mut x: Float32) -> Float32 {
+    let x1p25 = Float32::from_bits(0x4c000000); // 0x1p25f === 2 ^ 25
 
     let mut ix = x.to_bits();
     let mut k = 0i32;
@@ -50,7 +53,7 @@ pub fn logf(mut x: f32) -> f32 {
     ix += 0x3f800000 - 0x3f3504f3;
     k += ((ix >> 23) as i32) - 0x7f;
     ix = (ix & 0x007fffff) + 0x3f3504f3;
-    x = f32::from_bits(ix);
+    x = Float32::from_bits(ix);
 
     let f = x - 1.;
     let s = f / (2. + f);
@@ -60,6 +63,6 @@ pub fn logf(mut x: f32) -> f32 {
     let t2 = z * (LG1 + w * LG3);
     let r = t2 + t1;
     let hfsq = 0.5 * f * f;
-    let dk = k as f32;
+    let dk = k as Float32;
     s * (hfsq + r) + dk * LN2_LO - hfsq + f + dk * LN2_HI
 }

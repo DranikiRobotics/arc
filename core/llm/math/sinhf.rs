@@ -1,8 +1,11 @@
+use crate::{Float32, Radian32};
+
 use super::expm1f;
 use super::k_expo2f;
 
+/// Returns the hyperbolic sine of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sinhf(x: f32) -> f32 {
+pub fn sinhf(x: Radian32) -> Float32 {
     let mut h = 0.5f32;
     let mut ix = x.to_bits();
     if (ix >> 31) != 0 {
@@ -10,7 +13,7 @@ pub fn sinhf(x: f32) -> f32 {
     }
     /* |x| */
     ix &= 0x7fffffff;
-    let absx = f32::from_bits(ix);
+    let absx = Float32::from_bits(ix);
     let w = ix;
 
     /* |x| < log(FLT_MAX) */

@@ -1,4 +1,4 @@
-use core::{f32, f64};
+use crate::{Float64, Float32};
 
 use super::scalbn;
 
@@ -10,8 +10,8 @@ struct Num {
     sign: i32,
 }
 
-fn normalize(x: f64) -> Num {
-    let x1p63: f64 = f64::from_bits(0x43e0000000000000); // 0x1p63 === 2 ^ 63
+fn normalize(x: Float64) -> Num {
+    let x1p63: Float64 = Float64::from_bits(0x43e0000000000000); // 0x1p63 === 2 ^ 63
 
     let mut ix: u64 = x.to_bits();
     let mut e: i32 = (ix >> 52) as i32;
@@ -35,15 +35,15 @@ fn mul(x: u64, y: u64) -> (u64, u64) {
     ((t >> 64) as u64, t as u64)
 }
 
-/// Floating multiply add (f64)
+/// Floating multiply add
 ///
 /// Computes `(x*y)+z`, rounded as one ternary operation:
 /// Computes the value (as if) to infinite precision and rounds once to the result format,
 /// according to the rounding mode characterized by the value of FLT_ROUNDS.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fma(x: f64, y: f64, z: f64) -> f64 {
-    let x1p63: f64 = f64::from_bits(0x43e0000000000000); // 0x1p63 === 2 ^ 63
-    let x0_ffffff8p_63 = f64::from_bits(0x3bfffffff0000000); // 0x0.ffffff8p-63
+pub fn fma(x: Float64, y: Float64, z: Float64) -> Float64 {
+    let x1p63: Float64 = Float64::from_bits(0x43e0000000000000); // 0x1p63 === 2 ^ 63
+    let x0_ffffff8p_63 = Float64::from_bits(0x3bfffffff0000000); // 0x0.ffffff8p-63
 
     /* normalize so top 10bits and last bit are 0 */
     let nx = normalize(x);
@@ -146,12 +146,12 @@ pub fn fma(x: f64, y: f64, z: f64) -> f64 {
     if sign != 0 {
         i = -i;
     }
-    let mut r: f64 = i as f64; /* |r| is in [0x1p62,0x1p63] */
+    let mut r: Float64 = i as Float64; /* |r| is in [0x1p62,0x1p63] */
 
     if e < -1022 - 62 {
         /* result is subnormal before rounding */
         if e == -1022 - 63 {
-            let mut c: f64 = x1p63;
+            let mut c: Float64 = x1p63;
             if sign != 0 {
                 c = -c;
             }
@@ -159,8 +159,8 @@ pub fn fma(x: f64, y: f64, z: f64) -> f64 {
                 /* min normal after rounding, underflow depends
                 on arch behaviour which can be imitated by
                 a double to float conversion */
-                let fltmin: f32 = (x0_ffffff8p_63 * f32::MIN_POSITIVE as f64 * r) as f32;
-                return f64::MIN_POSITIVE / f32::MIN_POSITIVE as f64 * fltmin as f64;
+                let fltmin: Float32 = (x0_ffffff8p_63 * Float32::MIN_POSITIVE as Float64 * r) as Float32;
+                return Float64::MIN_POSITIVE / Float32::MIN_POSITIVE as Float64 * fltmin as Float64;
             }
             /* one bit is lost when scaled, add another top bit to
             only round once at conversion if it is inexact */
@@ -169,13 +169,13 @@ pub fn fma(x: f64, y: f64, z: f64) -> f64 {
                 if sign != 0 {
                     i = -i;
                 }
-                r = i as f64;
+                r = i as Float64;
                 r = 2. * r - c; /* remove top bit */
 
                 /* raise underflow portably, such that it
                 cannot be optimized away */
                 {
-                    let tiny: f64 = f64::MIN_POSITIVE / f32::MIN_POSITIVE as f64 * r;
+                    let tiny: Float64 = Float64::MIN_POSITIVE / Float32::MIN_POSITIVE as Float64 * r;
                     r += (tiny * tiny) * (r - r);
                 }
             }
@@ -186,7 +186,7 @@ pub fn fma(x: f64, y: f64, z: f64) -> f64 {
             if sign != 0 {
                 i = -i;
             }
-            r = i as f64;
+            r = i as Float64;
         }
     }
     scalbn(r, e)
@@ -208,7 +208,7 @@ mod tests {
         );
 
         let result = fma(-0.992, -0.992, -0.992);
-        //force rounding to storage format on x87 to prevent superious errors.
+        //force rounding to storage format on x86 to prevent superious errors.
         #[cfg(all(target_arch = "x86", not(target_feature = "sse2")))]
         let result = force_eval!(result);
         assert_eq!(result, -0.007936000000000007,);
@@ -217,7 +217,7 @@ mod tests {
     #[test]
     fn fma_sbb() {
         assert_eq!(
-            fma(-(1.0 - f64::EPSILON), f64::MIN, f64::MIN),
+            fma(-(1.0 - Float64::EPSILON), Float64::MIN, Float64::MIN),
             -3991680619069439e277
         );
     }

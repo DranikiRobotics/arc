@@ -1,8 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/e_j1f.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -11,29 +8,34 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+*/
+
+use crate::{Float64, Float32};
 
 use super::{cosf, fabsf, logf, sinf, sqrtf};
 
-const INVSQRTPI: f32 = 5.6418961287e-01; /* 0x3f106ebb */
-const TPI: f32 = 6.3661974669e-01; /* 0x3f22f983 */
+const INVSQRTPI: Float32 = 5.6418961287e-01; /* 0x3f106ebb */
+const TPI: Float32 = 6.3661974669e-01; /* 0x3f22f983 */
 
-fn common(ix: u32, x: f32, y1: bool, sign: bool) -> f32 {
-    let z: f64;
-    let mut s: f64;
-    let c: f64;
-    let mut ss: f64;
-    let mut cc: f64;
+fn common(ix: u32, x: Float32, y1: bool, sign: bool) -> Float32 {
+    let z: Float64;
+    let mut s: Float64;
+    let c: Float64;
+    let mut ss: Float64;
+    let mut cc: Float64;
 
-    s = sinf(x) as f64;
+    s = sinf(x) as Float64;
     if y1 {
         s = -s;
     }
-    c = cosf(x) as f64;
+    c = cosf(x) as Float64;
     cc = s - c;
     if ix < 0x7f000000 {
         ss = -s - c;
-        z = cosf(2.0 * x) as f64;
+        z = cosf(2.0 * x) as Float64;
         if s * c > 0.0 {
             cc = z / ss;
         } else {
@@ -43,30 +45,33 @@ fn common(ix: u32, x: f32, y1: bool, sign: bool) -> f32 {
             if y1 {
                 ss = -ss;
             }
-            cc = (ponef(x) as f64) * cc - (qonef(x) as f64) * ss;
+            cc = (ponef(x) as Float64) * cc - (qonef(x) as Float64) * ss;
         }
     }
     if sign {
         cc = -cc;
     }
-    return (((INVSQRTPI as f64) * cc) / (sqrtf(x) as f64)) as f32;
+    return (((INVSQRTPI as Float64) * cc) / (sqrtf(x) as Float64)) as Float32;
 }
 
 /* R0/S0 on [0,2] */
-const R00: f32 = -6.2500000000e-02; /* 0xbd800000 */
-const R01: f32 = 1.4070566976e-03; /* 0x3ab86cfd */
-const R02: f32 = -1.5995563444e-05; /* 0xb7862e36 */
-const R03: f32 = 4.9672799207e-08; /* 0x335557d2 */
-const S01: f32 = 1.9153760746e-02; /* 0x3c9ce859 */
-const S02: f32 = 1.8594678841e-04; /* 0x3942fab6 */
-const S03: f32 = 1.1771846857e-06; /* 0x359dffc2 */
-const S04: f32 = 5.0463624390e-09; /* 0x31ad6446 */
-const S05: f32 = 1.2354227016e-11; /* 0x2d59567e */
+const R00: Float32 = -6.2500000000e-02; /* 0xbd800000 */
+const R01: Float32 = 1.4070566976e-03; /* 0x3ab86cfd */
+const R02: Float32 = -1.5995563444e-05; /* 0xb7862e36 */
+const R03: Float32 = 4.9672799207e-08; /* 0x335557d2 */
+const S01: Float32 = 1.9153760746e-02; /* 0x3c9ce859 */
+const S02: Float32 = 1.8594678841e-04; /* 0x3942fab6 */
+const S03: Float32 = 1.1771846857e-06; /* 0x359dffc2 */
+const S04: Float32 = 5.0463624390e-09; /* 0x31ad6446 */
+const S05: Float32 = 1.2354227016e-11; /* 0x2d59567e */
 
-pub fn j1f(x: f32) -> f32 {
-    let mut z: f32;
-    let r: f32;
-    let s: f32;
+/// Bessel function of the first kind of order one
+/// 
+/// Calculates the Bessel function of the first kind of order one of `x`.
+pub fn j1f(x: Float32) -> Float32 {
+    let mut z: Float32;
+    let r: Float32;
+    let s: Float32;
     let mut ix: u32;
     let sign: bool;
 
@@ -92,14 +97,14 @@ pub fn j1f(x: f32) -> f32 {
     return z * x;
 }
 
-const U0: [f32; 5] = [
+const U0: [Float32; 5] = [
     -1.9605709612e-01, /* 0xbe48c331 */
     5.0443872809e-02,  /* 0x3d4e9e3c */
     -1.9125689287e-03, /* 0xbafaaf2a */
     2.3525259166e-05,  /* 0x37c5581c */
     -9.1909917899e-08, /* 0xb3c56003 */
 ];
-const V0: [f32; 5] = [
+const V0: [Float32; 5] = [
     1.9916731864e-02, /* 0x3ca3286a */
     2.0255257550e-04, /* 0x3954644b */
     1.3560879779e-06, /* 0x35b602d4 */
@@ -107,10 +112,13 @@ const V0: [f32; 5] = [
     1.6655924903e-11, /* 0x2d9281cf */
 ];
 
-pub fn y1f(x: f32) -> f32 {
-    let z: f32;
-    let u: f32;
-    let v: f32;
+/// Bessel function of the second kind of order one
+/// 
+/// Calculates the Bessel function of the second kind of order one of `x`.
+pub fn y1f(x: Float32) -> Float32 {
+    let z: Float32;
+    let u: Float32;
+    let v: Float32;
     let ix: u32;
 
     ix = x.to_bits();
@@ -137,7 +145,8 @@ pub fn y1f(x: f32) -> f32 {
     return x * (u / v) + TPI * (j1f(x) * logf(x) - 1.0 / x);
 }
 
-/* For x >= 8, the asymptotic expansions of pone is
+/**
+ * For x >= 8, the asymptotic expansions of pone is
  *      1 + 15/128 s^2 - 4725/2^15 s^4 - ...,   where s = 1/x.
  * We approximate pone by
  *      pone(x) = 1 + (R/S)
@@ -145,9 +154,8 @@ pub fn y1f(x: f32) -> f32 {
  *        S = 1 + ps0*s^2 + ... + ps4*s^10
  * and
  *      | pone(x)-1-R/S | <= 2  ** ( -60.06)
- */
-
-const PR8: [f32; 6] = [
+*/
+const PR8: [Float32; 6] = [
     /* for x in [inf, 8]=1/[0,0.125] */
     0.0000000000e+00, /* 0x00000000 */
     1.1718750000e-01, /* 0x3df00000 */
@@ -156,7 +164,7 @@ const PR8: [f32; 6] = [
     3.8747453613e+03, /* 0x45722bed */
     7.9144794922e+03, /* 0x45f753d6 */
 ];
-const PS8: [f32; 5] = [
+const PS8: [Float32; 5] = [
     1.1420736694e+02, /* 0x42e46a2c */
     3.6509309082e+03, /* 0x45642ee5 */
     3.6956207031e+04, /* 0x47105c35 */
@@ -164,7 +172,7 @@ const PS8: [f32; 5] = [
     3.0804271484e+04, /* 0x46f0a88b */
 ];
 
-const PR5: [f32; 6] = [
+const PR5: [Float32; 6] = [
     /* for x in [8,4.5454]=1/[0.125,0.22001] */
     1.3199052094e-11, /* 0x2d68333f */
     1.1718749255e-01, /* 0x3defffff */
@@ -173,7 +181,7 @@ const PR5: [f32; 6] = [
     5.1763616943e+02, /* 0x440168b7 */
     5.2871520996e+02, /* 0x44042dc6 */
 ];
-const PS5: [f32; 5] = [
+const PS5: [Float32; 5] = [
     5.9280597687e+01, /* 0x426d1f55 */
     9.9140142822e+02, /* 0x4477d9b1 */
     5.3532670898e+03, /* 0x45a74a23 */
@@ -181,7 +189,7 @@ const PS5: [f32; 5] = [
     1.5040468750e+03, /* 0x44bc0180 */
 ];
 
-const PR3: [f32; 6] = [
+const PR3: [Float32; 6] = [
     3.0250391081e-09, /* 0x314fe10d */
     1.1718686670e-01, /* 0x3defffab */
     3.9329774380e+00, /* 0x407bb5e7 */
@@ -189,7 +197,7 @@ const PR3: [f32; 6] = [
     9.1055007935e+01, /* 0x42b61c2a */
     4.8559066772e+01, /* 0x42423c7c */
 ];
-const PS3: [f32; 5] = [
+const PS3: [Float32; 5] = [
     3.4791309357e+01, /* 0x420b2a4d */
     3.3676245117e+02, /* 0x43a86198 */
     1.0468714600e+03, /* 0x4482dbe3 */
@@ -197,7 +205,7 @@ const PS3: [f32; 5] = [
     1.0378793335e+02, /* 0x42cf936c */
 ];
 
-const PR2: [f32; 6] = [
+const PR2: [Float32; 6] = [
     /* for x in [2.8570,2]=1/[0.3499,0.5] */
     1.0771083225e-07, /* 0x33e74ea8 */
     1.1717621982e-01, /* 0x3deffa16 */
@@ -206,7 +214,7 @@ const PR2: [f32; 6] = [
     1.7693971634e+01, /* 0x418d8d41 */
     5.0735230446e+00, /* 0x40a25a4d */
 ];
-const PS2: [f32; 5] = [
+const PS2: [Float32; 5] = [
     2.1436485291e+01, /* 0x41ab7dec */
     1.2529022980e+02, /* 0x42fa9499 */
     2.3227647400e+02, /* 0x436846c7 */
@@ -214,12 +222,12 @@ const PS2: [f32; 5] = [
     8.3646392822e+00, /* 0x4105d590 */
 ];
 
-fn ponef(x: f32) -> f32 {
-    let p: &[f32; 6];
-    let q: &[f32; 5];
-    let z: f32;
-    let r: f32;
-    let s: f32;
+fn ponef(x: Float32) -> Float32 {
+    let p: &[Float32; 6];
+    let q: &[Float32; 5];
+    let z: Float32;
+    let r: Float32;
+    let s: Float32;
     let mut ix: u32;
 
     ix = x.to_bits();
@@ -245,7 +253,8 @@ fn ponef(x: f32) -> f32 {
     return 1.0 + r / s;
 }
 
-/* For x >= 8, the asymptotic expansions of qone is
+/**
+ * For x >= 8, the asymptotic expansions of qone is
  *      3/8 s - 105/1024 s^3 - ..., where s = 1/x.
  * We approximate pone by
  *      qone(x) = s*(0.375 + (R/S))
@@ -253,9 +262,9 @@ fn ponef(x: f32) -> f32 {
  *        S = 1 + qs1*s^2 + ... + qs6*s^12
  * and
  *      | qone(x)/s -0.375-R/S | <= 2  ** ( -61.13)
- */
+*/
 
-const QR8: [f32; 6] = [
+const QR8: [Float32; 6] = [
     /* for x in [inf, 8]=1/[0,0.125] */
     0.0000000000e+00,  /* 0x00000000 */
     -1.0253906250e-01, /* 0xbdd20000 */
@@ -264,7 +273,7 @@ const QR8: [f32; 6] = [
     -1.1849806641e+04, /* 0xc639273a */
     -4.8438511719e+04, /* 0xc73d3683 */
 ];
-const QS8: [f32; 6] = [
+const QS8: [Float32; 6] = [
     1.6139537048e+02,  /* 0x43216537 */
     7.8253862305e+03,  /* 0x45f48b17 */
     1.3387534375e+05,  /* 0x4802bcd6 */
@@ -273,7 +282,7 @@ const QS8: [f32; 6] = [
     -2.9449025000e+05, /* 0xc88fcb48 */
 ];
 
-const QR5: [f32; 6] = [
+const QR5: [Float32; 6] = [
     /* for x in [8,4.5454]=1/[0.125,0.22001] */
     -2.0897993405e-11, /* 0xadb7d219 */
     -1.0253904760e-01, /* 0xbdd1fffe */
@@ -282,7 +291,7 @@ const QR5: [f32; 6] = [
     -1.3731937256e+03, /* 0xc4aba633 */
     -2.6124443359e+03, /* 0xc523471c */
 ];
-const QS5: [f32; 6] = [
+const QS5: [Float32; 6] = [
     8.1276550293e+01,  /* 0x42a28d98 */
     1.9917987061e+03,  /* 0x44f8f98f */
     1.7468484375e+04,  /* 0x468878f8 */
@@ -291,7 +300,7 @@ const QS5: [f32; 6] = [
     -4.7191835938e+03, /* 0xc5937978 */
 ];
 
-const QR3: [f32; 6] = [
+const QR3: [Float32; 6] = [
     -5.0783124372e-09, /* 0xb1ae7d4f */
     -1.0253783315e-01, /* 0xbdd1ff5b */
     -4.6101160049e+00, /* 0xc0938612 */
@@ -299,7 +308,7 @@ const QR3: [f32; 6] = [
     -2.2824453735e+02, /* 0xc3643e9a */
     -2.1921012878e+02, /* 0xc35b35cb */
 ];
-const QS3: [f32; 6] = [
+const QS3: [Float32; 6] = [
     4.7665153503e+01,  /* 0x423ea91e */
     6.7386511230e+02,  /* 0x4428775e */
     3.3801528320e+03,  /* 0x45534272 */
@@ -308,7 +317,7 @@ const QS3: [f32; 6] = [
     -1.3520118713e+02, /* 0xc3073381 */
 ];
 
-const QR2: [f32; 6] = [
+const QR2: [Float32; 6] = [
     /* for x in [2.8570,2]=1/[0.3499,0.5] */
     -1.7838172539e-07, /* 0xb43f8932 */
     -1.0251704603e-01, /* 0xbdd1f475 */
@@ -317,7 +326,7 @@ const QR2: [f32; 6] = [
     -4.2325313568e+01, /* 0xc2294d1f */
     -2.1371921539e+01, /* 0xc1aaf9b2 */
 ];
-const QS2: [f32; 6] = [
+const QS2: [Float32; 6] = [
     2.9533363342e+01,  /* 0x41ec4454 */
     2.5298155212e+02,  /* 0x437cfb47 */
     7.5750280762e+02,  /* 0x443d602e */
@@ -326,12 +335,12 @@ const QS2: [f32; 6] = [
     -4.9594988823e+00, /* 0xc09eb437 */
 ];
 
-fn qonef(x: f32) -> f32 {
-    let p: &[f32; 6];
-    let q: &[f32; 6];
-    let s: f32;
-    let r: f32;
-    let z: f32;
+fn qonef(x: Float32) -> Float32 {
+    let p: &[Float32; 6];
+    let q: &[Float32; 6];
+    let s: Float32;
+    let r: Float32;
+    let z: Float32;
     let mut ix: u32;
 
     ix = x.to_bits();

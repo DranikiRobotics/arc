@@ -1,21 +1,25 @@
+use crate::{Float64, Radian64};
+
 use super::{expm1, expo2};
 
 // sinh(x) = (exp(x) - 1/exp(x))/2
 //         = (exp(x)-1 + (exp(x)-1)/exp(x))/2
 //         = x + x^3/6 + o(x^5)
 //
+
+/// Returns the hyperbolic sine of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sinh(x: f64) -> f64 {
+pub fn sinh(x: Radian64) -> Float64 {
     // union {double f; uint64_t i;} u = {.f = x};
     // uint32_t w;
     // double t, h, absx;
 
-    let mut uf: f64 = x;
-    let mut ui: u64 = f64::to_bits(uf);
+    let mut uf: Float64 = x;
+    let mut ui: u64 = Float64::to_bits(uf);
     let w: u32;
-    let t: f64;
-    let mut h: f64;
-    let absx: f64;
+    let t: Float64;
+    let mut h: Float64;
+    let absx: Float64;
 
     h = 0.5;
     if ui >> 63 != 0 {
@@ -23,7 +27,7 @@ pub fn sinh(x: f64) -> f64 {
     }
     /* |x| */
     ui &= !1 / 2;
-    uf = f64::from_bits(ui);
+    uf = Float64::from_bits(ui);
     absx = uf;
     w = (ui >> 32) as u32;
 

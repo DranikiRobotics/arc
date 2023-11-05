@@ -1,16 +1,17 @@
-use core::f32;
+use crate::{Float64, Float32};
 
 use super::sqrtf;
 
+/// Calculate the length of the hypotenuse of a right-angle triangle given legs of length x and y.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn hypotf(mut x: f32, mut y: f32) -> f32 {
-    let x1p90 = f32::from_bits(0x6c800000); // 0x1p90f === 2 ^ 90
-    let x1p_90 = f32::from_bits(0x12800000); // 0x1p-90f === 2 ^ -90
+pub fn hypotf(mut x: Float32, mut y: Float32) -> Float32 {
+    let x1p90 = Float32::from_bits(0x6c800000); // 0x1p90f === 2 ^ 90
+    let x1p_90 = Float32::from_bits(0x12800000); // 0x1p-90f === 2 ^ -90
 
     let mut uxi = x.to_bits();
     let mut uyi = y.to_bits();
     let uti;
-    let mut z: f32;
+    let mut z: Float32;
 
     uxi &= -1i32 as u32 >> 1;
     uyi &= -1i32 as u32 >> 1;
@@ -20,8 +21,8 @@ pub fn hypotf(mut x: f32, mut y: f32) -> f32 {
         uyi = uti;
     }
 
-    x = f32::from_bits(uxi);
-    y = f32::from_bits(uyi);
+    x = Float32::from_bits(uxi);
+    y = Float32::from_bits(uyi);
     if uyi == 0xff << 23 {
         return y;
     }
@@ -39,5 +40,5 @@ pub fn hypotf(mut x: f32, mut y: f32) -> f32 {
         x *= x1p90;
         y *= x1p90;
     }
-    z * sqrtf((x as f64 * x as f64 + y as f64 * y as f64) as f32)
+    z * sqrtf((x as Float64 * x as Float64 + y as Float64 * y as Float64) as Float32)
 }

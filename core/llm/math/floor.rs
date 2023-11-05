@@ -1,15 +1,16 @@
 #![allow(unreachable_code)]
-use core::f64;
 
-const TOINT: f64 = 1. / f64::EPSILON;
+use crate::Float64;
 
-/// Floor (f64)
+const TOINT: Float64 = 1. / Float64::EPSILON;
+
+/// Floor
 ///
 /// Finds the nearest integer less than or equal to `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn floor(x: f64) -> f64 {
+pub fn floor(x: Float64) -> Float64 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
-    // `f64.floor` native instruction, so we can leverage this for both code size
+    // `Float64.floor` native instruction, so we can leverage this for both code size
     // and speed.
     llvm_intrinsically_optimized! {
         #[cfg(target_arch = "wasm32")] {
@@ -24,7 +25,7 @@ pub fn floor(x: f64) -> f64 {
         //basic implementation taken from https://github.com/rust-lang/libm/issues/219
         use super::fabs;
         if fabs(x).to_bits() < 4503599627370496.0_f64.to_bits() {
-            let truncated = x as i64 as f64;
+            let truncated = x as i64 as Float64;
             if truncated > x {
                 return truncated - 1.0;
             } else {
@@ -61,7 +62,7 @@ pub fn floor(x: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::f64::*;
+    use core::Float64::*;
 
     #[test]
     fn sanity_check() {

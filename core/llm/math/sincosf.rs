@@ -1,9 +1,5 @@
 /* origin: FreeBSD /usr/src/lib/msun/src/s_sinf.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- * Optimized by Bruce D. Evans.
- */
-/*
+/**
  * ====================================================
  * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
  *
@@ -12,21 +8,28 @@
  * software is freely granted, provided that this notice
  * is preserved.
  * ====================================================
- */
+*/
+/**
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+ * Optimized by Bruce D. Evans.
+*/
+
+use crate::{Float64, Float32, Radian32};
 
 use super::{k_cosf, k_sinf, rem_pio2f};
 
 /* Small multiples of pi/2 rounded to double precision. */
-const PI_2: f32 = 0.5 * 3.1415926535897931160E+00;
-const S1PIO2: f32 = 1.0 * PI_2; /* 0x3FF921FB, 0x54442D18 */
-const S2PIO2: f32 = 2.0 * PI_2; /* 0x400921FB, 0x54442D18 */
-const S3PIO2: f32 = 3.0 * PI_2; /* 0x4012D97C, 0x7F3321D2 */
-const S4PIO2: f32 = 4.0 * PI_2; /* 0x401921FB, 0x54442D18 */
+const PI_2: Float32 = 0.5 * 3.1415926535897931160E+00;
+const S1PIO2: Float32 = 1.0 * PI_2; /* 0x3FF921FB, 0x54442D18 */
+const S2PIO2: Float32 = 2.0 * PI_2; /* 0x400921FB, 0x54442D18 */
+const S3PIO2: Float32 = 3.0 * PI_2; /* 0x4012D97C, 0x7F3321D2 */
+const S4PIO2: Float32 = 4.0 * PI_2; /* 0x401921FB, 0x54442D18 */
 
+/// Simultaneously computes the sine and cosine of the argument x.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sincosf(x: f32) -> (f32, f32) {
-    let s: f32;
-    let c: f32;
+pub fn sincosf(x: Radian32) -> (Float32, Float32) {
+    let s: Float32;
+    let c: Float32;
     let mut ix: u32;
     let sign: bool;
 
@@ -40,7 +43,7 @@ pub fn sincosf(x: f32) -> (f32, f32) {
         if ix < 0x39800000 {
             /* raise inexact if x!=0 and underflow if subnormal */
 
-            let x1p120 = f32::from_bits(0x7b800000); // 0x1p120 == 2^120
+            let x1p120 = Float32::from_bits(0x7b800000); // 0x1p120 == 2^120
             if ix < 0x00100000 {
                 force_eval!(x / x1p120);
             } else {
@@ -48,7 +51,7 @@ pub fn sincosf(x: f32) -> (f32, f32) {
             }
             return (x, 1.0);
         }
-        return (k_sinf(x as f64), k_cosf(x as f64));
+        return (k_sinf(x as Float64), k_cosf(x as Float64));
     }
 
     /* |x| ~<= 5*pi/4 */
@@ -56,21 +59,21 @@ pub fn sincosf(x: f32) -> (f32, f32) {
         if ix <= 0x4016cbe3 {
             /* |x| ~<= 3pi/4 */
             if sign {
-                s = -k_cosf((x + S1PIO2) as f64);
-                c = k_sinf((x + S1PIO2) as f64);
+                s = -k_cosf((x + S1PIO2) as Float64);
+                c = k_sinf((x + S1PIO2) as Float64);
             } else {
-                s = k_cosf((S1PIO2 - x) as f64);
-                c = k_sinf((S1PIO2 - x) as f64);
+                s = k_cosf((S1PIO2 - x) as Float64);
+                c = k_sinf((S1PIO2 - x) as Float64);
             }
         }
         /* -sin(x+c) is not correct if x+c could be 0: -0 vs +0 */
         else {
             if sign {
-                s = -k_sinf((x + S2PIO2) as f64);
-                c = -k_cosf((x + S2PIO2) as f64);
+                s = -k_sinf((x + S2PIO2) as Float64);
+                c = -k_cosf((x + S2PIO2) as Float64);
             } else {
-                s = -k_sinf((x - S2PIO2) as f64);
-                c = -k_cosf((x - S2PIO2) as f64);
+                s = -k_sinf((x - S2PIO2) as Float64);
+                c = -k_cosf((x - S2PIO2) as Float64);
             }
         }
 
@@ -82,19 +85,19 @@ pub fn sincosf(x: f32) -> (f32, f32) {
         if ix <= 0x40afeddf {
             /* |x| ~<= 7*pi/4 */
             if sign {
-                s = k_cosf((x + S3PIO2) as f64);
-                c = -k_sinf((x + S3PIO2) as f64);
+                s = k_cosf((x + S3PIO2) as Float64);
+                c = -k_sinf((x + S3PIO2) as Float64);
             } else {
-                s = -k_cosf((x - S3PIO2) as f64);
-                c = k_sinf((x - S3PIO2) as f64);
+                s = -k_cosf((x - S3PIO2) as Float64);
+                c = k_sinf((x - S3PIO2) as Float64);
             }
         } else {
             if sign {
-                s = k_sinf((x + S4PIO2) as f64);
-                c = k_cosf((x + S4PIO2) as f64);
+                s = k_sinf((x + S4PIO2) as Float64);
+                c = k_cosf((x + S4PIO2) as Float64);
             } else {
-                s = k_sinf((x - S4PIO2) as f64);
-                c = k_cosf((x - S4PIO2) as f64);
+                s = k_sinf((x - S4PIO2) as Float64);
+                c = k_cosf((x - S4PIO2) as Float64);
             }
         }
 
@@ -132,22 +135,22 @@ mod tests {
 
     #[test]
     fn with_pi() {
-        let (s, c) = sincosf(core::f32::consts::PI);
+        let (s, c) = sincosf(core::Float32::consts::PI);
         _eqf(s.abs(), 0.0).unwrap();
         _eqf(c, -1.0).unwrap();
     }
 
     #[test]
     fn rotational_symmetry() {
-        use core::f32::consts::PI;
+        use core::Float32::consts::PI;
         const N: usize = 24;
         for n in 0..N {
-            let theta = 2. * PI * (n as f32) / (N as f32);
+            let theta = 2. * PI * (n as Float32) / (N as Float32);
             let (s, c) = sincosf(theta);
             let (s_plus, c_plus) = sincosf(theta + 2. * PI);
             let (s_minus, c_minus) = sincosf(theta - 2. * PI);
 
-            const TOLERANCE: f32 = 1e-6;
+            const TOLERANCE: Float32 = 1e-6;
             assert!(
                 (s - s_plus).abs() < TOLERANCE,
                 "|{} - {}| = {} >= {}",

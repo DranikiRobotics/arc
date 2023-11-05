@@ -1,5 +1,8 @@
+use crate::Float32;
+
+/// Returns the next representable floating-point value following `x` in the direction of `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn nextafterf(x: f32, y: f32) -> f32 {
+pub fn nextafterf(x: Float32, y: Float32) -> Float32 {
     if x.is_nan() || y.is_nan() {
         return x + y;
     }
@@ -28,7 +31,7 @@ pub fn nextafterf(x: f32, y: f32) -> f32 {
     if e == 0x7f80_0000_u32 {
         force_eval!(x + x);
     }
-    let ux_f = f32::from_bits(ux_i);
+    let ux_f = Float32::from_bits(ux_i);
     // raise underflow if ux_f is subnormal or zero
     if e == 0 {
         force_eval!(x * x + ux_f * ux_f);
