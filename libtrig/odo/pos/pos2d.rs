@@ -278,7 +278,7 @@ impl core::ops::Neg for THIS {
 impl core::fmt::Display for Pos2D {
     #[inline]
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}; {}", self.0, self.1)
+        write!(f, "({:.3}, {:.3}) {:.1}°", self.0.x, self.0.y, self.1.to_degrees())
     }
 }
 

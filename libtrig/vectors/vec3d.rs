@@ -211,6 +211,7 @@ impl Default for Vec3D {
 impl<F: Into<Float64>> From<(F, F, F)> for Vec3D {
     #[inline]
     #[must_use]
+    /// Converts a tuple of 3 Floats into a `Vec3D`.
     fn from((x, y, z): (F, F, F)) -> Self {
         Self::new(x.into(), y.into(), z.into())
     }

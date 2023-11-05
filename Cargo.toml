@@ -1,3 +1,10 @@
+[workspace]
+members = [
+    "core/llm",
+    "core/macros",
+    "example"
+]
+
 [package]
 name = "libtrig"
 version = "0.1.0"
@@ -13,7 +20,3 @@ path = "./core/llm"
 
 [lib]
 path = "./libtrig/main.rs"
-
-[[bin]]
-path = "./example.rs"
-name = "example"
