@@ -1,8 +1,8 @@
 use super::Number;
-use crate::int;
+use crate::Int;
 
 /// A trait for floating point numbers.
-pub trait Float: Number {
+pub trait Float<Output = Self>: Number {
     /// Returns the largest integer less than or equal to `self`.
     ///
     /// # Examples
@@ -17,7 +17,7 @@ pub trait Float: Number {
     /// assert_eq!(h.floor(), -4.0);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn floor(&self) -> Self;
+    fn floor(&self) -> Output;
 
     /// Returns the smallest integer greater than or equal to `self`.
     ///
@@ -31,7 +31,7 @@ pub trait Float: Number {
     /// assert_eq!(g.ceil(), 4.0);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn ceil(&self) -> Self;
+    fn ceil(&self) -> Output;
 
     /// Returns the nearest integer to `self`. If a value is half-way between two
     /// integers, round away from `0.0`.
@@ -52,7 +52,7 @@ pub trait Float: Number {
     /// assert_eq!(j.round(), 5.0);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn round(&self) -> Self;
+    fn round(&self) -> Output;
 
     /// Returns the integer part of `self`.
     /// This means that non-integer numbers are always truncated towards zero.
@@ -69,7 +69,7 @@ pub trait Float: Number {
     /// assert_eq!(h.trunc(), -3.0);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn trunc(&self) -> Self;
+    fn trunc(&self) -> Output;
 
     /// Returns the fractional part of `self`.
     ///
@@ -84,11 +84,8 @@ pub trait Float: Number {
     /// assert!(abs_difference_x < 1e-10);
     /// assert!(abs_difference_y < 1e-10);
     /// ```
-    #[inline]
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn fract(&self) -> Self {
-        *self - self.trunc()
-    }
+    fn fract(&self) -> Output;
 
     /// Computes the absolute value of `self`.
     ///
@@ -107,7 +104,7 @@ pub trait Float: Number {
     /// assert!(f64::NAN.abs().is_nan());
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn abs(&self) -> Self;
+    fn abs(&self) -> Output;
 
     /// Returns a number that represents the sign of `self`.
     ///
@@ -126,7 +123,7 @@ pub trait Float: Number {
     /// assert!(f64::NAN.signum().is_nan());
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn signum(&self) -> Self;
+    fn signum(&self) -> Output;
 
     /// Fused multiply-add. Computes `(self * a) + b` with only one rounding
     /// error, yielding a more accurate result than an unfused multiply-add.
@@ -149,7 +146,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn mul_add(&self, a: Self, b: Self) -> Self;
+    fn mul_add(&self, a: Self, b: Self) -> Output;
 
     /// Calculates Euclidean division, the matching method for `rem_euclid`.
     ///
@@ -169,7 +166,7 @@ pub trait Float: Number {
     /// assert_eq!((-a).div_euclid(-b), 2.0); // -7.0 >= -4.0 * 2.0
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn div_euclid(&self, rhs: Self) -> Self;
+    fn div_euclid(&self, rhs: Self) -> Output;
 
     /// Calculates the least nonnegative remainder of `self (mod rhs)`.
     ///
@@ -195,7 +192,7 @@ pub trait Float: Number {
     /// assert!((-f64::EPSILON).rem_euclid(3.0) != 0.0);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn rem_euclid(&self, rhs: Self) -> Self;
+    fn rem_euclid(&self, rhs: Self) -> Output;
 
     /// Raises a number to an integer power.
     ///
@@ -212,7 +209,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn powi(&self, n: int) -> Self;
+    fn powi(&self, n: Int) -> Output;
 
     /// Raises a number to a floating point power.
     ///
@@ -225,7 +222,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn powf(&self, n: Self) -> Self;
+    fn powf(&self, n: Self) -> Output;
 
     /// Returns the square root of a number.
     ///
@@ -245,7 +242,7 @@ pub trait Float: Number {
     /// assert!(negative_zero.sqrt() == negative_zero);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn sqrt(&self) -> Self;
+    fn sqrt(&self) -> Output;
 
     /// Returns `e^(self)`, (the exponential function).
     ///
@@ -262,7 +259,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn exp(&self) -> Self;
+    fn exp(&self) -> Output;
 
     /// Returns `2^(self)`.
     ///
@@ -277,7 +274,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn exp2(&self) -> Self;
+    fn exp2(&self) -> Output;
 
     /// Returns the natural logarithm of the number.
     ///
@@ -294,7 +291,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn ln(&self) -> Self;
+    fn ln(&self) -> Output;
 
     /// Returns the logarithm of the number with respect to an arbitrary base.
     ///
@@ -313,7 +310,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn log(&self, base: Self) -> Self;
+    fn log(&self, base: Self) -> Output;
 
     /// Returns the base 2 logarithm of the number.
     ///
@@ -328,7 +325,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn log2(&self) -> Self;
+    fn log2(&self) -> Output;
 
     /// Returns the base 10 logarithm of the number.
     ///
@@ -343,7 +340,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn log10(&self) -> Self;
+    fn log10(&self) -> Output;
 
     /// Returns the cube root of a number.
     ///
@@ -358,7 +355,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn cbrt(&self) -> Self;
+    fn cbrt(&self) -> Output;
 
     /// Compute the distance between the origin and a point (`x`, `y`) on the
     /// Euclidean plane. Equivalently, compute the length of the hypotenuse of a
@@ -377,7 +374,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn hypot(&self, other: Self) -> Self;
+    fn hypot(&self, other: Self) -> Output;
 
     /// Computes the sine of a number (in radians).
     ///
@@ -391,7 +388,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn sin(&self) -> Self;
+    fn sin(&self) -> Output;
 
     /// Computes the cosine of a number (in radians).
     ///
@@ -405,7 +402,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn cos(&self) -> Self;
+    fn cos(&self) -> Output;
 
     /// Computes the tangent of a number (in radians).
     ///
@@ -418,7 +415,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-14);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn tan(&self) -> Self;
+    fn tan(&self) -> Output;
 
     /// Computes the arcsine of a number. Return value is in radians in
     /// the range [-pi/2, pi/2] or NaN if the number is outside the range
@@ -435,7 +432,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn asin(&self) -> Self;
+    fn asin(&self) -> Output;
 
     /// Computes the arccosine of a number. Return value is in radians in
     /// the range [0, pi] or NaN if the number is outside the range
@@ -452,7 +449,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn acos(&self) -> Self;
+    fn acos(&self) -> Output;
 
     /// Computes the arctangent of a number. Return value is in radians in the
     /// range [-pi/2, pi/2];
@@ -468,7 +465,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn atan(&self) -> Self;
+    fn atan(&self) -> Output;
 
     /// Computes the four quadrant arctangent of `self` (`y`) and `other` (`x`) in radians.
     ///
@@ -497,7 +494,7 @@ pub trait Float: Number {
     /// assert!(abs_difference_2 < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn atan2(&self, other: Self) -> Self;
+    fn atan2(&self, other: Self) -> Output;
 
     /// Simultaneously computes the sine and cosine of the number, `x`. Returns
     /// `(sin(x), cos(x))`.
@@ -514,7 +511,11 @@ pub trait Float: Number {
     /// assert!(abs_difference_0 < 1e-10);
     /// assert!(abs_difference_1 < 1e-10);
     /// ```
-    fn sin_cos(&self) -> (Self, Self);
+    #[inline]
+    #[must_use = "method returns new numbers and does not mutate the original value"]
+    fn sin_cos(&self) -> (Output, Output) {
+        (self.sin(), self.cos())
+    }
 
     /// Returns `e^(self) - 1` in a way that is accurate even if the
     /// number is close to zero.
@@ -531,7 +532,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-20);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn exp_m1(&self) -> Self;
+    fn exp_m1(&self) -> Output;
 
     /// Returns `ln(1+n)` (natural logarithm) more accurately than if
     /// the operations were performed separately.
@@ -548,7 +549,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-20);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn ln_1p(&self) -> Self;
+    fn ln_1p(&self) -> Output;
 
     /// Hyperbolic sine function.
     ///
@@ -566,7 +567,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn sinh(&self) -> Self;
+    fn sinh(&self) -> Output;
 
     /// Hyperbolic cosine function.
     ///
@@ -584,7 +585,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1.0e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn cosh(&self) -> Self;
+    fn cosh(&self) -> Output;
 
     /// Hyperbolic tangent function.
     ///
@@ -602,7 +603,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1.0e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn tanh(&self) -> Self;
+    fn tanh(&self) -> Output;
 
     /// Inverse hyperbolic sine function.
     ///
@@ -617,7 +618,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1.0e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn asinh(&self) -> Self;
+    fn asinh(&self) -> Output;
 
     /// Inverse hyperbolic cosine function.
     ///
@@ -632,7 +633,7 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1.0e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn acosh(&self) -> Self;
+    fn acosh(&self) -> Output;
 
     /// Inverse hyperbolic tangent function.
     ///
@@ -647,5 +648,5 @@ pub trait Float: Number {
     /// assert!(abs_difference < 1.0e-10);
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
-    fn atanh(&self) -> Self;
+    fn atanh(&self) -> Output;
 }

@@ -1,4 +1,3 @@
-use crate::traits::Float;
 use crate::*;
 
 /// A wrapper around a `float` value that represents a 2D coordinate.
@@ -6,16 +5,16 @@ use crate::*;
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct Coord2D {
     /// The x coordinate.
-    pub x: float,
+    pub x: Float64,
     /// The y coordinate.
-    pub y: float,
+    pub y: Float64,
 }
 
 impl Coord2D {
     /// Creates a new `Vec2D` from the given `x` and `y` values.
     #[inline]
     #[must_use]
-    pub const fn new(x: float, y: float) -> Self {
+    pub const fn new(x: Float64, y: Float64) -> Self {
         Self { x, y }
     }
     /// Creates a new `Vec2D` located at the origin.
@@ -25,8 +24,11 @@ impl Coord2D {
         Self::new(0.0, 0.0)
     }
     /// Rotates the vector by the given angle in radians.
+    #[inline]
     #[must_use]
     pub fn rotate_by(&self, angle: Angle2D) -> Self {
+        #[allow(unused_imports)]
+        use crate::traits::Float;
         let angle = angle.to_radians();
         let (sin, cos) = angle.sin_cos();
         Self::new(
@@ -38,6 +40,8 @@ impl Coord2D {
     #[inline]
     #[must_use]
     pub fn angle(&self) -> Angle2D {
+        #[allow(unused_imports)]
+        use crate::traits::Float;
         Angle2D::from_radians(self.y.atan2(self.x))
     }
     /// Returns the inverted position.
@@ -152,7 +156,7 @@ impl core::ops::SubAssign<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @ORM Coord2D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::Mul<OTHER> for THIS {
     type Output = Coord2D;
@@ -178,7 +182,7 @@ impl core::ops::Mul<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @OM Coord2D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::MulAssign<OTHER> for THIS {
     #[inline]
@@ -202,7 +206,7 @@ impl core::ops::MulAssign<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @ORM Coord2D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::Div<OTHER> for THIS {
     type Output = Coord2D;
@@ -228,7 +232,7 @@ impl core::ops::Div<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @OM Coord2D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::DivAssign<OTHER> for THIS {
     #[inline]
@@ -275,7 +279,7 @@ impl Default for Coord2D {
     }
 }
 
-impl<F: Into<float>> From<(F, F)> for Coord2D {
+impl<F: Into<Float64>> From<(F, F)> for Coord2D {
     #[inline]
     #[must_use]
     fn from((x, y): (F, F)) -> Self {
@@ -283,7 +287,7 @@ impl<F: Into<float>> From<(F, F)> for Coord2D {
     }
 }
 
-impl From<Coord2D> for (float, float) {
+impl From<Coord2D> for (Float64, Float64) {
     #[inline]
     #[must_use]
     fn from(Coord2D {x, y}: Coord2D) -> Self {

@@ -1,3 +1,6 @@
+#![doc = include_str!("./EXAMPLE.md")]
+#![doc(hidden)]
+
 use libtrig::odo::*;
 use libtrig::*;
 
@@ -8,9 +11,9 @@ const CONFIG: OdometryConfig = OdometryConfig::new()
     .set_ticks_per_revolution(8192.0);
 
 struct Robot {
-    left_encoder: float,
-    right_encoder: float,
-    back_encoder: float,
+    left_encoder: Float64,
+    right_encoder: Float64,
+    back_encoder: Float64,
 
     odo: Odometry,
 }
@@ -23,7 +26,7 @@ impl Robot {
 
         odo: Odometry::new(CONFIG),
     } }
-    fn update(&mut self, movement: (float, float, float)) {
+    fn update(&mut self, movement: (Float64, Float64, Float64)) {
         self.left_encoder += movement.0;
         self.right_encoder += movement.1;
         self.back_encoder += movement.2;

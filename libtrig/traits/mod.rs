@@ -7,131 +7,77 @@ pub use number::Number;
 pub use float::Float;
 
 macro_rules! simpl {
-    ($n:ident => $m:ident $($o:tt)*) => (
+    ($n:ident => $m:ident $($t:tt)*) => (
         #[inline]
         #[must_use]
         fn $n(&self) -> Self {
-            math::$m(*self)
+            llm::$m(*self)
         }
-        simpl!($($o)*);
+        simpl!($($t)*);
     );
-    ($n:ident $($o:tt)*) => (
-        simpl!($n => $n $($o)*);
-    );
+    ($n:ident $($t:tt)*) => (simpl!($n => $n $($t)*););
     () => ();
 }
 
-impl Float for crate::float {
-    fn signum(&self) -> Self {
-        todo!()
-    }
-
+#[allow(unused)]
+impl Float for Float64 {
+    simpl!(floor ceil round trunc abs => fabs sqrt exp exp2 ln log2 log10 cbrt
+        sin cos tan asin acos atan exp_m1 => expm1 ln_1p => log1p
+        sinh cosh tanh asinh acosh atanh);
+    #[inline]
+    #[must_use]
     fn mul_add(&self, a: Self, b: Self) -> Self {
-        todo!()
+        llm::fma(*self, a, b)
     }
-
+    #[inline]
+    #[must_use]
     fn div_euclid(&self, rhs: Self) -> Self {
-        todo!()
+        todo!("div_euclid")
     }
-
+    #[inline]
+    #[must_use]
     fn rem_euclid(&self, rhs: Self) -> Self {
-        todo!()
+        todo!("rem_euclid")
     }
-
-    fn powi(&self, n: int) -> Self {
-        todo!()
+    #[inline]
+    #[must_use]
+    fn signum(&self) -> Self {
+        if *self > 0.0 {
+            1.0
+        } else if *self < 0.0 {
+            -1.0
+        } else {
+            Float64::NAN
+        }
     }
-
+    #[inline]
+    #[must_use]
+    fn powi(&self, n: Int) -> Self {
+        llm::pow(*self, n as Float64)
+    }
+    #[inline]
+    #[must_use]
     fn powf(&self, n: Self) -> Self {
-        todo!()
+        llm::pow(*self, n)
     }
-    simpl!(floor ceil round trunc abs => fabs sqrt exp exp2);
-
-    fn ln(&self) -> Self {
-        todo!()
-    }
-
+    #[inline]
+    #[must_use]
     fn log(&self, base: Self) -> Self {
-        todo!()
+        llm::log(*self) / llm::log(base)
     }
-
-    fn log2(&self) -> Self {
-        todo!()
-    }
-
-    fn log10(&self) -> Self {
-        todo!()
-    }
-
-    fn cbrt(&self) -> Self {
-        todo!()
-    }
-
+    #[inline]
+    #[must_use]
     fn hypot(&self, other: Self) -> Self {
-        todo!()
+        llm::hypot(*self, other)
     }
-
-    fn sin(&self) -> Self {
-        todo!()
-    }
-
-    fn cos(&self) -> Self {
-        todo!()
-    }
-
-    fn tan(&self) -> Self {
-        todo!()
-    }
-
-    fn asin(&self) -> Self {
-        todo!()
-    }
-
-    fn acos(&self) -> Self {
-        todo!()
-    }
-
-    fn atan(&self) -> Self {
-        todo!()
-    }
-
+    #[inline]
+    #[must_use]
     fn atan2(&self, other: Self) -> Self {
-        todo!()
+        llm::atan2(*self, other)
     }
-
-    fn sin_cos(&self) -> (Self, Self) {
-        todo!()
-    }
-
-    fn exp_m1(&self) -> Self {
-        todo!()
-    }
-
-    fn ln_1p(&self) -> Self {
-        todo!()
-    }
-
-    fn sinh(&self) -> Self {
-        todo!()
-    }
-
-    fn cosh(&self) -> Self {
-        todo!()
-    }
-
-    fn tanh(&self) -> Self {
-        todo!()
-    }
-
-    fn asinh(&self) -> Self {
-        todo!()
-    }
-
-    fn acosh(&self) -> Self {
-        todo!()
-    }
-
-    fn atanh(&self) -> Self {
-        todo!()
+    #[inline]
+    #[must_use]
+    fn fract(&self) -> Self {
+        *self - self.floor()
     }
 }

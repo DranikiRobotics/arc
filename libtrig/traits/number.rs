@@ -7,8 +7,7 @@ pub trait Number:
     ops::Sub<Output = Self> + ops::SubAssign +
     ops::Mul<Output = Self> + ops::MulAssign +
     ops::Div<Output = Self> + ops::DivAssign +
-    ops::Rem<Output = Self> + ops::RemAssign +
 { }
 
-impl Number for crate::int { }
-impl Number for crate::float { }
+impl Number for crate::Int { }
+impl Number for crate::Float64 { }

@@ -37,6 +37,8 @@ impl Odometry {
     ///
     #[doc = include_str!("./FORMULA.md")]
     pub fn update(&mut self, movement: Vec3D) {
+        #[allow(unused_imports)]
+        use crate::traits::Float;
         let old_encoder_values = self.encoder_values;
 
         self.encoder_values += movement;
@@ -49,15 +51,15 @@ impl Odometry {
         let dx = self.config.cm_per_tick * ((dn1 + dn2) / 2.0);
         let dy = self.config.cm_per_tick * (dn3 + ( (dn2 - dn1) / 2.0 ));
 
-        // pos.h += dtheta / 2;
-        // pos.x += dx * Math.cos(pos.h) - dy * Math.sin(pos.h);
-        // pos.y += dx * Math.sin(pos.h) + dy * Math.cos(pos.h);
-        // pos.h += dtheta / 2;
-        // pos.h = normDiff(pos.h);
-        // let new_angle = self.current_position.angle() + (dtheta / 2.0);
-        // self.current_position.setAngle(new_angle);
-        // let new_x = dx * new_angle.cos() - dy * new_angle.sin();
-        // self.current_position.setX(new_x);
+        let mut new_angle = self.current_position.angle() + (dtheta / 2.0);
+        self.current_position.setAngle(new_angle);
+        let new_x = dx * new_angle.cos() - dy * new_angle.sin();
+        let new_y = dx * new_angle.sin() + dy * new_angle.cos();
+        self.current_position.setX(new_x);
+        self.current_position.setY(new_y);
+        new_angle += dtheta / 2.0;
+        self.current_position.setAngle(new_angle);
+
     }
 
     /// Returns the current position.

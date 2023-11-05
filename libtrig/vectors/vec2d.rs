@@ -1,16 +1,15 @@
-use crate::traits::Float;
 use crate::*;
 
 /// A 2D vector.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
-pub struct Vec2D(float, float);
+pub struct Vec2D(Float64, Float64);
 
 impl Vec2D {
     /// Creates a new `Vec2D` from the given `x` and `y` values.
     #[inline]
     #[must_use]
-    pub const fn new(x: float, y: float) -> Self {
+    pub const fn new(x: Float64, y: Float64) -> Self {
         Self(x, y)
     }
     /// Creates a new `Vec2D` located at the origin.
@@ -22,18 +21,21 @@ impl Vec2D {
     /// Returns the x component of the vector.
     #[inline]
     #[must_use]
-    pub const fn x(&self) -> float {
+    pub const fn x(&self) -> Float64 {
         self.0
     }
     /// Returns the y component of the vector.
     #[inline]
     #[must_use]
-    pub const fn y(&self) -> float {
+    pub const fn y(&self) -> Float64 {
         self.1
     }
     /// Rotates the vector by the given angle in radians.
+    #[inline]
     #[must_use]
     pub fn rotate_by(&self, angle: Angle2D) -> Self {
+        #[allow(unused_imports)]
+        use crate::traits::Float;
         let angle = angle.to_radians();
         let (sin, cos) = angle.sin_cos();
         Self(
@@ -45,6 +47,8 @@ impl Vec2D {
     #[inline]
     #[must_use]
     pub fn angle(&self) -> Angle2D {
+        #[allow(unused_imports)]
+        use crate::traits::Float;
         Angle2D::from_radians(self.y().atan2(self.x()))
     }
     /// Returns the inverted vector.
@@ -58,13 +62,15 @@ impl Vec2D {
     /// Returns the dot product of the vector and the given vector.
     #[inline]
     #[must_use]
-    pub fn dot(&self, other: Self) -> float {
+    pub fn dot(&self, other: Self) -> Float64 {
         self.x() * other.x() + self.y() * other.y()
     }
     /// Returns the magnitude of the vector.
     #[inline]
     #[must_use]
-    pub fn magnitude(&self) -> float {
+    pub fn magnitude(&self) -> Float64 {
+        #[allow(unused_imports)]
+        use crate::traits::Float;
         self.dot(*self).sqrt()
     }
     /// Normalizes this vector.
@@ -129,7 +135,7 @@ impl core::ops::SubAssign<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @ORM Vec2D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::Mul<OTHER> for THIS {
     type Output = Vec2D;
@@ -142,7 +148,7 @@ impl core::ops::Mul<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @OM Vec2D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::MulAssign<OTHER> for THIS {
     #[inline]
@@ -154,7 +160,7 @@ impl core::ops::MulAssign<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @ORM Vec2D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::Div<OTHER> for THIS {
     type Output = Vec2D;
@@ -167,7 +173,7 @@ impl core::ops::Div<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @OM Vec2D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::DivAssign<OTHER> for THIS {
     #[inline]
@@ -202,15 +208,15 @@ impl Default for Vec2D {
     }
 }
 
-impl From<(float, float)> for Vec2D {
+impl<F: Into<Float64>> From<(F, F)> for Vec2D {
     #[inline]
     #[must_use]
-    fn from((x, y): (float, float)) -> Self {
-        Self::new(x, y)
+    fn from((x, y): (F, F)) -> Self {
+        Self::new(x.into(), y.into())
     }
 }
 
-impl From<Vec2D> for (float, float) {
+impl From<Vec2D> for (Float64, Float64) {
     #[inline]
     #[must_use]
     fn from(Vec2D(x, y): Vec2D) -> Self {

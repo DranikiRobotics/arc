@@ -1,10 +1,16 @@
-#![allow(non_camel_case_types)]
+pub use llm::{Float64, Float32, Radian64, Radian32};
 
-type __float = f64;
-type __int = i32;
+/// A degree. (64bit)
+pub type Degree64 = f64;
 
-/// A floating point number.
-pub type float = __float;
+/// A degree. (32bit)
+pub type Degree32 = f32;
 
 /// An integer.
-pub type int = __int;
+pub type Int = i32;
+
+/// A radian or degree. (64bit)
+pub type RadianOrDegree64 = Float64;
+
+/// A radian or degree. (32bit)
+pub type RadianOrDegree32 = Float32;

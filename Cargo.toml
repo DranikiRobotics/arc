@@ -7,7 +7,7 @@ edition = "2021"
 package = "libtrig-macros"
 path = "./core/macros"
 
-[dependencies.math]
+[dependencies.llm]
 package = "libtrig-llm"
 path = "./core/llm"
 

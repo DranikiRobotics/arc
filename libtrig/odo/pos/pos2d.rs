@@ -23,27 +23,25 @@ impl Pos2D {
     /// Returns the x coordinate of the position.
     #[inline]
     #[must_use]
-    pub const fn x(&self) -> float {
+    pub const fn x(&self) -> Float64 {
         self.0.x
     }
     /// Sets the x coordinate of the position.
     #[inline]
-    #[must_use]
     #[allow(non_snake_case)]
-    pub const fn setX(&mut self, x: float) {
+    pub const fn setX(&mut self, x: Float64) {
         self.0.x = x;
     }
     /// Returns the y coordinate of the position.
     #[inline]
     #[must_use]
-    pub const fn y(&self) -> float {
+    pub const fn y(&self) -> Float64 {
         self.0.y
     }
     /// Sets the y coordinate of the position.
     #[inline]
-    #[must_use]
     #[allow(non_snake_case)]
-    pub const fn setY(&mut self, y: float) {
+    pub const fn setY(&mut self, y: Float64) {
         self.0.y = y;
     }
     /// Rotates the position by the given angle in radians.
@@ -59,7 +57,6 @@ impl Pos2D {
     }
     /// Sets the facing angle.
     #[inline]
-    #[must_use]
     #[allow(non_snake_case)]
     pub const fn setAngle(&mut self, angle: Angle2D) {
         self.1 = angle;
@@ -301,7 +298,7 @@ impl<C: Into<Coord2D>, A: Into<Angle2D>> From<(C, A)> for Pos2D {
     }
 }
 
-impl<F: Into<float>> From<(F, F, F, bool)> for Pos2D {
+impl<F: Into<Float64>> From<(F, F, F, bool)> for Pos2D {
     #[inline]
     #[must_use]
     fn from(i: (F, F, F, bool)) -> Self {
@@ -312,7 +309,8 @@ impl<F: Into<float>> From<(F, F, F, bool)> for Pos2D {
     }
 }
 
-impl<F: Into<float>> From<(F, F, F)> for Pos2D {
+impl<F: Into<Float64>> From<(F, F, F)> for Pos2D {
+    /// Creates a new `Pos2D` from the given `coords` and `angle`.
     #[inline]
     #[must_use]
     fn from(i: (F, F, F)) -> Self {

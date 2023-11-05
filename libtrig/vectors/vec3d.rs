@@ -1,16 +1,15 @@
-use crate::traits::Float;
 use crate::*;
 
 /// A 3D vector.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
-pub struct Vec3D(float, float, float);
+pub struct Vec3D(Float64, Float64, Float64);
 
 impl Vec3D {
     /// Creates a new `Vec3D` from the given `x`, `y` and `z` values.
     #[inline]
     #[must_use]
-    pub const fn new(x: float, y: float, z: float) -> Self {
+    pub const fn new(x: Float64, y: Float64, z: Float64) -> Self {
         Self(x, y, z)
     }
     /// Creates a new `Vec3D` located at the origin.
@@ -22,19 +21,19 @@ impl Vec3D {
     /// Returns the x component of the vector.
     #[inline]
     #[must_use]
-    pub const fn x(&self) -> float {
+    pub const fn x(&self) -> Float64 {
         self.0
     }
     /// Returns the y component of the vector.
     #[inline]
     #[must_use]
-    pub const fn y(&self) -> float {
+    pub const fn y(&self) -> Float64 {
         self.1
     }
     /// Returns the z component of the vector.
     #[inline]
     #[must_use]
-    pub const fn z(&self) -> float {
+    pub const fn z(&self) -> Float64 {
         self.2
     }
     /// Returns the inverted vector.
@@ -46,13 +45,15 @@ impl Vec3D {
     /// Returns the dot product of the vector and the given vector.
     #[inline]
     #[must_use]
-    pub fn dot(&self, other: Self) -> float {
+    pub fn dot(&self, other: Self) -> Float64 {
         self.x() * other.x() + self.y() * other.y() + self.z() * other.z()
     }
     /// Returns the magnitude of the vector.
     #[inline]
     #[must_use]
-    pub fn magnitude(&self) -> float {
+    pub fn magnitude(&self) -> Float64 {
+        #[allow(unused_imports)]
+        use crate::traits::Float;
         self.dot(*self).sqrt()
     }
     /// Normalizes this vector.
@@ -132,7 +133,7 @@ impl core::ops::SubAssign<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @ORM Vec3D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::Mul<OTHER> for THIS {
     type Output = Vec3D;
@@ -145,7 +146,7 @@ impl core::ops::Mul<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @OM Vec3D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::MulAssign<OTHER> for THIS {
     #[inline]
@@ -158,7 +159,7 @@ impl core::ops::MulAssign<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @ORM Vec3D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::Div<OTHER> for THIS {
     type Output = Vec3D;
@@ -171,7 +172,7 @@ impl core::ops::Div<OTHER> for THIS {
 
 #[macros::mass_impl(
     $THIS = @OM Vec3D,
-    $OTHER = @OR float
+    $OTHER = @OR Float64
 )]
 impl core::ops::DivAssign<OTHER> for THIS {
     #[inline]
@@ -207,15 +208,15 @@ impl Default for Vec3D {
     }
 }
 
-impl From<(float, float, float)> for Vec3D {
+impl<F: Into<Float64>> From<(F, F, F)> for Vec3D {
     #[inline]
     #[must_use]
-    fn from((x, y, z): (float, float, float)) -> Self {
-        Self::new(x, y, z)
+    fn from((x, y, z): (F, F, F)) -> Self {
+        Self::new(x.into(), y.into(), z.into())
     }
 }
 
-impl From<Vec3D> for (float, float, float) {
+impl From<Vec3D> for (Float64, Float64, Float64) {
     #[inline]
     #[must_use]
     fn from(Vec3D(x, y, z): Vec3D) -> Self {
