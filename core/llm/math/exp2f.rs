@@ -98,7 +98,7 @@ pub fn exp2f(mut x: Float32) -> Float32 {
             /* NaN */
             return x;
         }
-        if ui >= 0x43000000 && ui < 0x80000000 {
+        if (0x43000000..0x80000000).contains(&ui) {
             /* x >= 128 */
             x *= x1p127;
             return x;

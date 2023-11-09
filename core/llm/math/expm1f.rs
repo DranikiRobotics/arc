@@ -15,17 +15,19 @@
 
 use crate::Float32;
 
+consts!{
 const O_THRESHOLD: Float32 = 8.8721679688e+01; /* 0x42b17180 */
 const LN2_HI: Float32 = 6.9313812256e-01; /* 0x3f317180 */
 const LN2_LO: Float32 = 9.0580006145e-06; /* 0x3717f7d1 */
 const INV_LN2: Float32 = 1.4426950216e+00; /* 0x3fb8aa3b */
-/**
+/*
  * Domain [-0.34568, 0.34568], range ~[-6.694e-10, 6.696e-10]:
  * |6 / x * (1 + 2 * (1 / (exp(x) - 1) - 1 / x)) - q(x)| < 2**-30.04
  * Scaled coefficients: Qn_here = 2**n * Qn_for_q (see s_expm1.c):
  */
 const Q1: Float32 = -3.3333212137e-2; /* -0x888868.0p-28 */
 const Q2: Float32 = 1.5807170421e-3; /*  0xcf3010.0p-33 */
+}
 
 /// Exponential, base *e*, of x-1
 ///
@@ -117,7 +119,7 @@ pub fn expm1f(mut x: Float32) -> Float32 {
         return 1. + 2. * (x - e);
     }
     let twopk = Float32::from_bits(((0x7f + k) << 23) as u32); /* 2^k */
-    if (k < 0) || (k > 56) {
+    if !(0..=56).contains(&k) {
         /* suffice to return exp(x)-1 */
         let mut y = x - e + 1.;
         if k == 128 {

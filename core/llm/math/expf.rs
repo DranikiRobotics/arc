@@ -17,6 +17,7 @@ use crate::Float32;
 
 use super::scalbnf;
 
+consts!{
 const HALF: [Float32; 2] = [0.5, -0.5];
 const LN2_HI: Float32 = 6.9314575195e-01; /* 0x3f317200 */
 const LN2_LO: Float32 = 1.4286067653e-06; /* 0x35bfbe8e */
@@ -27,6 +28,7 @@ const INV_LN2: Float32 = 1.4426950216e+00; /* 0x3fb8aa3b */
  */
 const P1: Float32 = 1.6666625440e-1; /*  0xaaaa8f.0p-26 */
 const P2: Float32 = -2.7667332906e-3; /* -0xb55215.0p-32 */
+}
 
 /// Exponential, base *e*
 ///

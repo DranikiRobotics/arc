@@ -70,6 +70,7 @@ use crate::{Float64, Float32};
 
 use super::scalbn;
 
+consts!{
 const HALF: [Float64; 2] = [0.5, -0.5];
 const LN2HI: Float64 = 6.93147180369123816490e-01; /* 0x3fe62e42, 0xfee00000 */
 const LN2LO: Float64 = 1.90821492927058770002e-10; /* 0x3dea39ef, 0x35793c76 */
@@ -79,6 +80,7 @@ const P2: Float64 = -2.77777777770155933842e-03; /* 0xBF66C16C, 0x16BEBD93 */
 const P3: Float64 = 6.61375632143793436117e-05; /* 0x3F11566A, 0xAF25DE2C */
 const P4: Float64 = -1.65339022054652515390e-06; /* 0xBEBBBD41, 0xC5D26BF1 */
 const P5: Float64 = 4.13813679705723846039e-08; /* 0x3E663769, 0x72BEA4D0 */
+}
 
 /// Exponential, base *e*
 ///
@@ -88,35 +90,28 @@ const P5: Float64 = 4.13813679705723846039e-08; /* 0x3E663769, 0x72BEA4D0 */
 pub fn exp(mut x: Float64) -> Float64 {
     let x1p1023 = Float64::from_bits(0x7fe0000000000000); // 0x1p1023 === 2 ^ 1023
     let x1p_149 = Float64::from_bits(0x36a0000000000000); // 0x1p-149 === 2 ^ -149
-
     let hi: Float64;
     let lo: Float64;
-    let c: Float64;
-    let xx: Float64;
-    let y: Float64;
     let k: i32;
-    let sign: i32;
     let mut hx: u32;
-
     hx = (x.to_bits() >> 32) as u32;
-    sign = (hx >> 31) as i32;
+    let sign: i32 = (hx >> 31) as i32;
     hx &= 0x7fffffff; /* high word of |x| */
-
     /* special cases */
     if hx >= 0x4086232b {
         /* if |x| >= 708.39... */
         if x.is_nan() {
             return x;
         }
-        if x > 709.782712893383973096 {
+        if x > 709.782_712_893_384 {
             /* overflow if x!=inf */
             x *= x1p1023;
             return x;
         }
-        if x < -708.39641853226410622 {
+        if x < -708.396_418_532_264_1 {
             /* underflow if x!=-inf */
             force_eval!((-x1p_149 / x) as Float32);
-            if x < -745.13321910194110842 {
+            if x < -745.133_219_101_941_1 {
                 return 0.;
             }
         }
@@ -146,9 +141,9 @@ pub fn exp(mut x: Float64) -> Float64 {
     }
 
     /* x is now in primary range */
-    xx = x * x;
-    c = x - xx * (P1 + xx * (P2 + xx * (P3 + xx * (P4 + xx * P5))));
-    y = 1. + (x * c / (2. - c) - lo + hi);
+    let xx: Float64 = x * x;
+    let c: Float64 = x - xx * (P1 + xx * (P2 + xx * (P3 + xx * (P4 + xx * P5))));
+    let y: Float64 = 1. + (x * c / (2. - c) - lo + hi);
     if k == 0 {
         y
     } else {

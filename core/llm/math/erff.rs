@@ -17,10 +17,9 @@ use crate::Float32;
 
 use super::{expf, fabsf};
 
+consts!{
 const ERX: Float32 = 8.4506291151e-01; /* 0x3f58560b */
-/*
- * Coefficients for approximation to  erf on [0,0.84375]
- */
+/* Coefficients for approximation to  erf on [0,0.84375] */
 const EFX8: Float32 = 1.0270333290e+00; /* 0x3f8375d4 */
 const PP0: Float32 = 1.2837916613e-01; /* 0x3e0375d4 */
 const PP1: Float32 = -3.2504209876e-01; /* 0xbea66beb */
@@ -32,9 +31,7 @@ const QQ2: Float32 = 6.5022252500e-02; /* 0x3d852a63 */
 const QQ3: Float32 = 5.0813062117e-03; /* 0x3ba68116 */
 const QQ4: Float32 = 1.3249473704e-04; /* 0x390aee49 */
 const QQ5: Float32 = -3.9602282413e-06; /* 0xb684e21a */
-/*
- * Coefficients for approximation to  erf  in [0.84375,1.25]
- */
+/* Coefficients for approximation to  erf  in [0.84375,1.25] */
 const PA0: Float32 = -2.3621185683e-03; /* 0xbb1acdc6 */
 const PA1: Float32 = 4.1485610604e-01; /* 0x3ed46805 */
 const PA2: Float32 = -3.7220788002e-01; /* 0xbebe9208 */
@@ -48,9 +45,7 @@ const QA3: Float32 = 7.1828655899e-02; /* 0x3d931ae7 */
 const QA4: Float32 = 1.2617121637e-01; /* 0x3e013307 */
 const QA5: Float32 = 1.3637083583e-02; /* 0x3c5f6e13 */
 const QA6: Float32 = 1.1984500103e-02; /* 0x3c445aa3 */
-/*
- * Coefficients for approximation to  erfc in [1.25,1/0.35]
- */
+/* Coefficients for approximation to  erfc in [1.25,1/0.35] */
 const RA0: Float32 = -9.8649440333e-03; /* 0xbc21a093 */
 const RA1: Float32 = -6.9385856390e-01; /* 0xbf31a0b7 */
 const RA2: Float32 = -1.0558626175e+01; /* 0xc128f022 */
@@ -67,9 +62,7 @@ const SA5: Float32 = 4.2900814819e+02; /* 0x43d6810b */
 const SA6: Float32 = 1.0863500214e+02; /* 0x42d9451f */
 const SA7: Float32 = 6.5702495575e+00; /* 0x40d23f7c */
 const SA8: Float32 = -6.0424413532e-02; /* 0xbd777f97 */
-/*
- * Coefficients for approximation to  erfc in [1/.35,28]
- */
+/* Coefficients for approximation to  erfc in [1/.35,28] */
 const RB0: Float32 = -9.8649431020e-03; /* 0xbc21a092 */
 const RB1: Float32 = -7.9928326607e-01; /* 0xbf4c9dd4 */
 const RB2: Float32 = -1.7757955551e+01; /* 0xc18e104b */
@@ -84,31 +77,24 @@ const SB4: Float32 = 3.1998581543e+03; /* 0x4547fdbb */
 const SB5: Float32 = 2.5530502930e+03; /* 0x451f90ce */
 const SB6: Float32 = 4.7452853394e+02; /* 0x43ed43a7 */
 const SB7: Float32 = -2.2440952301e+01; /* 0xc1b38712 */
+}
 
 fn erfc1(x: Float32) -> Float32 {
-    let s: Float32;
-    let p: Float32;
-    let q: Float32;
-
-    s = fabsf(x) - 1.0;
-    p = PA0 + s * (PA1 + s * (PA2 + s * (PA3 + s * (PA4 + s * (PA5 + s * PA6)))));
-    q = 1.0 + s * (QA1 + s * (QA2 + s * (QA3 + s * (QA4 + s * (QA5 + s * QA6)))));
+    let s = fabsf(x) - 1.0;
+    let p = PA0 + s * (PA1 + s * (PA2 + s * (PA3 + s * (PA4 + s * (PA5 + s * PA6)))));
+    let q = 1.0 + s * (QA1 + s * (QA2 + s * (QA3 + s * (QA4 + s * (QA5 + s * QA6)))));
     return 1.0 - ERX - p / q;
 }
 
 fn erfc2(mut ix: u32, mut x: Float32) -> Float32 {
-    let s: Float32;
     let r: Float32;
     let big_s: Float32;
-    let z: Float32;
-
     if ix < 0x3fa00000 {
         /* |x| < 1.25 */
         return erfc1(x);
     }
-
     x = fabsf(x);
-    s = 1.0 / (x * x);
+    let s: Float32 = 1.0 / (x * x);
     if ix < 0x4036db6d {
         /* |x| < 1/0.35 */
         r = RA0 + s * (RA1 + s * (RA2 + s * (RA3 + s * (RA4 + s * (RA5 + s * (RA6 + s * RA7))))));
@@ -122,8 +108,7 @@ fn erfc2(mut ix: u32, mut x: Float32) -> Float32 {
             1.0 + s * (SB1 + s * (SB2 + s * (SB3 + s * (SB4 + s * (SB5 + s * (SB6 + s * SB7))))));
     }
     ix = x.to_bits();
-    z = Float32::from_bits(ix & 0xffffe000);
-
+    let z = Float32::from_bits(ix & 0xffffe000);
     expf(-z * z - 0.5625) * expf((z - x) * (z + x) + r / big_s) / x
 }
 
@@ -138,12 +123,8 @@ pub fn erff(x: Float32) -> Float32 {
     let s: Float32;
     let z: Float32;
     let y: Float32;
-    let mut ix: u32;
-    let sign: usize;
-
-    ix = x.to_bits();
-    sign = (ix >> 31) as usize;
-    ix &= 0x7fffffff;
+    let ix: u32 = x.to_bits() & 0x7fffffff;
+    let sign: usize = (ix >> 31) as usize;
     if ix >= 0x7f800000 {
         /* erf(nan)=nan, erf(+-inf)=+-1 */
         return 1.0 - 2.0 * (sign as Float32) + 1.0 / x;
@@ -187,17 +168,12 @@ pub fn erfcf(x: Float32) -> Float32 {
     let s: Float32;
     let z: Float32;
     let y: Float32;
-    let mut ix: u32;
-    let sign: usize;
-
-    ix = x.to_bits();
-    sign = (ix >> 31) as usize;
-    ix &= 0x7fffffff;
+    let ix: u32 = x.to_bits() & 0x7fffffff;
+    let sign: usize = (ix >> 31) as usize;
     if ix >= 0x7f800000 {
         /* erfc(nan)=nan, erfc(+-inf)=0,2 */
         return 2.0 * (sign as Float32) + 1.0 / x;
     }
-
     if ix < 0x3f580000 {
         /* |x| < 0.84375 */
         if ix < 0x23800000 {

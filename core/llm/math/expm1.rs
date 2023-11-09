@@ -12,6 +12,7 @@
 
 use crate::Float64;
 
+consts!{
 const O_THRESHOLD: Float64 = 7.09782712893383973096e+02; /* 0x40862E42, 0xFEFA39EF */
 const LN2_HI: Float64 = 6.93147180369123816490e-01; /* 0x3fe62e42, 0xfee00000 */
 const LN2_LO: Float64 = 1.90821492927058770002e-10; /* 0x3dea39ef, 0x35793c76 */
@@ -22,6 +23,7 @@ const Q2: Float64 = 1.58730158725481460165e-03; /* 3F5A01A0 19FE5585 */
 const Q3: Float64 = -7.93650757867487942473e-05; /* BF14CE19 9EAADBB7 */
 const Q4: Float64 = 4.00821782732936239552e-06; /* 3ED0CFCA 86E65239 */
 const Q5: Float64 = -2.01099218183624371326e-07; /* BE8AFDB7 6E09C32D */
+}
 
 /// Exponential, base *e*, of x-1
 ///
@@ -115,7 +117,7 @@ pub fn expm1(mut x: Float64) -> Float64 {
     }
     ui = ((0x3ff + k) as u64) << 52; /* 2^k */
     let twopk = Float64::from_bits(ui);
-    if k < 0 || k > 56 {
+    if !(0..=56).contains(&k) {
         /* suffice to return exp(x)-1 */
         y = x - e + 1.0;
         if k == 1024 {

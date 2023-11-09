@@ -2,8 +2,9 @@ use crate::{Float64, Float32};
 
 use super::{exp2, exp2f, modff};
 
-const LN10_F32: Float32 = 3.32192809488736234787031942948939;
-const LN10_F64: Float64 = 3.32192809488736234787031942948939;
+use core::f64::consts::LN_10 as LN10_F64;
+use core::f32::consts::LN_10 as LN10_F32;
+
 const P10: &[Float32] = &[
     1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7,
 ];
