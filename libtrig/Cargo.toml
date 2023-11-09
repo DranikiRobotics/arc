@@ -1,0 +1,15 @@
+[package]
+name = "libtrig"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies.macros]
+package = "macros"
+path = "../utils/macros"
+
+[dependencies.llm]
+package = "llm"
+path = "../llm"
+
+[lib]
+path = "lib.rs"

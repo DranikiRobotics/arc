@@ -1,21 +1,7 @@
 [workspace]
+resolver = "2"
 members = [
-    "core/llm",
-    "core/macros"
+    "libtrig",
+    "llm",
+    "utils/macros"
 ]
-
-[package]
-name = "libtrig"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies.macros]
-package = "libtrig-macros"
-path = "./core/macros"
-
-[dependencies.llm]
-package = "libtrig-llm"
-path = "./core/llm"
-
-[lib]
-path = "./libtrig/lib.rs"

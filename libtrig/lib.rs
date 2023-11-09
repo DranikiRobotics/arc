@@ -3,7 +3,7 @@
 #![no_std]
 
 #![warn(missing_docs, unused, clippy::all)]
-#![doc = include_str!("../README.md")]
+#![doc = include_str!("./README.md")]
 
 pub(crate) mod vectors;
 pub(crate) mod traits;
