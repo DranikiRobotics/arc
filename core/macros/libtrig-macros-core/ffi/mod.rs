@@ -55,11 +55,11 @@ fn parse_func(item: TokenStream) -> TokenStream {
             #body
         }
     };
-    result.into()
+    result
 }
 
 /// parses the settings (can be none, const, unsafe or both)
-fn parse_settings<'a>(attr: TokenStream) -> (String, String) {
+fn parse_settings(attr: TokenStream) -> (String, String) {
     let modifiers_str = attr.to_string();
     let mut res = String::new();
     if modifiers_str.contains("const") {
@@ -70,7 +70,7 @@ fn parse_settings<'a>(attr: TokenStream) -> (String, String) {
     }
     let t = if modifiers_str.contains("type=") {
         let type_str = modifiers_str.split("type=").collect::<Vec<&str>>()[1];
-        type_str.split(" ").collect::<Vec<&str>>()[0]
+        type_str.split(' ').collect::<Vec<&str>>()[0]
     } else {
         "C"
     };

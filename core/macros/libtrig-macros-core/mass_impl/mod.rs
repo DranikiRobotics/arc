@@ -13,9 +13,7 @@ pub fn mass_impl<T: Into<TokenStream>>(cfg: T, input: T) -> TokenStream {
             return err.to_compile_error();
         }
     };
-    let input = input.to_string();
-    let mut results = Vec::new();
-    results.push(input);
+    let mut results = vec![input.to_string()];
 
     for tv in &config.type_variants {
         let mut temp_results = Vec::new();
