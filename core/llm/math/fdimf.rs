@@ -1,5 +1,6 @@
 use crate::Float32;
 
+#[allow(clippy::tabs_in_doc_comments)]
 /// Positive difference
 ///
 /// Determines the positive difference between arguments, returning:
