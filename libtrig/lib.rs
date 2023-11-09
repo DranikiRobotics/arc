@@ -10,7 +10,6 @@ pub(crate) mod traits;
 pub(crate) mod coords;
 pub(crate) mod angle;
 pub(crate) mod types;
-pub mod odo;
 
 pub use llm;
 

@@ -11,5 +11,5 @@ package = "libtrig-macros"
 path = "../macros"
 
 [features]
-default = ["unstable"]
+# default = ["unstable"]
 unstable = []

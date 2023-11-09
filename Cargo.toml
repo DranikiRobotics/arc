@@ -1,8 +1,7 @@
 [workspace]
 members = [
     "core/llm",
-    "core/macros",
-    "example"
+    "core/macros"
 ]
 
 [package]
@@ -19,4 +18,4 @@ package = "libtrig-llm"
 path = "./core/llm"
 
 [lib]
-path = "./libtrig/main.rs"
+path = "./libtrig/lib.rs"
