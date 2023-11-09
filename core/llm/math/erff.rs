@@ -123,8 +123,9 @@ pub fn erff(x: Float32) -> Float32 {
     let s: Float32;
     let z: Float32;
     let y: Float32;
-    let ix: u32 = x.to_bits() & 0x7fffffff;
-    let sign: usize = (ix >> 31) as usize;
+    let mut ix: u32 = x.to_bits();
+    let sign = (ix >> 31) as usize;
+    ix &= 0x7fffffff;
     if ix >= 0x7f800000 {
         /* erf(nan)=nan, erf(+-inf)=+-1 */
         return 1.0 - 2.0 * (sign as Float32) + 1.0 / x;
@@ -168,8 +169,9 @@ pub fn erfcf(x: Float32) -> Float32 {
     let s: Float32;
     let z: Float32;
     let y: Float32;
-    let ix: u32 = x.to_bits() & 0x7fffffff;
-    let sign: usize = (ix >> 31) as usize;
+    let mut ix = x.to_bits();
+    let sign = (ix >> 31) as usize;
+    ix &= 0x7fffffff;
     if ix >= 0x7f800000 {
         /* erfc(nan)=nan, erfc(+-inf)=0,2 */
         return 2.0 * (sign as Float32) + 1.0 / x;

@@ -103,15 +103,18 @@ pub fn exp(mut x: Float64) -> Float64 {
         if x.is_nan() {
             return x;
         }
-        if x > 709.782_712_893_384 {
+        #[allow(clippy::excessive_precision)]
+        if x > 709.782_712_893_383_973_096 {
             /* overflow if x!=inf */
             x *= x1p1023;
             return x;
         }
-        if x < -708.396_418_532_264_1 {
+        #[allow(clippy::excessive_precision)]
+        if x < -708.396_418_532_264_106_22 {
             /* underflow if x!=-inf */
             force_eval!((-x1p_149 / x) as Float32);
-            if x < -745.133_219_101_941_1 {
+            #[allow(clippy::excessive_precision)]
+            if x < -745.133_219_101_941_108_42 {
                 return 0.;
             }
         }
