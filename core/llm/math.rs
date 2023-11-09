@@ -74,6 +74,17 @@ macro_rules! div {
     };
 }
 
+
+macro_rules! consts {
+    (const $name:ident: $ty:ty = $value:expr; $($t:tt)* ) => (
+        #[allow(clippy::excessive_precision)]
+        #[deny(clippy::approx_constant)]
+        const $name: $ty = $value;
+        consts!($($t)*);
+    );
+    () => ();
+}
+
 macro_rules! llvm_intrinsically_optimized {
     (#[cfg($($clause:tt)*)] $e:expr) => {
         #[cfg(all($($clause)*))]
