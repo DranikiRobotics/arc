@@ -17,12 +17,14 @@ use crate::{Float32, Radian32};
 
 use super::sqrtf::sqrtf;
 
+consts!{
 const PIO2_HI: Float32 = 1.5707962513e+00; /* 0x3fc90fda */
 const PIO2_LO: Float32 = 7.5497894159e-08; /* 0x33a22168 */
 const P_S0: Float32 = 1.6666586697e-01;
 const P_S1: Float32 = -4.2743422091e-02;
 const P_S2: Float32 = -8.6563630030e-03;
 const Q_S1: Float32 = -7.0662963390e-01;
+}
 
 fn r(z: Float32) -> Float32 {
     let p = z * (P_S0 + z * (P_S1 + z * P_S2));

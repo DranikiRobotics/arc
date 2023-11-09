@@ -18,6 +18,7 @@ use crate::{Float64, Float32, Radian32};
 use super::fabsf::fabsf;
 use super::sqrt::sqrt;
 
+consts!{
 const PIO2: Float64 = 1.570796326794896558e+00;
 
 /* coefficients for R(x^2) */
@@ -25,6 +26,7 @@ const P_S0: Float32 = 1.6666586697e-01;
 const P_S1: Float32 = -4.2743422091e-02;
 const P_S2: Float32 = -8.6563630030e-03;
 const Q_S1: Float32 = -7.0662963390e-01;
+}
 
 fn r(z: Float32) -> Float32 {
     let p = z * (P_S0 + z * (P_S1 + z * P_S2));
@@ -56,7 +58,7 @@ pub fn asinf(mut x: Float32) -> Radian32 {
     if ix < 0x3f000000 {
         /* |x| < 0.5 */
         /* if 0x1p-126 <= |x| < 0x1p-12, avoid raising underflow */
-        if (ix < 0x39800000) && (ix >= 0x00800000) {
+        if (0x00800000..0x39800000).contains(&ix) {
             return x;
         }
         return x + x * r(x * x);

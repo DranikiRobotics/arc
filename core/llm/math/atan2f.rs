@@ -18,8 +18,13 @@ use crate::{Float32, Radian32};
 use super::atanf;
 use super::fabsf;
 
-const PI: Float32 = 3.1415927410e+00; /* 0x40490fdb */
+use core::f32::consts::PI;
+use core::f32::consts::FRAC_PI_2;
+use core::f32::consts::FRAC_PI_4;
+
+consts!{
 const PI_LO: Float32 = -8.7422776573e-08; /* 0xb3bbbd2e */
+}
 
 /// Arctangent of y/x
 ///
@@ -47,34 +52,34 @@ pub fn atan2f(y: Float32, x: Float32) -> Radian32 {
         return match m {
             0 | 1 => y,   /* atan(+-0,+anything)=+-0 */
             2 => PI,      /* atan(+0,-anything) = pi */
-            3 | _ => -PI, /* atan(-0,-anything) =-pi */
+            _ => -PI, /* atan(-0,-anything) =-pi */
         };
     }
     /* when x = 0 */
     if ix == 0 {
-        return if m & 1 != 0 { -PI / 2. } else { PI / 2. };
+        return if m & 1 != 0 { -FRAC_PI_2 } else { FRAC_PI_2 };
     }
     /* when x is INF */
     if ix == 0x7f800000 {
         return if iy == 0x7f800000 {
             match m {
-                0 => PI / 4.,           /* atan(+INF,+INF) */
-                1 => -PI / 4.,          /* atan(-INF,+INF) */
-                2 => 3. * PI / 4.,      /* atan(+INF,-INF)*/
-                3 | _ => -3. * PI / 4., /* atan(-INF,-INF)*/
+                0 => FRAC_PI_4,           /* atan(+INF,+INF) */
+                1 => -FRAC_PI_4,          /* atan(-INF,+INF) */
+                2 => 3. * FRAC_PI_4,      /* atan(+INF,-INF)*/
+                _ => -3. * FRAC_PI_4, /* atan(-INF,-INF)*/
             }
         } else {
             match m {
                 0 => 0.,      /* atan(+...,+INF) */
                 1 => -0.,     /* atan(-...,+INF) */
                 2 => PI,      /* atan(+...,-INF) */
-                3 | _ => -PI, /* atan(-...,-INF) */
+                _ => -PI, /* atan(-...,-INF) */
             }
         };
     }
     /* |y/x| > 0x1p26 */
     if (ix + (26 << 23) < iy) || (iy == 0x7f800000) {
-        return if m & 1 != 0 { -PI / 2. } else { PI / 2. };
+        return if m & 1 != 0 { -FRAC_PI_2 } else { FRAC_PI_2 };
     }
 
     /* z = atan(|y/x|) with correct underflow */

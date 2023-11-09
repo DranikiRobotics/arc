@@ -2,7 +2,7 @@ use crate::{Float32, Radian32};
 
 use super::{log1pf, logf, sqrtf};
 
-const LN2: Float32 = 0.693147180559945309417232121458176568;
+use core::f32::consts::LN_2;
 
 /* asinh(x) = sign(x)*log(|x|+sqrt(x*x+1)) ~= x - x^3/6 + o(x^5) */
 /// Inverse hyperbolic sine
@@ -20,7 +20,7 @@ pub fn asinhf(mut x: Float32) -> Radian32 {
 
     if i >= 0x3f800000 + (12 << 23) {
         /* |x| >= 0x1p12 or inf or nan */
-        x = logf(x) + LN2;
+        x = logf(x) + LN_2;
     } else if i >= 0x3f800000 + (1 << 23) {
         /* |x| >= 2 */
         x = logf(2.0 * x + 1.0 / (sqrtf(x * x + 1.0) + x));

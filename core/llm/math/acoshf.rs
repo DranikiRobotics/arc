@@ -2,7 +2,9 @@ use crate::{Float32, Radian32};
 
 use super::{log1pf, logf, sqrtf};
 
+consts!{
 const LN2: Float32 = 0.693147180559945309417232121458176568;
+}
 
 /// Inverse hyperbolic cosine
 ///

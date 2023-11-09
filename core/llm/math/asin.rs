@@ -44,6 +44,7 @@ use crate::{Float64, Radian64};
 
 use super::{fabs, get_high_word, get_low_word, sqrt, with_set_low_word};
 
+consts!{
 const PIO2_HI: Float64 = 1.57079632679489655800e+00; /* 0x3FF921FB, 0x54442D18 */
 const PIO2_LO: Float64 = 6.12323399573676603587e-17; /* 0x3C91A626, 0x33145C07 */
 /* coefficients for R(x^2) */
@@ -57,6 +58,7 @@ const Q_S1: Float64 = -2.40339491173441421878e+00; /* 0xC0033A27, 0x1C8A2D4B */
 const Q_S2: Float64 = 2.02094576023350569471e+00; /* 0x40002AE5, 0x9C598AC8 */
 const Q_S3: Float64 = -6.88283971605453293030e-01; /* 0xBFE6066C, 0x1B8D0159 */
 const Q_S4: Float64 = 7.70381505559019352791e-02; /* 0x3FB3B8C5, 0xB12E9282 */
+}
 
 fn comp_r(z: Float64) -> Float64 {
     let p = z * (P_S0 + z * (P_S1 + z * (P_S2 + z * (P_S3 + z * (P_S4 + z * P_S5)))));
@@ -71,18 +73,11 @@ fn comp_r(z: Float64) -> Float64 {
 /// Returns values in radians, in the range of -pi/2 to pi/2.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub fn asin(mut x: Float64) -> Radian64 {
-    let z: Float64;
-    let r: Float64;
-    let s: Float64;
-    let hx: u32;
-    let ix: u32;
-
-    hx = get_high_word(x);
-    ix = hx & 0x7fffffff;
+    let hx: u32 = get_high_word(x);
+    let ix: u32 = hx & 0x7fffffff;
     /* |x| >= 1 or nan */
     if ix >= 0x3ff00000 {
-        let lx: u32;
-        lx = get_low_word(x);
+        let lx: u32 = get_low_word(x);
         if ((ix - 0x3ff00000) | lx) == 0 {
             /* asin(1) = +-pi/2 with inexact */
             return x * PIO2_HI + Float64::from_bits(0x3870000000000000);
@@ -93,25 +88,23 @@ pub fn asin(mut x: Float64) -> Radian64 {
     /* |x| < 0.5 */
     if ix < 0x3fe00000 {
         /* if 0x1p-1022 <= |x| < 0x1p-26, avoid raising underflow */
-        if ix < 0x3e500000 && ix >= 0x00100000 {
+        if (0x00100000..0x3e500000).contains(&ix) {
             return x;
         } else {
             return x + x * comp_r(x * x);
         }
     }
     /* 1 > |x| >= 0.5 */
-    z = (1.0 - fabs(x)) * 0.5;
-    s = sqrt(z);
-    r = comp_r(z);
+    let z: Float64 = (1.0 - fabs(x)) * 0.5;
+    let s: Float64 = sqrt(z);
+    let r: Float64 = comp_r(z);
     if ix >= 0x3fef3333 {
         /* if |x| > 0.975 */
         x = PIO2_HI - (2. * (s + s * r) - PIO2_LO);
     } else {
-        let f: Float64;
-        let c: Float64;
         /* f+c = sqrt(z) */
-        f = with_set_low_word(s, 0);
-        c = (z - f * f) / (s + f);
+        let f: Float64 = with_set_low_word(s, 0);
+        let c: Float64 = (z - f * f) / (s + f);
         x = 0.5 * PIO2_HI - (2.0 * s * r - (PIO2_LO - 2.0 * c) - (0.5 * PIO2_HI - 2.0 * f));
     }
     if hx >> 31 != 0 {

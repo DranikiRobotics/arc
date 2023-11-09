@@ -43,8 +43,13 @@ use crate::{Float64, Radian64};
 use super::atan;
 use super::fabs;
 
-const PI: Float64 = 3.1415926535897931160E+00; /* 0x400921FB, 0x54442D18 */
+use core::f64::consts::PI;
+use core::f64::consts::FRAC_PI_2;
+use core::f64::consts::FRAC_PI_4;
+
+consts!{
 const PI_LO: Float64 = 1.2246467991473531772E-16; /* 0x3CA1A626, 0x33145C07 */
+}
 
 /// Arctangent of y/x
 ///
@@ -78,16 +83,16 @@ pub fn atan2(y: Float64, x: Float64) -> Radian64 {
     }
     /* when x = 0 */
     if (ix | lx) == 0 {
-        return if m & 1 != 0 { -PI / 2.0 } else { PI / 2.0 };
+        return if m & 1 != 0 { -FRAC_PI_2 } else { FRAC_PI_2 };
     }
     /* when x is INF */
     if ix == 0x7ff00000 {
         if iy == 0x7ff00000 {
             return match m {
-                0 => PI / 4.0,        /* atan(+INF,+INF) */
-                1 => -PI / 4.0,       /* atan(-INF,+INF) */
-                2 => 3.0 * PI / 4.0,  /* atan(+INF,-INF) */
-                _ => -3.0 * PI / 4.0, /* atan(-INF,-INF) */
+                0 => FRAC_PI_4,        /* atan(+INF,+INF) */
+                1 => -FRAC_PI_4,       /* atan(-INF,+INF) */
+                2 => 3.0 * FRAC_PI_4,  /* atan(+INF,-INF) */
+                _ => -3.0 * FRAC_PI_4, /* atan(-INF,-INF) */
             };
         } else {
             return match m {
@@ -100,7 +105,7 @@ pub fn atan2(y: Float64, x: Float64) -> Radian64 {
     }
     /* |y/x| > 0x1p64 */
     if ix.wrapping_add(64 << 20) < iy || iy == 0x7ff00000 {
-        return if m & 1 != 0 { -PI / 2.0 } else { PI / 2.0 };
+        return if m & 1 != 0 { -FRAC_PI_2 } else { FRAC_PI_2 };
     }
 
     /* z = atan(|y/x|) without spurious underflow */

@@ -17,6 +17,7 @@ use crate::{Float32, Radian32};
 
 use super::fabsf;
 
+consts!{
 const ATAN_HI: [Float32; 4] = [
     4.6364760399e-01, /* atan(0.5)hi 0x3eed6338 */
     7.8539812565e-01, /* atan(1.0)hi 0x3f490fda */
@@ -38,6 +39,7 @@ const A_T: [Float32; 5] = [
     -1.0648017377e-01,
     6.1687607318e-02,
 ];
+}
 
 /// Arctangent
 ///

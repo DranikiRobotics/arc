@@ -34,11 +34,12 @@ use crate::{Float64, Float32, Radian64};
 
 use super::fabs;
 
+consts!{
 const ATANHI: [Float64; 4] = [
-    4.63647609000806093515e-01, /* atan(0.5)hi 0x3FDDAC67, 0x0561BB4F */
-    7.85398163397448278999e-01, /* atan(1.0)hi 0x3FE921FB, 0x54442D18 */
-    9.82793723247329054082e-01, /* atan(1.5)hi 0x3FEF730B, 0xD281F69B */
-    1.57079632679489655800e+00, /* atan(inf)hi 0x3FF921FB, 0x54442D18 */
+    4.63647609000806093515e-01,   /* atan(0.5)hi 0x3FDDAC67, 0x0561BB4F */
+    7.85398163397448278999e-01,   /* atan(1.0)hi 0x3FE921FB, 0x54442D18 */
+    9.82793723247329054082e-01,   /* atan(1.5)hi 0x3FEF730B, 0xD281F69B */
+    core::f64::consts::FRAC_PI_2, /* atan(inf)hi 0x3FF921FB, 0x54442D18 */
 ];
 
 const ATANLO: [Float64; 4] = [
@@ -61,6 +62,7 @@ const AT: [Float64; 11] = [
     -3.65315727442169155270e-02, /* 0xBFA2B444, 0x2C6A6C2F */
     1.62858201153657823623e-02,  /* 0x3F90AD3A, 0xE322DA11 */
 ];
+}
 
 /// Arctangent
 ///
@@ -148,9 +150,9 @@ mod tests {
             (3.0_f64.sqrt() / 3.0, f64::consts::FRAC_PI_6),
             (1.0, f64::consts::FRAC_PI_4),
             (3.0_f64.sqrt(), f64::consts::FRAC_PI_3),
-            (-3.0_f64.sqrt() / 3.0, -f64::consts::FRAC_PI_6),
+            (-(3.0_f64.sqrt()) / 3.0, -f64::consts::FRAC_PI_6),
             (-1.0, -f64::consts::FRAC_PI_4),
-            (-3.0_f64.sqrt(), -f64::consts::FRAC_PI_3),
+            (-(3.0_f64.sqrt()), -f64::consts::FRAC_PI_3),
         ]
         .iter()
         {
