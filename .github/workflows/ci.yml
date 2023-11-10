@@ -1,0 +1,73 @@
+name: CI
+
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # If anything fails, the whole workflow fails.
+  ci-pass:
+    name: CI Pass
+    needs: [style, android, linux]
+    runs-on: ubuntu-latest
+
+  # Check style.
+  style:
+    name: Style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Check style
+        run: ./epearl fmt --check
+  
+  # Check if the Android build works.
+  android: 
+    name: Android
+    needs: [style]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          profile: minimal
+          target: aarch64-linux-android
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Build Android
+        run: ./epearl build --target aarch64-linux-android
+      - name: Test Android
+        run: ./epearl test --target aarch64-linux-android
+  
+  # Check if the Linux build works.
+  linux:
+    name: Linux
+    needs: [style]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          profile: minimal
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Build Android
+        run: ./epearl build
+      - name: Test Android
+        run: ./epearl test

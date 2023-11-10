@@ -14,4 +14,4 @@ do
 done
 
 APP_HOME=$( cd "${APP_HOME:-./}" && pwd -P ) || exit
-exec "python" "$APP_HOME/libs/scripts.py" "$APP_HOME" "$@"
+exec "python" "$APP_HOME/epearl.py" "$APP_HOME" "$@"

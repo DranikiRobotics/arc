@@ -24,7 +24,7 @@ echo.
 echo Please install Python
 
 :execute
-"%PYTHON_EXE%" "%APP_HOME%\libs\scripts.py" "%APP_HOME%" "%*%"
+"%PYTHON_EXE%" %APP_HOME%/epearl.py %APP_HOME% %*%
 :end
 @REM End local scope for the variables with windows NT shell
 if "%ERRORLEVEL%"=="0" goto mainEnd
