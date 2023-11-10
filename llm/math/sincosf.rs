@@ -19,7 +19,7 @@ use crate::{Float64, Float32, Radian32};
 use super::{k_cosf, k_sinf, rem_pio2f};
 
 /* Small multiples of pi/2 rounded to double precision. */
-const PI_2: Float32 = 0.5 * 3.141_592_7;
+const PI_2: Float32 = 0.5 * 3.1415926535897931160E+00;
 const S1PIO2: Float32 = 1.0 * PI_2; /* 0x3FF921FB, 0x54442D18 */
 const S2PIO2: Float32 = 2.0 * PI_2; /* 0x400921FB, 0x54442D18 */
 const S3PIO2: Float32 = 3.0 * PI_2; /* 0x4012D97C, 0x7F3321D2 */
@@ -31,10 +31,10 @@ pub fn sincosf(x: Radian32) -> (Float32, Float32) {
     let s: Float32;
     let c: Float32;
     let mut ix: u32;
-    
+    let sign: bool;
 
     ix = x.to_bits();
-    let sign: bool = (ix >> 31) != 0;
+    sign = (ix >> 31) != 0;
     ix &= 0x7fffffff;
 
     /* |x| ~<= pi/4 */
@@ -67,12 +67,14 @@ pub fn sincosf(x: Radian32) -> (Float32, Float32) {
             }
         }
         /* -sin(x+c) is not correct if x+c could be 0: -0 vs +0 */
-        else if sign {
-            s = -k_sinf((x + S2PIO2) as Float64);
-            c = -k_cosf((x + S2PIO2) as Float64);
-        } else {
-            s = -k_sinf((x - S2PIO2) as Float64);
-            c = -k_cosf((x - S2PIO2) as Float64);
+        else {
+            if sign {
+                s = -k_sinf((x + S2PIO2) as Float64);
+                c = -k_cosf((x + S2PIO2) as Float64);
+            } else {
+                s = -k_sinf((x - S2PIO2) as Float64);
+                c = -k_cosf((x - S2PIO2) as Float64);
+            }
         }
 
         return (s, c);
@@ -89,12 +91,14 @@ pub fn sincosf(x: Radian32) -> (Float32, Float32) {
                 s = -k_cosf((x - S3PIO2) as Float64);
                 c = k_sinf((x - S3PIO2) as Float64);
             }
-        } else if sign {
-            s = k_sinf((x + S4PIO2) as Float64);
-            c = k_cosf((x + S4PIO2) as Float64);
         } else {
-            s = k_sinf((x - S4PIO2) as Float64);
-            c = k_cosf((x - S4PIO2) as Float64);
+            if sign {
+                s = k_sinf((x + S4PIO2) as Float64);
+                c = k_cosf((x + S4PIO2) as Float64);
+            } else {
+                s = k_sinf((x - S4PIO2) as Float64);
+                c = k_cosf((x - S4PIO2) as Float64);
+            }
         }
 
         return (s, c);

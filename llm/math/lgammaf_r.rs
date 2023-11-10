@@ -17,69 +17,69 @@ use crate::{Float64, Float32};
 
 use super::{floorf, k_cosf, k_sinf, logf};
 
-const PI: Float32 = 3.141_592_7; /* 0x40490fdb */
-const A0: Float32 = 7.721_566_4e-2; /* 0x3d9e233f */
-const A1: Float32 = 3.224_670_3e-1; /* 0x3ea51a66 */
-const A2: Float32 = 6.735_23e-2; /* 0x3d89f001 */
-const A3: Float32 = 2.058_080_8e-2; /* 0x3ca89915 */
-const A4: Float32 = 7.385_551e-3; /* 0x3bf2027e */
-const A5: Float32 = 2.890_513_7e-3; /* 0x3b3d6ec6 */
-const A6: Float32 = 1.192_707_7e-3; /* 0x3a9c54a1 */
-const A7: Float32 = 5.100_698e-4; /* 0x3a05b634 */
-const A8: Float32 = 2.208_627_8e-4; /* 0x39679767 */
-const A9: Float32 = 1.080_115_7e-4; /* 0x38e28445 */
-const A10: Float32 = 2.521_445_6e-5; /* 0x37d383a2 */
-const A11: Float32 = 4.486_409_7e-5; /* 0x383c2c75 */
-const TC: Float32 = 1.461_632_1; /* 0x3fbb16c3 */
-const TF: Float32 = -1.214_862_84e-1; /* 0xbdf8cdcd */
+const PI: Float32 = 3.1415927410e+00; /* 0x40490fdb */
+const A0: Float32 = 7.7215664089e-02; /* 0x3d9e233f */
+const A1: Float32 = 3.2246702909e-01; /* 0x3ea51a66 */
+const A2: Float32 = 6.7352302372e-02; /* 0x3d89f001 */
+const A3: Float32 = 2.0580807701e-02; /* 0x3ca89915 */
+const A4: Float32 = 7.3855509982e-03; /* 0x3bf2027e */
+const A5: Float32 = 2.8905137442e-03; /* 0x3b3d6ec6 */
+const A6: Float32 = 1.1927076848e-03; /* 0x3a9c54a1 */
+const A7: Float32 = 5.1006977446e-04; /* 0x3a05b634 */
+const A8: Float32 = 2.2086278477e-04; /* 0x39679767 */
+const A9: Float32 = 1.0801156895e-04; /* 0x38e28445 */
+const A10: Float32 = 2.5214456400e-05; /* 0x37d383a2 */
+const A11: Float32 = 4.4864096708e-05; /* 0x383c2c75 */
+const TC: Float32 = 1.4616321325e+00; /* 0x3fbb16c3 */
+const TF: Float32 = -1.2148628384e-01; /* 0xbdf8cdcd */
 /* TT = -(tail of TF) */
-const TT: Float32 = 6.697_100_7e-9; /* 0x31e61c52 */
-const T0: Float32 = 4.838_361e-1; /* 0x3ef7b95e */
-const T1: Float32 = -1.475_877_2e-1; /* 0xbe17213c */
-const T2: Float32 = 6.462_494e-2; /* 0x3d845a15 */
-const T3: Float32 = -3.278_854e-2; /* 0xbd064d47 */
-const T4: Float32 = 1.797_067_6e-2; /* 0x3c93373d */
-const T5: Float32 = -1.031_422_4e-2; /* 0xbc28fcfe */
-const T6: Float32 = 6.100_538_7e-3; /* 0x3bc7e707 */
-const T7: Float32 = -3.684_520_3e-3; /* 0xbb7177fe */
-const T8: Float32 = 2.259_647_7e-3; /* 0x3b141699 */
-const T9: Float32 = -1.403_464_7e-3; /* 0xbab7f476 */
-const T10: Float32 = 8.810_818_5e-4; /* 0x3a66f867 */
-const T11: Float32 = -5.385_953e-4; /* 0xba0d3085 */
-const T12: Float32 = 3.156_320_6e-4; /* 0x39a57b6b */
-const T13: Float32 = -3.127_541_6e-4; /* 0xb9a3f927 */
-const T14: Float32 = 3.355_291_8e-4; /* 0x39afe9f7 */
-const U0: Float32 = -7.721_566_4e-2; /* 0xbd9e233f */
-const U1: Float32 = 6.328_270_4e-1; /* 0x3f2200f4 */
-const U2: Float32 = 1.454_922_6; /* 0x3fba3ae7 */
-const U3: Float32 = 9.777_175e-1; /* 0x3f7a4bb2 */
-const U4: Float32 = 2.289_637_3e-1; /* 0x3e6a7578 */
-const U5: Float32 = 1.338_109_2e-2; /* 0x3c5b3c5e */
-const V1: Float32 = 2.455_978; /* 0x401d2ebe */
-const V2: Float32 = 2.128_489_7; /* 0x4008392d */
-const V3: Float32 = 7.692_851_4e-1; /* 0x3f44efdf */
-const V4: Float32 = 1.042_226_5e-1; /* 0x3dd572af */
-const V5: Float32 = 3.217_092_5e-3; /* 0x3b52d5db */
-const S0: Float32 = -7.721_566_4e-2; /* 0xbd9e233f */
-const S1: Float32 = 2.149_824_2e-1; /* 0x3e5c245a */
-const S2: Float32 = 3.257_787_8e-1; /* 0x3ea6cc7a */
-const S3: Float32 = 1.463_504_7e-1; /* 0x3e15dce6 */
-const S4: Float32 = 2.664_227e-2; /* 0x3cda40e4 */
-const S5: Float32 = 1.840_284_6e-3; /* 0x3af135b4 */
-const S6: Float32 = 3.194_753_3e-5; /* 0x3805ff67 */
-const R1: Float32 = 1.392_005_3; /* 0x3fb22d3b */
-const R2: Float32 = 7.219_356e-1; /* 0x3f38d0c5 */
-const R3: Float32 = 1.719_338_6e-1; /* 0x3e300f6e */
-const R4: Float32 = 1.864_592e-2; /* 0x3c98bf54 */
-const R5: Float32 = 7.779_425e-4; /* 0x3a4beed6 */
-const R6: Float32 = 7.326_684e-6; /* 0x36f5d7bd */
-const W0: Float32 = 4.189_385_5e-1; /* 0x3ed67f1d */
-const W1: Float32 = 8.333_333_6e-2; /* 0x3daaaaab */
-const W2: Float32 = -2.777_777_8e-3; /* 0xbb360b61 */
-const W3: Float32 = 7.936_506e-4; /* 0x3a500cfd */
-const W4: Float32 = -5.951_875_4e-4; /* 0xba1c065c */
-const W5: Float32 = 8.363_399e-4; /* 0x3a5b3dd2 */
-const W6: Float32 = -1.630_929_3e-3; /* 0xbad5c4e8 */
+const TT: Float32 = 6.6971006518e-09; /* 0x31e61c52 */
+const T0: Float32 = 4.8383611441e-01; /* 0x3ef7b95e */
+const T1: Float32 = -1.4758771658e-01; /* 0xbe17213c */
+const T2: Float32 = 6.4624942839e-02; /* 0x3d845a15 */
+const T3: Float32 = -3.2788541168e-02; /* 0xbd064d47 */
+const T4: Float32 = 1.7970675603e-02; /* 0x3c93373d */
+const T5: Float32 = -1.0314224288e-02; /* 0xbc28fcfe */
+const T6: Float32 = 6.1005386524e-03; /* 0x3bc7e707 */
+const T7: Float32 = -3.6845202558e-03; /* 0xbb7177fe */
+const T8: Float32 = 2.2596477065e-03; /* 0x3b141699 */
+const T9: Float32 = -1.4034647029e-03; /* 0xbab7f476 */
+const T10: Float32 = 8.8108185446e-04; /* 0x3a66f867 */
+const T11: Float32 = -5.3859531181e-04; /* 0xba0d3085 */
+const T12: Float32 = 3.1563205994e-04; /* 0x39a57b6b */
+const T13: Float32 = -3.1275415677e-04; /* 0xb9a3f927 */
+const T14: Float32 = 3.3552918467e-04; /* 0x39afe9f7 */
+const U0: Float32 = -7.7215664089e-02; /* 0xbd9e233f */
+const U1: Float32 = 6.3282704353e-01; /* 0x3f2200f4 */
+const U2: Float32 = 1.4549225569e+00; /* 0x3fba3ae7 */
+const U3: Float32 = 9.7771751881e-01; /* 0x3f7a4bb2 */
+const U4: Float32 = 2.2896373272e-01; /* 0x3e6a7578 */
+const U5: Float32 = 1.3381091878e-02; /* 0x3c5b3c5e */
+const V1: Float32 = 2.4559779167e+00; /* 0x401d2ebe */
+const V2: Float32 = 2.1284897327e+00; /* 0x4008392d */
+const V3: Float32 = 7.6928514242e-01; /* 0x3f44efdf */
+const V4: Float32 = 1.0422264785e-01; /* 0x3dd572af */
+const V5: Float32 = 3.2170924824e-03; /* 0x3b52d5db */
+const S0: Float32 = -7.7215664089e-02; /* 0xbd9e233f */
+const S1: Float32 = 2.1498242021e-01; /* 0x3e5c245a */
+const S2: Float32 = 3.2577878237e-01; /* 0x3ea6cc7a */
+const S3: Float32 = 1.4635047317e-01; /* 0x3e15dce6 */
+const S4: Float32 = 2.6642270386e-02; /* 0x3cda40e4 */
+const S5: Float32 = 1.8402845599e-03; /* 0x3af135b4 */
+const S6: Float32 = 3.1947532989e-05; /* 0x3805ff67 */
+const R1: Float32 = 1.3920053244e+00; /* 0x3fb22d3b */
+const R2: Float32 = 7.2193557024e-01; /* 0x3f38d0c5 */
+const R3: Float32 = 1.7193385959e-01; /* 0x3e300f6e */
+const R4: Float32 = 1.8645919859e-02; /* 0x3c98bf54 */
+const R5: Float32 = 7.7794247773e-04; /* 0x3a4beed6 */
+const R6: Float32 = 7.3266842264e-06; /* 0x36f5d7bd */
+const W0: Float32 = 4.1893854737e-01; /* 0x3ed67f1d */
+const W1: Float32 = 8.3333335817e-02; /* 0x3daaaaab */
+const W2: Float32 = -2.7777778450e-03; /* 0xbb360b61 */
+const W3: Float32 = 7.9365057172e-04; /* 0x3a500cfd */
+const W4: Float32 = -5.9518753551e-04; /* 0xba1c065c */
+const W5: Float32 = 8.3633989561e-04; /* 0x3a5b3dd2 */
+const W6: Float32 = -1.6309292987e-03; /* 0xbad5c4e8 */
 
 /* sin(PI*x) assuming x > 2^-100, if sin(PI*x)==0 the sign is arbitrary */
 fn sin_pi(mut x: Float32) -> Float32 {
@@ -92,7 +92,7 @@ fn sin_pi(mut x: Float32) -> Float32 {
     n = (x * 4.0) as isize;
     n = div!(n + 1, 2);
     y = (x as Float64) - (n as Float64) * 0.5;
-    y *= 3.141_592_653_589_793;
+    y *= 3.14159265358979323846;
     match n {
         1 => k_cosf(y),
         2 => k_sinf(-y),
@@ -119,15 +119,15 @@ pub fn lgammaf_r(mut x: Float32) -> (Float32, i32) {
     let q: Float32;
     let mut r: Float32;
     let w: Float32;
-    
+    let ix: u32;
     let i: i32;
-    
+    let sign: bool;
     let mut signgam: i32;
 
     /* purge off +-inf, NaN, +-0, tiny and negative arguments */
     signgam = 1;
-    let sign: bool = (u >> 31) != 0;
-    let ix: u32 = u & 0x7fffffff;
+    sign = (u >> 31) != 0;
+    ix = u & 0x7fffffff;
     if ix >= 0x7f800000 {
         return (x * x, signgam);
     }

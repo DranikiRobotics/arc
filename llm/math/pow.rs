@@ -63,34 +63,34 @@ use crate::Float64;
 use super::{fabs, get_high_word, scalbn, sqrt, with_set_high_word, with_set_low_word};
 
 const BP: [Float64; 2] = [1.0, 1.5];
-const DP_H: [Float64; 2] = [0.0, 5.849_624_872_207_642e-1]; /* 0x3fe2b803_40000000 */
-const DP_L: [Float64; 2] = [0.0, 1.350_039_202_129_749e-8]; /* 0x3E4CFDEB, 0x43CFD006 */
+const DP_H: [Float64; 2] = [0.0, 5.84962487220764160156e-01]; /* 0x3fe2b803_40000000 */
+const DP_L: [Float64; 2] = [0.0, 1.35003920212974897128e-08]; /* 0x3E4CFDEB, 0x43CFD006 */
 const TWO53: Float64 = 9007199254740992.0; /* 0x43400000_00000000 */
 const HUGE: Float64 = 1.0e300;
 const TINY: Float64 = 1.0e-300;
 
 // poly coefs for (3/2)*(log(x)-2s-2/3*s**3:
-const L1: Float64 = 5.999_999_999_999_946e-1; /* 0x3fe33333_33333303 */
-const L2: Float64 = 4.285_714_285_785_502e-1; /* 0x3fdb6db6_db6fabff */
-const L3: Float64 = 3.333_333_298_183_774_3e-1; /* 0x3fd55555_518f264d */
-const L4: Float64 = 2.727_281_238_085_34e-1; /* 0x3fd17460_a91d4101 */
-const L5: Float64 = 2.306_607_457_755_617_5e-1; /* 0x3fcd864a_93c9db65 */
-const L6: Float64 = 2.069_750_178_003_384_2e-1; /* 0x3fca7e28_4a454eef */
-const P1: Float64 = 1.666_666_666_666_660_2e-1; /* 0x3fc55555_5555553e */
-const P2: Float64 = -2.777_777_777_701_559_3e-3; /* 0xbf66c16c_16bebd93 */
-const P3: Float64 = 6.613_756_321_437_934e-5; /* 0x3f11566a_af25de2c */
-const P4: Float64 = -1.653_390_220_546_525_2e-6; /* 0xbebbbd41_c5d26bf1 */
-const P5: Float64 = 4.138_136_797_057_238_5e-8; /* 0x3e663769_72bea4d0 */
-const LG2: Float64 = 6.931_471_805_599_453e-1; /* 0x3fe62e42_fefa39ef */
-const LG2_H: Float64 = 6.931_471_824_645_996e-1; /* 0x3fe62e43_00000000 */
-const LG2_L: Float64 = -1.904_654_299_957_768e-9; /* 0xbe205c61_0ca86c39 */
-const OVT: Float64 = 8.008_566_259_537_294e-17; /* -(1024-log2(ovfl+.5ulp)) */
-const CP: Float64 = 9.617_966_939_259_756e-1; /* 0x3feec709_dc3a03fd =2/(3ln2) */
-const CP_H: Float64 = 9.617_967_009_544_373e-1; /* 0x3feec709_e0000000 =(float)cp */
-const CP_L: Float64 = -7.028_461_650_952_758e-9; /* 0xbe3e2fe0_145b01f5 =tail of cp_h*/
-const IVLN2: Float64 = 1.442_695_040_888_963_4; /* 0x3ff71547_652b82fe =1/ln2 */
-const IVLN2_H: Float64 = 1.442_695_021_629_333_5; /* 0x3ff71547_60000000 =24b 1/ln2*/
-const IVLN2_L: Float64 = 1.925_962_991_126_617_5e-8; /* 0x3e54ae0b_f85ddf44 =1/ln2 tail*/
+const L1: Float64 = 5.99999999999994648725e-01; /* 0x3fe33333_33333303 */
+const L2: Float64 = 4.28571428578550184252e-01; /* 0x3fdb6db6_db6fabff */
+const L3: Float64 = 3.33333329818377432918e-01; /* 0x3fd55555_518f264d */
+const L4: Float64 = 2.72728123808534006489e-01; /* 0x3fd17460_a91d4101 */
+const L5: Float64 = 2.30660745775561754067e-01; /* 0x3fcd864a_93c9db65 */
+const L6: Float64 = 2.06975017800338417784e-01; /* 0x3fca7e28_4a454eef */
+const P1: Float64 = 1.66666666666666019037e-01; /* 0x3fc55555_5555553e */
+const P2: Float64 = -2.77777777770155933842e-03; /* 0xbf66c16c_16bebd93 */
+const P3: Float64 = 6.61375632143793436117e-05; /* 0x3f11566a_af25de2c */
+const P4: Float64 = -1.65339022054652515390e-06; /* 0xbebbbd41_c5d26bf1 */
+const P5: Float64 = 4.13813679705723846039e-08; /* 0x3e663769_72bea4d0 */
+const LG2: Float64 = 6.93147180559945286227e-01; /* 0x3fe62e42_fefa39ef */
+const LG2_H: Float64 = 6.93147182464599609375e-01; /* 0x3fe62e43_00000000 */
+const LG2_L: Float64 = -1.90465429995776804525e-09; /* 0xbe205c61_0ca86c39 */
+const OVT: Float64 = 8.0085662595372944372e-017; /* -(1024-log2(ovfl+.5ulp)) */
+const CP: Float64 = 9.61796693925975554329e-01; /* 0x3feec709_dc3a03fd =2/(3ln2) */
+const CP_H: Float64 = 9.61796700954437255859e-01; /* 0x3feec709_e0000000 =(float)cp */
+const CP_L: Float64 = -7.02846165095275826516e-09; /* 0xbe3e2fe0_145b01f5 =tail of cp_h*/
+const IVLN2: Float64 = 1.44269504088896338700e+00; /* 0x3ff71547_652b82fe =1/ln2 */
+const IVLN2_H: Float64 = 1.44269502162933349609e+00; /* 0x3ff71547_60000000 =24b 1/ln2*/
+const IVLN2_L: Float64 = 1.92596299112661746887e-08; /* 0x3e54ae0b_f85ddf44 =1/ln2 tail*/
 
 /// Returns `x` raised to the power `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
@@ -101,8 +101,8 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
     let (hx, lx): (i32, u32) = ((x.to_bits() >> 32) as i32, x.to_bits() as u32);
     let (hy, ly): (i32, u32) = ((y.to_bits() >> 32) as i32, y.to_bits() as u32);
 
-    let mut ix: i32 = hx & 0x7fffffff;
-    let iy: i32 = hy & 0x7fffffff;
+    let mut ix: i32 = (hx & 0x7fffffff) as i32;
+    let iy: i32 = (hy & 0x7fffffff) as i32;
 
     /* x**0 = 1, even if x is NaN */
     if ((iy as u32) | ly) == 0 {
@@ -267,7 +267,7 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
         /* now |1-x| is TINY <= 2**-20, suffice to compute
         log(x) by x-x^2/2+x^3/3-x^4/4 */
         let t: Float64 = ax - 1.0; /* t has 20 trailing zeros */
-        let w: Float64 = (t * t) * (0.5 - t * (0.333_333_333_333_333_3 - t * 0.25));
+        let w: Float64 = (t * t) * (0.5 - t * (0.3333333333333333333333 - t * 0.25));
         let u: Float64 = IVLN2_H * t; /* ivln2_h has 21 sig. bits */
         let v: Float64 = t * IVLN2_L - w * IVLN2;
         t1 = with_set_low_word(u + v, 0);
@@ -374,7 +374,7 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
     }
 
     /* compute 2**(p_h+p_l) */
-    let i: i32 = j & 0x7fffffff_i32;
+    let i: i32 = j & (0x7fffffff as i32);
     k = (i >> 20) - 0x3ff;
     let mut n: i32 = 0;
 
@@ -613,7 +613,7 @@ mod tests {
 
         // Factoring -1 out:
         // (negative anything ^ integer should be (-1 ^ integer) * (positive anything ^ integer))
-        [POS_ZERO, NEG_ZERO, POS_ONE, NEG_ONE, POS_EVENS, NEG_EVENS]
+        (&[POS_ZERO, NEG_ZERO, POS_ONE, NEG_ONE, POS_EVENS, NEG_EVENS])
             .iter()
             .for_each(|int_set| {
                 int_set.iter().for_each(|int| {
@@ -625,7 +625,7 @@ mod tests {
 
         // Negative base (imaginary results):
         // (-anything except 0 and Infinity ^ non-integer should be NAN)
-        NEG[1..(NEG.len() - 1)].iter().for_each(|set| {
+        (&NEG[1..(NEG.len() - 1)]).iter().for_each(|set| {
             set.iter().for_each(|val| {
                 test_sets(&ALL[3..7], &|v: Float64| pow(*val, v), &|_| NAN);
             })

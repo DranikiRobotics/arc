@@ -14,16 +14,16 @@ pub fn tanh(mut x: Radian64) -> Float64 {
     let mut uf: Float64 = x;
     let mut ui: u64 = Float64::to_bits(uf);
 
-    
-    
+    let w: u32;
+    let sign: bool;
     let mut t: Float64;
 
     /* x = |x| */
-    let sign: bool = ui >> 63 != 0;
+    sign = ui >> 63 != 0;
     ui &= !1 / 2;
     uf = Float64::from_bits(ui);
     x = uf;
-    let w: u32 = (ui >> 32) as u32;
+    w = (ui >> 32) as u32;
 
     if w > 0x3fe193ea {
         /* |x| > log(3)/2 ~= 0.5493 or nan */

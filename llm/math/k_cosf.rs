@@ -17,10 +17,10 @@
 use crate::{Float64, Float32};
 
 /* |cos(x) - c(x)| < 2**-34.1 (~[-5.37e-11, 5.295e-11]). */
-const C0: Float64 = -0.499_999_997_251_031; /* -0x1ffffffd0c5e81.0p-54 */
-const C1: Float64 = 0.041_666_623_323_739_06; /*  0x155553e1053a42.0p-57 */
-const C2: Float64 = -0.001_388_676_377_460_993; /* -0x16c087e80f1e27.0p-62 */
-const C3: Float64 = 0.000_024_390_448_796_277_41; /*  0x199342e0ee5069.0p-68 */
+const C0: Float64 = -0.499999997251031003120; /* -0x1ffffffd0c5e81.0p-54 */
+const C1: Float64 = 0.0416666233237390631894; /*  0x155553e1053a42.0p-57 */
+const C2: Float64 = -0.00138867637746099294692; /* -0x16c087e80f1e27.0p-62 */
+const C3: Float64 = 0.0000243904487962774090654; /*  0x199342e0ee5069.0p-68 */
 
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub(crate) fn k_cosf(x: Float64) -> Float32 {

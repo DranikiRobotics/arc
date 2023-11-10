@@ -4,7 +4,7 @@ use crate::Float64;
 pub fn modf(x: Float64) -> (Float64, Float64) {
     let rv2: Float64;
     let mut u = x.to_bits();
-    
+    let mask: u64;
     let e = ((u >> 52 & 0x7ff) as i32) - 0x3ff;
 
     /* no fractional part */
@@ -25,7 +25,7 @@ pub fn modf(x: Float64) -> (Float64, Float64) {
         return (x, rv2);
     }
 
-    let mask: u64 = ((!0) >> 12) >> e;
+    mask = ((!0) >> 12) >> e;
     if (u & mask) == 0 {
         rv2 = x;
         u &= 1 << 63;

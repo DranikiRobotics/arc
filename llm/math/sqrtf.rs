@@ -158,7 +158,7 @@ mod tests {
     #[test]
     fn conformance_tests() {
         let values = [
-            3.141_592_7_f32,
+            3.14159265359f32,
             10000.0f32,
             Float32::from_bits(0x0000000f),
             INFINITY,

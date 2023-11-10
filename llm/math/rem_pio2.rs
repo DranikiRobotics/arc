@@ -17,7 +17,7 @@ use super::rem_pio2_large;
 
 // #if FLT_EVAL_METHOD==0 || FLT_EVAL_METHOD==1
 // #define EPS DBL_EPSILON
-const EPS: Float64 = 2.220_446_049_250_313e-16;
+const EPS: Float64 = 2.2204460492503131e-16;
 // #elif FLT_EVAL_METHOD==2
 // #define EPS LDBL_EPSILON
 // #endif
@@ -26,19 +26,19 @@ const EPS: Float64 = 2.220_446_049_250_313e-16;
 
 const TO_INT: Float64 = 1.5 / EPS;
 /// 53 bits of 2/pi
-const INV_PIO2: Float64 = 6.366_197_723_675_814e-1; /* 0x3FE45F30, 0x6DC9C883 */
+const INV_PIO2: Float64 = 6.36619772367581382433e-01; /* 0x3FE45F30, 0x6DC9C883 */
 /// first 33 bits of pi/2
-const PIO2_1: Float64 = 1.570_796_326_734_125_6; /* 0x3FF921FB, 0x54400000 */
+const PIO2_1: Float64 = 1.57079632673412561417e+00; /* 0x3FF921FB, 0x54400000 */
 /// pi/2 - PIO2_1
-const PIO2_1T: Float64 = 6.077_100_506_506_192e-11; /* 0x3DD0B461, 0x1A626331 */
+const PIO2_1T: Float64 = 6.07710050650619224932e-11; /* 0x3DD0B461, 0x1A626331 */
 /// second 33 bits of pi/2
-const PIO2_2: Float64 = 6.077_100_506_303_966e-11; /* 0x3DD0B461, 0x1A600000 */
+const PIO2_2: Float64 = 6.07710050630396597660e-11; /* 0x3DD0B461, 0x1A600000 */
 /// pi/2 - (PIO2_1+PIO2_2)
-const PIO2_2T: Float64 = 2.022_266_248_795_950_6e-21; /* 0x3BA3198A, 0x2E037073 */
+const PIO2_2T: Float64 = 2.02226624879595063154e-21; /* 0x3BA3198A, 0x2E037073 */
 /// third 33 bits of pi/2
-const PIO2_3: Float64 = 2.022_266_248_711_166_5e-21; /* 0x3BA3198A, 0x2E000000 */
+const PIO2_3: Float64 = 2.02226624871116645580e-21; /* 0x3BA3198A, 0x2E000000 */
 /// pi/2 - (PIO2_1+PIO2_2+PIO2_3)
-const PIO2_3T: Float64 = 8.478_427_660_368_9e-32; /* 0x397B839A, 0x252049C1 */
+const PIO2_3T: Float64 = 8.47842766036889956997e-32; /* 0x397B839A, 0x252049C1 */
 
 /// return the remainder of x rem pi/2 in y[0]+y[1]
 /// use rem_pio2_large() for large x

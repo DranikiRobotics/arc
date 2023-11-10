@@ -66,7 +66,6 @@ const TPI: Float64 = 6.36619772367581382433e-01; /* 0x3FE45F30, 0x6DC9C883 */
 
 /* common method when |x|>=2 */
 fn common(ix: u32, x: Float64, y0: bool) -> Float64 {
-    
     let mut c: Float64;
     let mut ss: Float64;
     let mut cc: Float64;
@@ -124,7 +123,7 @@ pub fn j0(mut x: Float64) -> Float64 {
     let z: Float64;
     let r: Float64;
     let s: Float64;
-    let mut ix;
+    let mut ix: u32;
 
     ix = get_high_word(x);
     ix &= 0x7fffffff;
@@ -213,7 +212,6 @@ pub fn y0(x: Float64) -> Float64 {
     return U00 + TPI * log(x);
 }
 
-consts!{
 /* The asymptotic expansions of pzero is
  *      1 - 9/128 s^2 + 11025/98304 s^4 - ...,  where s = 1/x.
  * For x >= 2, We approximate pzero by
@@ -223,6 +221,7 @@ consts!{
  * and
  *      | pzero(x)-1-R/S | <= 2  ** ( -60.26)
 */
+consts!{
 const PR8: [Float64; 6] = [
     /* for x in [inf, 8]=1/[0,0.125] */
     0.00000000000000000000e+00,  /* 0x00000000, 0x00000000 */
@@ -320,7 +319,6 @@ fn pzero(x: Float64) -> Float64 {
     return 1.0 + r / s;
 }
 
-consts!{
 /* For x >= 8, the asymptotic expansions of qzero is
  *      -1/8 s + 75/1024 s^3 - ..., where s = 1/x.
  * We approximate pzero by
@@ -330,6 +328,7 @@ consts!{
  * and
  *      | qzero(x)/s +1.25-R/S | <= 2  ** ( -61.22)
 */
+consts!{
 const QR8: [Float64; 6] = [
     /* for x in [inf, 8]=1/[0,0.125] */
     0.00000000000000000000e+00, /* 0x00000000, 0x00000000 */

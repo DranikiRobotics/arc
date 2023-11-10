@@ -17,13 +17,12 @@ use crate::Float32;
 
 use super::{cosf, fabsf, logf, sinf, sqrtf};
 
-consts!{
 const INVSQRTPI: Float32 = 5.6418961287e-01; /* 0x3f106ebb */
 const TPI: Float32 = 6.3661974669e-01; /* 0x3f22f983 */
-}
 
 fn common(ix: u32, x: Float32, y0: bool) -> Float32 {
     let z: Float32;
+    let s: Float32;
     let mut c: Float32;
     let mut ss: Float32;
     let mut cc: Float32;
@@ -31,7 +30,7 @@ fn common(ix: u32, x: Float32, y0: bool) -> Float32 {
      * j0(x) = 1/sqrt(pi) * (P(0,x)*cc - Q(0,x)*ss) / sqrt(x)
      * y0(x) = 1/sqrt(pi) * (P(0,x)*ss + Q(0,x)*cc) / sqrt(x)
      */
-    let s = sinf(x);
+    s = sinf(x);
     c = cosf(x);
     if y0 {
         c = -c;
@@ -56,7 +55,6 @@ fn common(ix: u32, x: Float32, y0: bool) -> Float32 {
 }
 
 /* R0/S0 on [0, 2.00] */
-consts!{
 const R02: Float32 = 1.5625000000e-02; /* 0x3c800000 */
 const R03: Float32 = -1.8997929874e-04; /* 0xb947352e */
 const R04: Float32 = 1.8295404516e-06; /* 0x35f58e88 */
@@ -65,15 +63,14 @@ const S01: Float32 = 1.5619102865e-02; /* 0x3c7fe744 */
 const S02: Float32 = 1.1692678527e-04; /* 0x38f53697 */
 const S03: Float32 = 5.1354652442e-07; /* 0x3509daa6 */
 const S04: Float32 = 1.1661400734e-09; /* 0x30a045e8 */
-}
 
 /// Bessel function of the first kind of order zero
 /// 
 /// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/j0.html)
 pub fn j0f(mut x: Float32) -> Float32 {
-    let z;
-    let r;
-    let s;
+    let z: Float32;
+    let r: Float32;
+    let s: Float32;
     let mut ix: u32;
 
     ix = x.to_bits();
@@ -103,7 +100,6 @@ pub fn j0f(mut x: Float32) -> Float32 {
     return 1.0 - x;
 }
 
-consts!{
 const U00: Float32 = -7.3804296553e-02; /* 0xbd9726b5 */
 const U01: Float32 = 1.7666645348e-01; /* 0x3e34e80d */
 const U02: Float32 = -1.3818567619e-02; /* 0xbc626746 */
@@ -115,15 +111,11 @@ const V01: Float32 = 1.2730483897e-02; /* 0x3c509385 */
 const V02: Float32 = 7.6006865129e-05; /* 0x389f65e0 */
 const V03: Float32 = 2.5915085189e-07; /* 0x348b216c */
 const V04: Float32 = 4.4111031494e-10; /* 0x2ff280c2 */
-}
 
 /// Bessel function of the second kind of order zero
 /// 
 /// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/y0.html)
 pub fn y0f(x: Float32) -> Float32 {
-    let z;
-    let u;
-    let v;
     let ix: u32 = x.to_bits();
     if (ix & 0x7fffffff) == 0 {
         return -1.0 / 0.0;
@@ -142,15 +134,14 @@ pub fn y0f(x: Float32) -> Float32 {
     if ix >= 0x39000000 {
         /* x >= 2**-13 */
         /* large ulp error at x ~= 0.89 */
-        z = x * x;
-        u = U00 + z * (U01 + z * (U02 + z * (U03 + z * (U04 + z * (U05 + z * U06)))));
-        v = 1.0 + z * (V01 + z * (V02 + z * (V03 + z * V04)));
+        let z = x * x;
+        let u = U00 + z * (U01 + z * (U02 + z * (U03 + z * (U04 + z * (U05 + z * U06)))));
+        let v = 1.0 + z * (V01 + z * (V02 + z * (V03 + z * V04)));
         return u / v + TPI * (j0f(x) * logf(x));
     }
     return U00 + TPI * logf(x);
 }
 
-consts!{
 /* The asymptotic expansions of pzero is
  *      1 - 9/128 s^2 + 11025/98304 s^4 - ...,  where s = 1/x.
  * For x >= 2, We approximate pzero by
@@ -160,6 +151,7 @@ consts!{
  * and
  *      | pzero(x)-1-R/S | <= 2  ** ( -60.26)
 */
+consts!{
 const PR8: [Float32; 6] = [
     /* for x in [inf, 8]=1/[0,0.125] */
     0.0000000000e+00,  /* 0x00000000 */
@@ -231,10 +223,7 @@ const PS2: [Float32; 5] = [
 fn pzerof(x: Float32) -> Float32 {
     let p: &[Float32; 6];
     let q: &[Float32; 5];
-    let mut ix: u32;
-
-    ix = x.to_bits();
-    ix &= 0x7fffffff;
+    let ix = x.to_bits() & 0x7fffffff;
     if ix >= 0x41000000 {
         p = &PR8;
         q = &PS8;
@@ -256,7 +245,6 @@ fn pzerof(x: Float32) -> Float32 {
     return 1.0 + r / s;
 }
 
-consts!{
 /* For x >= 8, the asymptotic expansions of qzero is
  *      -1/8 s + 75/1024 s^3 - ..., where s = 1/x.
  * We approximate pzero by
@@ -265,7 +253,8 @@ consts!{
  *        S = 1 + qS0*s^2 + ... + qS5*s^12
  * and
  *      | qzero(x)/s +1.25-R/S | <= 2  ** ( -61.22)
- */
+*/
+consts!{
 const QR8: [Float32; 6] = [
     /* for x in [inf, 8]=1/[0,0.125] */
     0.0000000000e+00, /* 0x00000000 */
@@ -342,10 +331,7 @@ const QS2: [Float32; 6] = [
 fn qzerof(x: Float32) -> Float32 {
     let p: &[Float32; 6];
     let q: &[Float32; 6];
-    let mut ix: u32;
-
-    ix = x.to_bits();
-    ix &= 0x7fffffff;
+    let ix = x.to_bits() & 0x7fffffff;
     if ix >= 0x41000000 {
         p = &QR8;
         q = &QS8;

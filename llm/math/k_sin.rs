@@ -11,12 +11,12 @@
 
 use crate::Float64;
 
-const S1: Float64 = -1.666_666_666_666_663_2e-1; /* 0xBFC55555, 0x55555549 */
-const S2: Float64 = 8.333_333_333_322_49e-3; /* 0x3F811111, 0x1110F8A6 */
-const S3: Float64 = -1.984_126_982_985_795e-4; /* 0xBF2A01A0, 0x19C161D5 */
-const S4: Float64 = 2.755_731_370_707_006_8e-6; /* 0x3EC71DE3, 0x57B1FE7D */
-const S5: Float64 = -2.505_076_025_340_686_3e-8; /* 0xBE5AE5E6, 0x8A2B9CEB */
-const S6: Float64 = 1.589_690_995_211_55e-10; /* 0x3DE5D93A, 0x5ACFD57C */
+const S1: Float64 = -1.66666666666666324348e-01; /* 0xBFC55555, 0x55555549 */
+const S2: Float64 = 8.33333333332248946124e-03; /* 0x3F811111, 0x1110F8A6 */
+const S3: Float64 = -1.98412698298579493134e-04; /* 0xBF2A01A0, 0x19C161D5 */
+const S4: Float64 = 2.75573137070700676789e-06; /* 0x3EC71DE3, 0x57B1FE7D */
+const S5: Float64 = -2.50507602534068634195e-08; /* 0xBE5AE5E6, 0x8A2B9CEB */
+const S6: Float64 = 1.58969099521155010221e-10; /* 0x3DE5D93A, 0x5ACFD57C */
 
 // kernel sin function on ~[-pi/4, pi/4] (except on -0), pi/4 ~ 0.7854
 // Input x is assumed to be bounded by ~pi/4 in magnitude.

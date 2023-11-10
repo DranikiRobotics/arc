@@ -15,13 +15,13 @@
 
 use crate::Float32;
 
-const LN2_HI: Float32 = 6.931_381e-1; /* 0x3f317180 */
-const LN2_LO: Float32 = 9.058_001e-6; /* 0x3717f7d1 */
+const LN2_HI: Float32 = 6.9313812256e-01; /* 0x3f317180 */
+const LN2_LO: Float32 = 9.0580006145e-06; /* 0x3717f7d1 */
 /* |(log(1+s)-log(1-s))/s - Lg(s)| < 2**-34.24 (~[-4.95e-11, 4.97e-11]). */
-const LG1: Float32 = 0.666_666_6; /*  0xaaaaaa.0p-24*/
-const LG2: Float32 = 0.400_009_72; /*  0xccce13.0p-25 */
-const LG3: Float32 = 0.284_987_87; /*  0x91e9ee.0p-25 */
-const LG4: Float32 = 0.242_790_79; /*  0xf89e26.0p-26 */
+const LG1: Float32 = 0.66666662693; /*  0xaaaaaa.0p-24*/
+const LG2: Float32 = 0.40000972152; /*  0xccce13.0p-25 */
+const LG3: Float32 = 0.28498786688; /*  0x91e9ee.0p-25 */
+const LG4: Float32 = 0.24279078841; /*  0xf89e26.0p-26 */
 
 /// Returns the logarithm of `x`
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]

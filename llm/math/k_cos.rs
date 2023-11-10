@@ -11,12 +11,12 @@
 
 use crate::Float64;
 
-const C1: Float64 = 4.166_666_666_666_66e-2; /* 0x3FA55555, 0x5555554C */
-const C2: Float64 = -1.388_888_888_887_411e-3; /* 0xBF56C16C, 0x16C15177 */
-const C3: Float64 = 2.480_158_728_947_673e-5; /* 0x3EFA01A0, 0x19CB1590 */
-const C4: Float64 = -2.755_731_435_139_066_3e-7; /* 0xBE927E4F, 0x809C52AD */
-const C5: Float64 = 2.087_572_321_298_175e-9; /* 0x3E21EE9E, 0xBDB4B1C4 */
-const C6: Float64 = -1.135_964_755_778_819_5e-11; /* 0xBDA8FAE9, 0xBE8838D4 */
+const C1: Float64 = 4.16666666666666019037e-02; /* 0x3FA55555, 0x5555554C */
+const C2: Float64 = -1.38888888888741095749e-03; /* 0xBF56C16C, 0x16C15177 */
+const C3: Float64 = 2.48015872894767294178e-05; /* 0x3EFA01A0, 0x19CB1590 */
+const C4: Float64 = -2.75573143513906633035e-07; /* 0xBE927E4F, 0x809C52AD */
+const C5: Float64 = 2.08757232129817482790e-09; /* 0x3E21EE9E, 0xBDB4B1C4 */
+const C6: Float64 = -1.13596475577881948265e-11; /* 0xBDA8FAE9, 0xBE8838D4 */
 
 // kernel cos function on [-pi/4, pi/4], pi/4 ~ 0.785398164
 // Input x is assumed to be bounded by ~pi/4 in magnitude.

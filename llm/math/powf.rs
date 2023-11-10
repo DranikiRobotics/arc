@@ -18,32 +18,32 @@ use crate::Float32;
 use super::{fabsf, scalbnf, sqrtf};
 
 const BP: [Float32; 2] = [1.0, 1.5];
-const DP_H: [Float32; 2] = [0.0, 5.849_609_4e-1]; /* 0x3f15c000 */
-const DP_L: [Float32; 2] = [0.0, 1.563_220_8e-6]; /* 0x35d1cfdc */
+const DP_H: [Float32; 2] = [0.0, 5.84960938e-01]; /* 0x3f15c000 */
+const DP_L: [Float32; 2] = [0.0, 1.56322085e-06]; /* 0x35d1cfdc */
 const TWO24: Float32 = 16777216.0; /* 0x4b800000 */
 const HUGE: Float32 = 1.0e30;
 const TINY: Float32 = 1.0e-30;
-const L1: Float32 = 6e-1; /* 0x3f19999a */
-const L2: Float32 = 4.285_714_3e-1; /* 0x3edb6db7 */
-const L3: Float32 = 3.333_333_4e-1; /* 0x3eaaaaab */
-const L4: Float32 = 2.727_281_2e-1; /* 0x3e8ba305 */
-const L5: Float32 = 2.306_607_5e-1; /* 0x3e6c3255 */
-const L6: Float32 = 2.069_750_1e-1; /* 0x3e53f142 */
-const P1: Float32 = 1.666_666_7e-1; /* 0x3e2aaaab */
-const P2: Float32 = -2.777_777_8e-3; /* 0xbb360b61 */
-const P3: Float32 = 6.613_756e-5; /* 0x388ab355 */
-const P4: Float32 = -1.653_390_2e-6; /* 0xb5ddea0e */
-const P5: Float32 = 4.138_137e-8; /* 0x3331bb4c */
-const LG2: Float32 = 6.931_472e-1; /* 0x3f317218 */
-const LG2_H: Float32 = 6.931_457_5e-1; /* 0x3f317200 */
-const LG2_L: Float32 = 1.428_606_5e-6; /* 0x35bfbe8c */
-const OVT: Float32 = 4.299_566_6e-8; /* -(128-log2(ovfl+.5ulp)) */
-const CP: Float32 = 9.617_967e-1; /* 0x3f76384f =2/(3ln2) */
-const CP_H: Float32 = 9.619_140_6e-1; /* 0x3f764000 =12b cp */
-const CP_L: Float32 = -1.173_685_74e-4; /* 0xb8f623c6 =tail of cp_h */
-const IVLN2: Float32 = 1.442_695;
-const IVLN2_H: Float32 = 1.442_688;
-const IVLN2_L: Float32 = 7.052_607_5e-6;
+const L1: Float32 = 6.0000002384e-01; /* 0x3f19999a */
+const L2: Float32 = 4.2857143283e-01; /* 0x3edb6db7 */
+const L3: Float32 = 3.3333334327e-01; /* 0x3eaaaaab */
+const L4: Float32 = 2.7272811532e-01; /* 0x3e8ba305 */
+const L5: Float32 = 2.3066075146e-01; /* 0x3e6c3255 */
+const L6: Float32 = 2.0697501302e-01; /* 0x3e53f142 */
+const P1: Float32 = 1.6666667163e-01; /* 0x3e2aaaab */
+const P2: Float32 = -2.7777778450e-03; /* 0xbb360b61 */
+const P3: Float32 = 6.6137559770e-05; /* 0x388ab355 */
+const P4: Float32 = -1.6533901999e-06; /* 0xb5ddea0e */
+const P5: Float32 = 4.1381369442e-08; /* 0x3331bb4c */
+const LG2: Float32 = 6.9314718246e-01; /* 0x3f317218 */
+const LG2_H: Float32 = 6.93145752e-01; /* 0x3f317200 */
+const LG2_L: Float32 = 1.42860654e-06; /* 0x35bfbe8c */
+const OVT: Float32 = 4.2995665694e-08; /* -(128-log2(ovfl+.5ulp)) */
+const CP: Float32 = 9.6179670095e-01; /* 0x3f76384f =2/(3ln2) */
+const CP_H: Float32 = 9.6191406250e-01; /* 0x3f764000 =12b cp */
+const CP_L: Float32 = -1.1736857402e-04; /* 0xb8f623c6 =tail of cp_h */
+const IVLN2: Float32 = 1.4426950216e+00;
+const IVLN2_H: Float32 = 1.4426879883e+00;
+const IVLN2_L: Float32 = 7.0526075433e-06;
 
 /// Returns `x` raised to the power `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
@@ -54,7 +54,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
     let z_l: Float32;
     let mut p_h: Float32;
     let mut p_l: Float32;
-    
+    let y1: Float32;
     let mut t1: Float32;
     let t2: Float32;
     let mut r: Float32;
@@ -64,22 +64,22 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
     let mut u: Float32;
     let mut v: Float32;
     let mut w: Float32;
-    
+    let i: i32;
     let mut j: i32;
     let mut k: i32;
     let mut yisint: i32;
     let mut n: i32;
-    
-    
+    let hx: i32;
+    let hy: i32;
     let mut ix: i32;
-    
+    let iy: i32;
     let mut is: i32;
 
-    let hx: i32 = x.to_bits() as i32;
-    let hy: i32 = y.to_bits() as i32;
+    hx = x.to_bits() as i32;
+    hy = y.to_bits() as i32;
 
     ix = hx & 0x7fffffff;
-    let iy: i32 = hy & 0x7fffffff;
+    iy = hy & 0x7fffffff;
 
     /* x**0 = 1, even if x is NaN */
     if iy == 0 {
@@ -202,7 +202,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         /* now |1-x| is TINY <= 2**-20, suffice to compute
         log(x) by x-x^2/2+x^3/3-x^4/4 */
         t = ax - 1.; /* t has 20 trailing zeros */
-        w = (t * t) * (0.5 - t * (0.333_333_34 - t * 0.25));
+        w = (t * t) * (0.5 - t * (0.333333333333 - t * 0.25));
         u = IVLN2_H * t; /* IVLN2_H has 16 sig. bits */
         v = t * IVLN2_L - w * IVLN2;
         t1 = u + v;
@@ -212,7 +212,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
     } else {
         let mut s2: Float32;
         let mut s_h: Float32;
-        
+        let s_l: Float32;
         let mut t_h: Float32;
         let mut t_l: Float32;
 
@@ -251,7 +251,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         is = (((ix as u32 >> 1) & 0xfffff000) | 0x20000000) as i32;
         t_h = Float32::from_bits(is as u32 + 0x00400000 + ((k as u32) << 21));
         t_l = ax - (t_h - i!(BP, k as usize));
-        let s_l: Float32 = v * ((u - s_h * t_h) - s_h * t_l);
+        s_l = v * ((u - s_h * t_h) - s_h * t_l);
         /* compute log(ax) */
         s2 = s * s;
         r = s2 * s2 * (L1 + s2 * (L2 + s2 * (L3 + s2 * (L4 + s2 * (L5 + s2 * L6)))));
@@ -281,7 +281,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
 
     /* split up y into y1+y2 and compute (y1+y2)*(t1+t2) */
     is = y.to_bits() as i32;
-    let y1: Float32 = Float32::from_bits(is as u32 & 0xfffff000);
+    y1 = Float32::from_bits(is as u32 & 0xfffff000);
     p_l = (y - y1) * t1 + y * t2;
     p_h = y1 * t1;
     z = p_l + p_h;
@@ -308,7 +308,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
     /*
      * compute 2**(p_h+p_l)
      */
-    let i: i32 = j & 0x7fffffff;
+    i = j & 0x7fffffff;
     k = (i >> 23) - 0x7f;
     n = 0;
     if i > 0x3f000000 {

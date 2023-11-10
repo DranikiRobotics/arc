@@ -13,8 +13,8 @@ pub fn nextafter(x: Float64, y: Float64) -> Float64 {
         return y;
     }
 
-    let ax = ux_i & (!1_u64 / 2);
-    let ay = uy_i & (!1_u64 / 2);
+    let ax = ux_i & !1_u64 / 2;
+    let ay = uy_i & !1_u64 / 2;
     if ax == 0 {
         if ay == 0 {
             return y;

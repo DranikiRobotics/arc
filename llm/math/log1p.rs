@@ -9,7 +9,7 @@
  * is preserved.
  * ====================================================
 */
-/*
+/**
  * double log1p(double x)
  * Return the natural logarithm of 1+x.
  *
@@ -56,7 +56,6 @@
 
 use crate::{Float64, Float32};
 
-consts!{
 const LN2_HI: Float64 = 6.93147180369123816490e-01; /* 3fe62e42 fee00000 */
 const LN2_LO: Float64 = 1.90821492927058770002e-10; /* 3dea39ef 35793c76 */
 const LG1: Float64 = 6.666666666666735130e-01; /* 3FE55555 55555593 */
@@ -66,18 +65,26 @@ const LG4: Float64 = 2.222219843214978396e-01; /* 3FCC71C5 1D8E78AF */
 const LG5: Float64 = 1.818357216161805012e-01; /* 3FC74664 96CB03DE */
 const LG6: Float64 = 1.531383769920937332e-01; /* 3FC39A09 D078C69F */
 const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
-}
 
 /// Return the natural logarithm of `1+x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub fn log1p(x: Float64) -> Float64 {
     let mut ui: u64 = x.to_bits();
+    let hfsq: Float64;
     let mut f: Float64 = 0.;
     let mut c: Float64 = 0.;
+    let s: Float64;
+    let z: Float64;
+    let r: Float64;
+    let w: Float64;
+    let t1: Float64;
+    let t2: Float64;
+    let dk: Float64;
+    let hx: u32;
     let mut hu: u32;
     let mut k: i32;
 
-    let hx: u32 = (ui >> 32) as u32;
+    hx = (ui >> 32) as u32;
     k = 1;
     if hx < 0x3fda827a || (hx >> 31) > 0 {
         /* 1+x < sqrt(2)+ */
@@ -126,13 +133,13 @@ pub fn log1p(x: Float64) -> Float64 {
         ui = (hu as u64) << 32 | (ui & 0xffffffff);
         f = Float64::from_bits(ui) - 1.;
     }
-    let hfsq: Float64 = 0.5 * f * f;
-    let s: Float64 = f / (2.0 + f);
-    let z: Float64 = s * s;
-    let w: Float64 = z * z;
-    let t1: Float64 = w * (LG2 + w * (LG4 + w * LG6));
-    let t2: Float64 = z * (LG1 + w * (LG3 + w * (LG5 + w * LG7)));
-    let r: Float64 = t2 + t1;
-    let dk: Float64 = k as Float64;
+    hfsq = 0.5 * f * f;
+    s = f / (2.0 + f);
+    z = s * s;
+    w = z * z;
+    t1 = w * (LG2 + w * (LG4 + w * LG6));
+    t2 = z * (LG1 + w * (LG3 + w * (LG5 + w * LG7)));
+    r = t2 + t1;
+    dk = k as Float64;
     s * (hfsq + r) + (dk * LN2_LO + c) - hfsq + f + dk * LN2_HI
 }
