@@ -3,8 +3,8 @@ use crate::TokenStream;
 /// Simplifies the creation of FFI functions
 ///
 /// # Example
-/// ```
-/// #[utils::ffi(type = "system")]
+/// ```rust,ignore,no_run
+/// #[macros::ffi(type = "system")]
 /// pub fn Java_Main_greet<'a>(
 ///     mut env: JNIEnv<'a>, _class: JClass<'a>, input: JString<'a>
 /// ) -> jstring {

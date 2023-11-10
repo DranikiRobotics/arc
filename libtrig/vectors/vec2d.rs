@@ -76,10 +76,9 @@ impl Vec2D {
     /// Normalizes this vector.
     #[inline]
     #[must_use]
-    pub fn normalize(&mut self) {
+    pub fn normalize(&self) -> Self {
         let magnitude = self.magnitude();
-        self.0 /= magnitude;
-        self.1 /= magnitude;
+        Self(self.x() / magnitude, self.y() / magnitude)
     }
 }
 

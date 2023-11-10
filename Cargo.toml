@@ -1,7 +1,18 @@
 [workspace]
 resolver = "2"
 members = [
+    # Helper crates
+    "libs/macros-core",
+    "libs/macros",
+
+    # Main crates
     "libtrig",
     "llm",
-    "utils/macros"
 ]
+
+[workspace.package]
+authors = ["Матвей Т <https://matveit.dev> AtomicGamer9523@github"]
+repository = "https://github.com/AtomicGamer9523/librobomath"
+version = "0.1.0-dev"
+edition = "2021"
+license = "MIT"

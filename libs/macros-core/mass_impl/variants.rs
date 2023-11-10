@@ -2,7 +2,7 @@
 /// 
 /// Input generally looks like this:
 /// 
-/// ```rust,no_run,ignore
+/// ```rust,ignore,no_run
 /// $NAME = @RM SomeStruct
 /// ```
 /// 
@@ -54,7 +54,7 @@ impl std::fmt::Debug for TypeVariant {
 impl syn::parse::Parse for TypeVariant {
     /// Turns this:
     /// 
-    /// ```
+    /// ```rust,ignore,no_run
     /// $NAME = @RM SomeStruct,
     /// ```
     /// 
