@@ -79,7 +79,7 @@ pub fn fmod(x: Float64, y: Float64) -> Float64 {
     } else {
         uxi >>= -ex + 1;
     }
-    uxi |= (sx as u64) << 63;
+    uxi |= sx << 63;
 
     Float64::from_bits(uxi)
 }
