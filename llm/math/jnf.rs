@@ -198,6 +198,7 @@ pub fn jnf(n: i32, mut x: Float32) -> Float32 {
 /// Bessel function of the second kind of order zero
 /// 
 /// Calculates the Bessel function of the second kind of order zero of `x`.
+#[allow(clippy::zero_divided_by_zero)]
 pub fn ynf(n: i32, x: Float32) -> Float32 {
     let mut ix: u32;
     let mut ib: u32;

@@ -49,6 +49,7 @@ const IVLN2_L: Float32 = 7.0526075433e-06;
 
 /// Returns `x` raised to the power `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
+#[allow(clippy::comparison_chain)]
 pub fn powf(x: Float32, y: Float32) -> Float32 {
     let mut z: Float32;
     let mut ax: Float32;
@@ -289,13 +290,11 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         if p_l + OVT > z - p_h {
             return sn * HUGE * HUGE; /* overflow */
         }
-    } else if (j & 0x7fffffff) > 0x43160000 {
-        /* z < -150 */
-        // FIXME: check should be  (uint32_t)j > 0xc3160000
-        return sn * TINY * TINY; /* underflow */
-    } else if j as u32 == 0xc3160000
-              /* z == -150 */
-              && p_l <= z - p_h
+    } else if 
+        ((j & 0x7fffffff) > 0x43160000) ||
+        (j as u32 == 0xc3160000
+            /* z == -150 */
+            && p_l <= z - p_h)
     {
         return sn * TINY * TINY; /* underflow */
     }

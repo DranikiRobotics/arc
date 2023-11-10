@@ -110,6 +110,7 @@ const V0: [Float32; 5] = [
 /// Bessel function of the second kind of order one
 /// 
 /// Calculates the Bessel function of the second kind of order one of `x`.
+#[allow(clippy::zero_divided_by_zero)]
 pub fn y1f(x: Float32) -> Float32 {
     let ix = x.to_bits();
     if (ix & 0x7fffffff) == 0 {

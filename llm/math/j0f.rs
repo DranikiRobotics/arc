@@ -120,6 +120,7 @@ const V04: Float32 = 4.4111031494e-10; /* 0x2ff280c2 */
 /// Bessel function of the second kind of order zero
 /// 
 /// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/y0.html)
+#[allow(clippy::zero_divided_by_zero)]
 pub fn y0f(x: Float32) -> Float32 {
     let ix: u32 = x.to_bits();
     if (ix & 0x7fffffff) == 0 {

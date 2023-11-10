@@ -94,12 +94,12 @@ fn sin_pi(mut x: Float32) -> Float32 {
     n = (x * 4.0) as isize;
     n = div!(n + 1, 2);
     y = (x as Float64) - (n as Float64) * 0.5;
-    y *= 3.141_592_653_589_793;
+    y *= core::f64::consts::PI;
     match n {
         1 => k_cosf(y),
         2 => k_sinf(-y),
         3 => -k_cosf(y),
-        0 | _ => k_sinf(y),
+        _ => k_sinf(y),
     }
 }
 

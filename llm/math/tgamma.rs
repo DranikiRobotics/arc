@@ -48,7 +48,7 @@ fn sinpi(mut x: Float64) -> Float64 {
         1 => k_cos(x, 0.0),
         2 => k_sin(-x, 0.0, 0),
         3 => -k_cos(x, 0.0),
-        0 | _ => k_sin(x, 0.0, 0),
+        _ => k_sin(x, 0.0, 0),
     }
 }
 
@@ -155,7 +155,7 @@ pub fn tgamma(mut x: Float64) -> Float64 {
     /* raise inexact when non-integer */
     if x == floor(x) {
         if sign {
-            return 0.0 / 0.0;
+            return Float64::NAN;
         }
         if x <= FACT.len() as Float64 {
             return i!(FACT, (x as usize) - 1);

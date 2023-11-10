@@ -177,6 +177,7 @@ const V04: Float64 = 4.41110311332675467403e-10; /* 0x3DFE5018, 0x3BD6D9EF */
 /// Bessel function of the second kind of order zero
 /// 
 /// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/y0.html)
+#[allow(clippy::zero_divided_by_zero)]
 pub fn y0(x: Float64) -> Float64 {
     let z: Float64;
     let u: Float64;

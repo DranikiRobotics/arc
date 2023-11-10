@@ -164,6 +164,7 @@ const V0: [Float64; 5] = [
 /// Bessel function of the second kind of order one
 /// 
 /// Calculates the Bessel function of the second kind of order one of `x`.
+#[allow(clippy::zero_divided_by_zero)]
 pub fn y1(x: Float64) -> Float64 {
     let ix = get_high_word(x);
     let lx = get_low_word(x);

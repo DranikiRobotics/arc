@@ -107,7 +107,7 @@ pub fn jn(n: i32, mut x: Float64) -> Float64 {
                 0 => -cos(x) + sin(x),
                 1 => -cos(x) - sin(x),
                 2 => cos(x) - sin(x),
-                3 | _ => cos(x) + sin(x),
+                _ => cos(x) + sin(x),
             };
             b = INVSQRTPI * temp / sqrt(x);
         } else {
@@ -256,6 +256,7 @@ pub fn jn(n: i32, mut x: Float64) -> Float64 {
 /// Bessel function of the second kind of order zero of `x`.
 /// 
 /// Calculates the Bessel function of the second kind of order zero of `x`.
+#[allow(clippy::zero_divided_by_zero)]
 pub fn yn(n: i32, x: Float64) -> Float64 {
     let mut ix: u32;
     
@@ -322,7 +323,7 @@ pub fn yn(n: i32, x: Float64) -> Float64 {
             0 => -sin(x) - cos(x),
             1 => -sin(x) + cos(x),
             2 => sin(x) + cos(x),
-            3 | _ => sin(x) - cos(x),
+            _ => sin(x) - cos(x),
         };
         b = INVSQRTPI * temp / sqrt(x);
     } else {

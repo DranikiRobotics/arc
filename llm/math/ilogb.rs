@@ -5,6 +5,7 @@ const FP_ILOGB0: i32 = FP_ILOGBNAN;
 
 /// Get exponent of floating point value
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
+#[allow(clippy::zero_divided_by_zero)]
 pub fn ilogb(x: Float64) -> i32 {
     let mut i: u64 = x.to_bits();
     let e = ((i >> 52) & 0x7ff) as i32;
