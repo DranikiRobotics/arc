@@ -17,12 +17,13 @@ use crate::Float32;
 
 use super::{cosf, fabsf, logf, sinf, sqrtf};
 
+consts!{
 const INVSQRTPI: Float32 = 5.6418961287e-01; /* 0x3f106ebb */
 const TPI: Float32 = 6.3661974669e-01; /* 0x3f22f983 */
+}
 
 fn common(ix: u32, x: Float32, y0: bool) -> Float32 {
     let z: Float32;
-    let s: Float32;
     let mut c: Float32;
     let mut ss: Float32;
     let mut cc: Float32;
@@ -30,7 +31,7 @@ fn common(ix: u32, x: Float32, y0: bool) -> Float32 {
      * j0(x) = 1/sqrt(pi) * (P(0,x)*cc - Q(0,x)*ss) / sqrt(x)
      * y0(x) = 1/sqrt(pi) * (P(0,x)*ss + Q(0,x)*cc) / sqrt(x)
      */
-    s = sinf(x);
+    let s: Float32 = sinf(x);
     c = cosf(x);
     if y0 {
         c = -c;
@@ -55,6 +56,7 @@ fn common(ix: u32, x: Float32, y0: bool) -> Float32 {
 }
 
 /* R0/S0 on [0, 2.00] */
+consts!{
 const R02: Float32 = 1.5625000000e-02; /* 0x3c800000 */
 const R03: Float32 = -1.8997929874e-04; /* 0xb947352e */
 const R04: Float32 = 1.8295404516e-06; /* 0x35f58e88 */
@@ -63,6 +65,7 @@ const S01: Float32 = 1.5619102865e-02; /* 0x3c7fe744 */
 const S02: Float32 = 1.1692678527e-04; /* 0x38f53697 */
 const S03: Float32 = 5.1354652442e-07; /* 0x3509daa6 */
 const S04: Float32 = 1.1661400734e-09; /* 0x30a045e8 */
+}
 
 /// Bessel function of the first kind of order zero
 /// 
@@ -100,6 +103,7 @@ pub fn j0f(mut x: Float32) -> Float32 {
     return 1.0 - x;
 }
 
+consts!{
 const U00: Float32 = -7.3804296553e-02; /* 0xbd9726b5 */
 const U01: Float32 = 1.7666645348e-01; /* 0x3e34e80d */
 const U02: Float32 = -1.3818567619e-02; /* 0xbc626746 */
@@ -111,6 +115,7 @@ const V01: Float32 = 1.2730483897e-02; /* 0x3c509385 */
 const V02: Float32 = 7.6006865129e-05; /* 0x389f65e0 */
 const V03: Float32 = 2.5915085189e-07; /* 0x348b216c */
 const V04: Float32 = 4.4111031494e-10; /* 0x2ff280c2 */
+}
 
 /// Bessel function of the second kind of order zero
 /// 

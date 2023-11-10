@@ -42,6 +42,7 @@ use crate::Float64;
 //      4. For x in [0.67434,pi/4],  let y = pi/4 - x, then
 //              tan(x) = tan(pi/4-y) = (1-tan(y))/(1+tan(y))
 //                     = 1 - 2*(tan(y) - (tan(y)^2)/(1+tan(y)))
+#[allow(clippy::excessive_precision)]
 static T: [Float64; 13] = [
     3.33333333333334091986e-01,  /* 3FD55555, 55555563 */
     1.33333333333201242699e-01,  /* 3FC11111, 1110FE7A */
@@ -57,8 +58,10 @@ static T: [Float64; 13] = [
     -1.85586374855275456654e-05, /* BEF375CB, DB605373 */
     2.59073051863633712884e-05,  /* 3EFB2A70, 74BF7AD4 */
 ];
+consts!{
 const PIO4: Float64 = 7.85398163397448278999e-01; /* 3FE921FB, 54442D18 */
 const PIO4_LO: Float64 = 3.06161699786838301793e-17; /* 3C81A626, 33145C07 */
+}
 
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub(crate) fn k_tan(mut x: Float64, mut y: Float64, odd: i32) -> Float64 {

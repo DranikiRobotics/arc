@@ -12,6 +12,7 @@
 use crate::{Float64, Float32};
 
 /* |tan(x)/x - t(x)| < 2**-25.5 (~[-2e-08, 2e-08]). */
+consts!{
 const T: [Float64; 6] = [
     0.333331395030791399758,   /* 0x15554d3418c99f.0p-54 */
     0.133392002712976742718,   /* 0x1112fd38999f72.0p-55 */
@@ -20,6 +21,7 @@ const T: [Float64; 6] = [
     0.00297435743359967304927, /* 0x185dadfcecf44e.0p-61 */
     0.00946564784943673166728, /* 0x1362b9bf971bcd.0p-59 */
 ];
+}
 
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub(crate) fn k_tanf(x: Float64, odd: bool) -> Float32 {
