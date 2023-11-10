@@ -17,6 +17,7 @@ use crate::{Float64, Float32};
 
 use super::{floorf, k_cosf, k_sinf, logf};
 
+consts!{
 const PI: Float32 = 3.1415927410e+00; /* 0x40490fdb */
 const A0: Float32 = 7.7215664089e-02; /* 0x3d9e233f */
 const A1: Float32 = 3.2246702909e-01; /* 0x3ea51a66 */
@@ -80,6 +81,7 @@ const W3: Float32 = 7.9365057172e-04; /* 0x3a500cfd */
 const W4: Float32 = -5.9518753551e-04; /* 0xba1c065c */
 const W5: Float32 = 8.3633989561e-04; /* 0x3a5b3dd2 */
 const W6: Float32 = -1.6309292987e-03; /* 0xbad5c4e8 */
+}
 
 /* sin(PI*x) assuming x > 2^-100, if sin(PI*x)==0 the sign is arbitrary */
 fn sin_pi(mut x: Float32) -> Float32 {
@@ -92,7 +94,7 @@ fn sin_pi(mut x: Float32) -> Float32 {
     n = (x * 4.0) as isize;
     n = div!(n + 1, 2);
     y = (x as Float64) - (n as Float64) * 0.5;
-    y *= 3.14159265358979323846;
+    y *= 3.141_592_653_589_793;
     match n {
         1 => k_cosf(y),
         2 => k_sinf(-y),
@@ -119,15 +121,12 @@ pub fn lgammaf_r(mut x: Float32) -> (Float32, i32) {
     let q: Float32;
     let mut r: Float32;
     let w: Float32;
-    let ix: u32;
     let i: i32;
-    let sign: bool;
-    let mut signgam: i32;
+    let mut signgam = 1;
 
     /* purge off +-inf, NaN, +-0, tiny and negative arguments */
-    signgam = 1;
-    sign = (u >> 31) != 0;
-    ix = u & 0x7fffffff;
+    let sign: bool = (u >> 31) != 0;
+    let ix: u32 = u & 0x7fffffff;
     if ix >= 0x7f800000 {
         return (x * x, signgam);
     }

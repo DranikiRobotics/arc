@@ -12,6 +12,7 @@
 
 use crate::Float32;
 
+consts!{
 const LN2_HI: Float32 = 6.9313812256e-01; /* 0x3f317180 */
 const LN2_LO: Float32 = 9.0580006145e-06; /* 0x3717f7d1 */
 /* |(log(1+s)-log(1-s))/s - Lg(s)| < 2**-34.24 (~[-4.95e-11, 4.97e-11]). */
@@ -19,26 +20,17 @@ const LG1: Float32 = 0.66666662693; /* 0xaaaaaa.0p-24 */
 const LG2: Float32 = 0.40000972152; /* 0xccce13.0p-25 */
 const LG3: Float32 = 0.28498786688; /* 0x91e9ee.0p-25 */
 const LG4: Float32 = 0.24279078841; /* 0xf89e26.0p-26 */
+}
 
 /// Return the natural logarithm of `1+x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub fn log1pf(x: Float32) -> Float32 {
     let mut ui: u32 = x.to_bits();
-    let hfsq: Float32;
     let mut f: Float32 = 0.;
     let mut c: Float32 = 0.;
-    let s: Float32;
-    let z: Float32;
-    let r: Float32;
-    let w: Float32;
-    let t1: Float32;
-    let t2: Float32;
-    let dk: Float32;
-    let ix: u32;
     let mut iu: u32;
     let mut k: i32;
-
-    ix = ui;
+    let ix: u32 = ui;
     k = 1;
     if ix < 0x3ed413d0 || (ix >> 31) > 0 {
         /* 1+x < sqrt(2)+  */
@@ -87,13 +79,13 @@ pub fn log1pf(x: Float32) -> Float32 {
         ui = iu;
         f = Float32::from_bits(ui) - 1.;
     }
-    s = f / (2.0 + f);
-    z = s * s;
-    w = z * z;
-    t1 = w * (LG2 + w * LG4);
-    t2 = z * (LG1 + w * LG3);
-    r = t2 + t1;
-    hfsq = 0.5 * f * f;
-    dk = k as Float32;
+    let s: Float32 = f / (2.0 + f);
+    let z: Float32 = s * s;
+    let w: Float32 = z * z;
+    let t1: Float32 = w * (LG2 + w * LG4);
+    let t2: Float32 = z * (LG1 + w * LG3);
+    let r: Float32 = t2 + t1;
+    let hfsq: Float32 = 0.5 * f * f;
+    let dk: Float32 = k as Float32;
     s * (hfsq + r) + (dk * LN2_LO + c) - hfsq + f + dk * LN2_HI
 }

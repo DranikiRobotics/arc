@@ -83,6 +83,7 @@ use crate::Float64;
 
 use super::{floor, k_cos, k_sin, log};
 
+consts!{
 const PI: Float64 = 3.14159265358979311600e+00; /* 0x400921FB, 0x54442D18 */
 const A0: Float64 = 7.72156649015328655494e-02; /* 0x3FB3C467, 0xE37DB0C8 */
 const A1: Float64 = 3.22467033424113591611e-01; /* 0x3FD4A34C, 0xC4A60FAD */
@@ -146,6 +147,7 @@ const W3: Float64 = 7.93650558643019558500e-04; /* 0x3F4A019F, 0x98CF38B6 */
 const W4: Float64 = -5.95187557450339963135e-04; /* 0xBF4380CB, 0x8C0FE741 */
 const W5: Float64 = 8.36339918996282139126e-04; /* 0x3F4B67BA, 0x4CDAD5D1 */
 const W6: Float64 = -1.63092934096575273989e-03; /* 0xBF5AB89D, 0x0B9E43E4 */
+}
 
 /* sin(PI*x) assuming x > 2^-100, if sin(PI*x)==0 the sign is arbitrary */
 fn sin_pi(mut x: Float64) -> Float64 {
@@ -185,15 +187,15 @@ pub fn lgamma_r(mut x: Float64) -> (Float64, i32) {
     let q: Float64;
     let mut r: Float64;
     let w: Float64;
-    let ix: u32;
-    let sign: bool;
+    
+    
     let i: i32;
     let mut signgam: i32;
 
     /* purge off +-inf, NaN, +-0, tiny and negative arguments */
     signgam = 1;
-    sign = (u >> 63) != 0;
-    ix = ((u >> 32) as u32) & 0x7fffffff;
+    let sign: bool = (u >> 63) != 0;
+    let ix: u32 = ((u >> 32) as u32) & 0x7fffffff;
     if ix >= 0x7ff00000 {
         return (x * x, signgam);
     }

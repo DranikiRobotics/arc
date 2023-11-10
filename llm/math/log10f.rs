@@ -15,6 +15,7 @@
 
 use crate::Float32;
 
+consts!{
 const IVLN10HI: Float32 = 4.3432617188e-01; /* 0x3ede6000 */
 const IVLN10LO: Float32 = -3.1689971365e-05; /* 0xb804ead9 */
 const LOG10_2HI: Float32 = 3.0102920532e-01; /* 0x3e9a2080 */
@@ -24,6 +25,7 @@ const LG1: Float32 = 0.66666662693; /* 0xaaaaaa.0p-24 */
 const LG2: Float32 = 0.40000972152; /* 0xccce13.0p-25 */
 const LG3: Float32 = 0.28498786688; /* 0x91e9ee.0p-25 */
 const LG4: Float32 = 0.24279078841; /* 0xf89e26.0p-26 */
+}
 
 /// Returns the base 10 logarithm of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
@@ -31,17 +33,7 @@ pub fn log10f(mut x: Float32) -> Float32 {
     let x1p25f = Float32::from_bits(0x4c000000); // 0x1p25f === 2 ^ 25
 
     let mut ui: u32 = x.to_bits();
-    let hfsq: Float32;
-    let f: Float32;
-    let s: Float32;
-    let z: Float32;
-    let r: Float32;
-    let w: Float32;
-    let t1: Float32;
-    let t2: Float32;
-    let dk: Float32;
     let mut hi: Float32;
-    let lo: Float32;
     let mut ix: u32;
     let mut k: i32;
 
@@ -73,20 +65,20 @@ pub fn log10f(mut x: Float32) -> Float32 {
     ui = ix;
     x = Float32::from_bits(ui);
 
-    f = x - 1.0;
-    s = f / (2.0 + f);
-    z = s * s;
-    w = z * z;
-    t1 = w * (LG2 + w * LG4);
-    t2 = z * (LG1 + w * LG3);
-    r = t2 + t1;
-    hfsq = 0.5 * f * f;
+    let f: Float32 = x - 1.0;
+    let s: Float32 = f / (2.0 + f);
+    let z: Float32 = s * s;
+    let w: Float32 = z * z;
+    let t1: Float32 = w * (LG2 + w * LG4);
+    let t2: Float32 = z * (LG1 + w * LG3);
+    let r: Float32 = t2 + t1;
+    let hfsq: Float32 = 0.5 * f * f;
 
     hi = f - hfsq;
     ui = hi.to_bits();
     ui &= 0xfffff000;
     hi = Float32::from_bits(ui);
-    lo = f - hi - hfsq + s * (hfsq + r);
-    dk = k as Float32;
+    let lo: Float32 = f - hi - hfsq + s * (hfsq + r);
+    let dk: Float32 = k as Float32;
     dk * LOG10_2LO + (lo + hi) * IVLN10LO + lo * IVLN10HI + hi * IVLN10HI + dk * LOG10_2HI
 }

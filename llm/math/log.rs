@@ -63,6 +63,7 @@
 
 use crate::Float64;
 
+consts!{
 const LN2_HI: Float64 = 6.93147180369123816490e-01; /* 3fe62e42 fee00000 */
 const LN2_LO: Float64 = 1.90821492927058770002e-10; /* 3dea39ef 35793c76 */
 const LG1: Float64 = 6.666666666666735130e-01; /* 3FE55555 55555593 */
@@ -72,6 +73,7 @@ const LG4: Float64 = 2.222219843214978396e-01; /* 3FCC71C5 1D8E78AF */
 const LG5: Float64 = 1.818357216161805012e-01; /* 3FC74664 96CB03DE */
 const LG6: Float64 = 1.531383769920937332e-01; /* 3FC39A09 D078C69F */
 const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
+}
 
 /// Returns the logarithm of `x`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
