@@ -156,6 +156,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::excessive_precision)]
     fn conformance_tests() {
         let values = [
             3.14159265359f32,

@@ -27,7 +27,7 @@ use crate::{Float64, Float32};
 
 use super::{exp, floor, k_cos, k_sin, pow};
 
-const PI: Float64 = 3.141592653589793238462643383279502884;
+use core::f64::consts::PI;
 
 /* sin(pi x) with x > 0x1p-100, if sin(pi*x)==0 the sign is arbitrary */
 fn sinpi(mut x: Float64) -> Float64 {
@@ -52,6 +52,7 @@ fn sinpi(mut x: Float64) -> Float64 {
     }
 }
 
+consts!{
 const N: usize = 12;
 //static const double g = 6.024680040776729583740234375;
 const GMHALF: Float64 = 5.524680040776729583740234375;
@@ -111,6 +112,7 @@ const FACT: [Float64; 23] = [
     51090942171709440000.0,
     1124000727777607680000.0,
 ];
+}
 
 /* S(x) rational function for positive x */
 fn s(x: Float64) -> Float64 {
@@ -136,11 +138,6 @@ fn s(x: Float64) -> Float64 {
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub fn tgamma(mut x: Float64) -> Float64 {
     let u: u64 = x.to_bits();
-    let absx: Float64;
-    let mut y: Float64;
-    let mut dy: Float64;
-    let mut z: Float64;
-    let mut r: Float64;
     let ix: u32 = ((u >> 32) as u32) & 0x7fffffff;
     let sign: bool = (u >> 63) != 0;
 
@@ -183,10 +180,12 @@ pub fn tgamma(mut x: Float64) -> Float64 {
         return x;
     }
 
-    absx = if sign { -x } else { x };
+    let absx: Float64 = if sign { -x } else { x };
 
     /* handle the error of x + g - 0.5 */
-    y = absx + GMHALF;
+    let mut y = absx + GMHALF;
+    let mut dy: Float64;
+    let mut z: Float64;
     if absx > GMHALF {
         dy = y - absx;
         dy -= GMHALF;
@@ -196,7 +195,7 @@ pub fn tgamma(mut x: Float64) -> Float64 {
     }
 
     z = absx - 0.5;
-    r = s(absx) * exp(-y);
+    let mut r = s(absx) * exp(-y);
     if x < 0.0 {
         /* reflection formula for negative x */
         /* sinpi(absx) is not 0, integers are already handled */

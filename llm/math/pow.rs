@@ -62,6 +62,7 @@ use crate::Float64;
 
 use super::{fabs, get_high_word, scalbn, sqrt, with_set_high_word, with_set_low_word};
 
+consts!{
 const BP: [Float64; 2] = [1.0, 1.5];
 const DP_H: [Float64; 2] = [0.0, 5.84962487220764160156e-01]; /* 0x3fe2b803_40000000 */
 const DP_L: [Float64; 2] = [0.0, 1.35003920212974897128e-08]; /* 0x3E4CFDEB, 0x43CFD006 */
@@ -91,6 +92,7 @@ const CP_L: Float64 = -7.02846165095275826516e-09; /* 0xbe3e2fe0_145b01f5 =tail 
 const IVLN2: Float64 = 1.44269504088896338700e+00; /* 0x3ff71547_652b82fe =1/ln2 */
 const IVLN2_H: Float64 = 1.44269502162933349609e+00; /* 0x3ff71547_60000000 =24b 1/ln2*/
 const IVLN2_L: Float64 = 1.92596299112661746887e-08; /* 0x3e54ae0b_f85ddf44 =1/ln2 tail*/
+}
 
 /// Returns `x` raised to the power `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
@@ -101,8 +103,8 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
     let (hx, lx): (i32, u32) = ((x.to_bits() >> 32) as i32, x.to_bits() as u32);
     let (hy, ly): (i32, u32) = ((y.to_bits() >> 32) as i32, y.to_bits() as u32);
 
-    let mut ix: i32 = (hx & 0x7fffffff) as i32;
-    let iy: i32 = (hy & 0x7fffffff) as i32;
+    let mut ix: i32 = hx & 0x7fffffff;
+    let iy: i32 = hy & 0x7fffffff;
 
     /* x**0 = 1, even if x is NaN */
     if ((iy as u32) | ly) == 0 {
@@ -267,6 +269,7 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
         /* now |1-x| is TINY <= 2**-20, suffice to compute
         log(x) by x-x^2/2+x^3/3-x^4/4 */
         let t: Float64 = ax - 1.0; /* t has 20 trailing zeros */
+        #[allow(clippy::excessive_precision)]
         let w: Float64 = (t * t) * (0.5 - t * (0.3333333333333333333333 - t * 0.25));
         let u: Float64 = IVLN2_H * t; /* ivln2_h has 21 sig. bits */
         let v: Float64 = t * IVLN2_L - w * IVLN2;
@@ -374,7 +377,7 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
     }
 
     /* compute 2**(p_h+p_l) */
-    let i: i32 = j & (0x7fffffff as i32);
+    let i: i32 = j & 0x7fffffff_i32;
     k = (i >> 20) - 0x3ff;
     let mut n: i32 = 0;
 
@@ -613,7 +616,7 @@ mod tests {
 
         // Factoring -1 out:
         // (negative anything ^ integer should be (-1 ^ integer) * (positive anything ^ integer))
-        (&[POS_ZERO, NEG_ZERO, POS_ONE, NEG_ONE, POS_EVENS, NEG_EVENS])
+        [POS_ZERO, NEG_ZERO, POS_ONE, NEG_ONE, POS_EVENS, NEG_EVENS]
             .iter()
             .for_each(|int_set| {
                 int_set.iter().for_each(|int| {
@@ -625,7 +628,7 @@ mod tests {
 
         // Negative base (imaginary results):
         // (-anything except 0 and Infinity ^ non-integer should be NAN)
-        (&NEG[1..(NEG.len() - 1)]).iter().for_each(|set| {
+        NEG[1..(NEG.len() - 1)].iter().for_each(|set| {
             set.iter().for_each(|val| {
                 test_sets(&ALL[3..7], &|v: Float64| pow(*val, v), &|_| NAN);
             })

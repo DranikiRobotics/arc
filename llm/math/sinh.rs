@@ -16,10 +16,8 @@ pub fn sinh(x: Radian64) -> Float64 {
 
     let mut uf: Float64 = x;
     let mut ui: u64 = Float64::to_bits(uf);
-    let w: u32;
     let t: Float64;
     let mut h: Float64;
-    let absx: Float64;
 
     h = 0.5;
     if ui >> 63 != 0 {
@@ -28,8 +26,8 @@ pub fn sinh(x: Radian64) -> Float64 {
     /* |x| */
     ui &= !1 / 2;
     uf = Float64::from_bits(ui);
-    absx = uf;
-    w = (ui >> 32) as u32;
+    let absx: Float64 = uf;
+    let w: u32 = (ui >> 32) as u32;
 
     /* |x| < log(DBL_MAX) */
     if w < 0x40862e42 {

@@ -17,12 +17,7 @@ use super::{get_high_word, k_cos, k_sin, rem_pio2};
 /// Simultaneously computes the sine and cosine of the argument x.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub fn sincos(x: Radian64) -> (Float64, Float64) {
-    let s: Float64;
-    let c: Float64;
-    let mut ix: u32;
-
-    ix = get_high_word(x);
-    ix &= 0x7fffffff;
+    let ix = get_high_word(x) & 0x7fffffff;
 
     /* |x| ~< pi/4 */
     if ix <= 0x3fe921fb {
@@ -48,8 +43,8 @@ pub fn sincos(x: Radian64) -> (Float64, Float64) {
 
     /* argument reduction needed */
     let (n, y0, y1) = rem_pio2(x);
-    s = k_sin(y0, y1, 1);
-    c = k_cos(y0, y1);
+    let s = k_sin(y0, y1, 1);
+    let c = k_cos(y0, y1);
     match n & 3 {
         0 => (s, c),
         1 => (c, -s),

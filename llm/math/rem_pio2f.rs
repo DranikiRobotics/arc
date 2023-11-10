@@ -20,12 +20,14 @@ use super::rem_pio2_large;
 
 const TOINT: Float64 = 1.5 / Float64::EPSILON;
 
-/// 53 bits of 2/pi
+consts!{
+// 53 bits of 2/pi
 const INV_PIO2: Float64 = 6.36619772367581382433e-01; /* 0x3FE45F30, 0x6DC9C883 */
-/// first 25 bits of pi/2
+// first 25 bits of pi/2
 const PIO2_1: Float64 = 1.57079631090164184570e+00; /* 0x3FF921FB, 0x50000000 */
-/// pi/2 - pio2_1
+// pi/2 - pio2_1
 const PIO2_1T: Float64 = 1.58932547735281966916e-08; /* 0x3E5110b4, 0x611A6263 */
+}
 
 /// Return the remainder of x rem pi/2 in *y
 ///

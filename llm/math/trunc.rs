@@ -16,7 +16,6 @@ pub fn trunc(x: Float64) -> Float64 {
 
     let mut i: u64 = x.to_bits();
     let mut e: i64 = (i >> 52 & 0x7ff) as i64 - 0x3ff + 12;
-    let m: u64;
 
     if e >= 52 + 12 {
         return x;
@@ -24,7 +23,7 @@ pub fn trunc(x: Float64) -> Float64 {
     if e < 12 {
         e = 1;
     }
-    m = -1i64 as u64 >> e;
+    let m: u64 = -1i64 as u64 >> e;
     if (i & m) == 0 {
         return x;
     }
