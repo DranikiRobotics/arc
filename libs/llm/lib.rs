@@ -1,6 +1,7 @@
 #![doc = include_str!("./README.md")]
 #![no_std]
 #![feature(core_intrinsics)]
+#![allow(unused_unsafe)]
 #![allow(clippy::unreadable_literal)]
 #![allow(clippy::many_single_char_names)]
 #![allow(clippy::needless_return)]
