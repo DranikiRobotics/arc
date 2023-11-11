@@ -17,7 +17,7 @@ jobs:
     needs: [style, android, linux]
     runs-on: ubuntu-latest
     steps:
-      - run: echo "CI passed!"
+      - run: exit 0
 
   # Check style.
   style:
@@ -48,8 +48,9 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           target: aarch64-linux-android
+      - name: Install rustup target
+        run: rustup target add aarch64-linux-android
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
