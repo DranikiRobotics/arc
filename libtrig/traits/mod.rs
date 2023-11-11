@@ -1,10 +1,10 @@
 use crate::*;
 
-mod number;
 mod float;
+mod number;
 
-pub use number::Number;
 pub use float::Float;
+pub use number::Number;
 
 macro_rules! simpl {
     ($n:ident => $m:ident $($t:tt)*) => (

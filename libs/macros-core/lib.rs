@@ -4,8 +4,8 @@
 
 use proc_macro2::TokenStream;
 
-mod mass_impl;
 mod ffi;
+mod mass_impl;
 
-pub use mass_impl::mass_impl;
 pub use ffi::ffi;
+pub use mass_impl::mass_impl;

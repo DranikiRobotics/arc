@@ -1,7 +1,7 @@
 use crate::TokenStream;
 
-mod variants;
 mod args;
+mod variants;
 
 /// A macro for implementing a trait for a list of types.
 pub fn mass_impl<T: Into<TokenStream>>(cfg: T, input: T) -> TokenStream {
@@ -40,8 +40,6 @@ pub fn mass_impl<T: Into<TokenStream>>(cfg: T, input: T) -> TokenStream {
     let single_str = results.join("\n");
     match syn::parse_str::<TokenStream>(&single_str) {
         Ok(ts) => ts,
-        Err(err) => {
-            err.to_compile_error()
-        }
+        Err(err) => err.to_compile_error(),
     }
 }

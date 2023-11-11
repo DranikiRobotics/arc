@@ -1,4 +1,4 @@
-pub use llm::{Float64, Float32, Radian64, Radian32};
+pub use llm::{Float32, Float64, Radian32, Radian64};
 
 /// A degree. (64bit)
 pub type Degree64 = f64;

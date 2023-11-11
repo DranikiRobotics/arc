@@ -1,5 +1,4 @@
 #![doc = include_str!("./README.md")]
-
 #![warn(missing_docs, unused, clippy::all)]
 
 use proc_macro::TokenStream;

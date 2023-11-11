@@ -31,10 +31,7 @@ impl Coord2D {
         use crate::traits::Float;
         let angle = angle.to_radians();
         let (sin, cos) = angle.sin_cos();
-        Self::new(
-            self.x * cos - self.y * sin,
-            self.x * sin + self.y * cos,
-        )
+        Self::new(self.x * cos - self.y * sin, self.x * sin + self.y * cos)
     }
     /// Returns the angle of the vector in radians.
     #[inline]
@@ -290,7 +287,7 @@ impl<F: Into<Float64>> From<(F, F)> for Coord2D {
 impl From<Coord2D> for (Float64, Float64) {
     #[inline]
     #[must_use]
-    fn from(Coord2D {x, y}: Coord2D) -> Self {
+    fn from(Coord2D { x, y }: Coord2D) -> Self {
         (x, y)
     }
 }

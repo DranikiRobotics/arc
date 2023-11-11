@@ -1,8 +1,6 @@
 #![doc = include_str!("./README.md")]
-
 #![no_std]
 #![feature(core_intrinsics)]
-
 #![allow(clippy::unreadable_literal)]
 #![allow(clippy::many_single_char_names)]
 #![allow(clippy::needless_return)]
@@ -13,8 +11,8 @@
 #![allow(clippy::eq_op)]
 #![allow(clippy::assign_op_pattern)]
 
-mod types;
 mod math;
+mod types;
 
 pub use self::math::*;
 pub use self::types::*;

@@ -17,7 +17,7 @@ use crate::TokenStream;
 ///     let output = env.new_string(
 ///         format!("Hello, {}!", input)
 ///     ).expect("Couldn't create java string!");
-/// 
+///
 ///     // Finally, extract the raw pointer to return.
 ///     output.into_raw()
 /// }
@@ -74,5 +74,5 @@ fn parse_settings(attr: TokenStream) -> (String, String) {
     } else {
         "C"
     };
-    (res, format!("\"{}\"",t))
+    (res, format!("\"{}\"", t))
 }

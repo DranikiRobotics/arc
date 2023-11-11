@@ -345,7 +345,7 @@ impl core::fmt::Display for Angle2D {
         }
         write!(f, "{}°", self.to_degrees())
     }
-} 
+}
 
 impl<F: Into<Float64>> From<(F, bool)> for Angle2D {
     #[inline]

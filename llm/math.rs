@@ -74,7 +74,6 @@ macro_rules! div {
     };
 }
 
-
 macro_rules! consts {
     (const $name:ident: $ty:ty = $value:expr; $($t:tt)* ) => (
         #[allow(clippy::excessive_precision)]
@@ -118,7 +117,21 @@ import!(pub scalbn, scalbnf, sin, sincos, sincosf, sinf, sinh, sinhf, sqrt, sqrt
 import!(pub tan, tanf, tanh, tanhf, tgamma, tgammaf, trunc, truncf);
 
 // Private modules
-import!(expo2, fenv, k_cos, k_cosf, k_expo2, k_expo2f, k_sin, k_sinf, k_tan, k_tanf, rem_pio2, rem_pio2_large, rem_pio2f);
+import!(
+    expo2,
+    fenv,
+    k_cos,
+    k_cosf,
+    k_expo2,
+    k_expo2f,
+    k_sin,
+    k_sinf,
+    k_tan,
+    k_tanf,
+    rem_pio2,
+    rem_pio2_large,
+    rem_pio2f
+);
 
 use crate::Float64;
 

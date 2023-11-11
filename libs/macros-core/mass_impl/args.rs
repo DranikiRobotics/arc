@@ -36,12 +36,11 @@ impl MassImplMacroConfig {
 impl syn::parse::Parse for MassImplMacroConfig {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let mut type_variants = Vec::new();
-        let vars = syn::punctuated::Punctuated::<TypeVariant, syn::Token![,]>::parse_terminated(input)?;
+        let vars =
+            syn::punctuated::Punctuated::<TypeVariant, syn::Token![,]>::parse_terminated(input)?;
         for var in vars {
             type_variants.push(var);
         }
-        Ok(MassImplMacroConfig {
-            type_variants,
-        })
+        Ok(MassImplMacroConfig { type_variants })
     }
 }
