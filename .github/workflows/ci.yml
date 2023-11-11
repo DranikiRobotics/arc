@@ -88,7 +88,7 @@ jobs:
           python-version: 3.11
       - name: Give permission to run epearl
         run: chmod +x ./epearl
-      - name: Build Android
+      - name: Build
         run: ./epearl build
-      - name: Test Android
+      - name: Test
         run: ./epearl test
