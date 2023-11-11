@@ -12,6 +12,8 @@ jobs:
     name: CI Pass
     needs: [style, android, linux]
     runs-on: ubuntu-latest
+    steps:
+      - run: echo "CI passed!"
 
   # Check style.
   style:
