@@ -35,7 +35,7 @@ jobs:
       - name: Give permission to run epearl
         run: chmod +x epearl
       - name: Check style
-        run: ./epearl fmt --check
+        run: bash ./epearl fmt --check
   
   # Check if the Android build works.
   android: 
@@ -57,9 +57,9 @@ jobs:
       - name: Give permission to run epearl
         run: chmod +x epearl
       - name: Build Android
-        run: ./epearl build --target aarch64-linux-android
+        run: bash ./epearl build --target aarch64-linux-android
       - name: Test Android
-        run: ./epearl test --target aarch64-linux-android
+        run: bash ./epearl test --target aarch64-linux-android
   
   # Check if the Linux build works.
   linux:
@@ -80,6 +80,6 @@ jobs:
       - name: Give permission to run epearl
         run: chmod +x epearl
       - name: Build Android
-        run: ./epearl build
+        run: bash ./epearl build
       - name: Test Android
-        run: ./epearl test
+        run: bash ./epearl test
