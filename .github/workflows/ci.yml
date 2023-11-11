@@ -14,7 +14,7 @@ jobs:
   # If anything fails, the whole workflow fails.
   ci-pass:
     name: CI Pass
-    needs: [style, android, linux]
+    needs: [style, android, linux, tests]
     runs-on: ubuntu-latest
     steps:
       - run: exit 0
@@ -53,8 +53,6 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           target: aarch64-linux-android
-      - name: Set up Rust Part 2
-        uses: cargo-bins/cargo-binstall@main
       - name: Install rustup target
         run: rustup target add aarch64-linux-android
       - name: Set up Python
@@ -65,8 +63,6 @@ jobs:
         run: chmod +x ./epearl
       - name: Build Android
         run: ./epearl build --target aarch64-linux-android
-      - name: Test Android
-        run: ./epearl test --target aarch64-linux-android
   
   # Check if the Linux build works.
   linux:
@@ -80,8 +76,6 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           profile: minimal
-      - name: Set up Rust Part 2
-        uses: cargo-bins/cargo-binstall@main
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -90,5 +84,26 @@ jobs:
         run: chmod +x ./epearl
       - name: Build
         run: ./epearl build
-      - name: Test
+
+  # Check if the tests pass.
+  tests:
+    name: Tests
+    needs: [style, linux]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          profile: minimal
+      - name: Set up Binstall
+        uses: cargo-bins/cargo-binstall@main
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Give permission to run epearl
+        run: chmod +x ./epearl
+      - name: Run tests
         run: ./epearl test
