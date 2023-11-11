@@ -33,9 +33,9 @@ jobs:
         with:
           python-version: 3.11
       - name: Give permission to run epearl
-        run: chmod +x epearl
+        run: chmod +x ./epearl.sh
       - name: Check style
-        run: sh ./epearl fmt --check
+        run: ./epearl.sh fmt --check
   
   # Check if the Android build works.
   android: 
@@ -55,11 +55,11 @@ jobs:
         with:
           python-version: 3.11
       - name: Give permission to run epearl
-        run: chmod +x epearl
+        run: chmod +x ./epearl.sh
       - name: Build Android
-        run: sh ./epearl build --target aarch64-linux-android
+        run: ./epearl.sh build --target aarch64-linux-android
       - name: Test Android
-        run: sh ./epearl test --target aarch64-linux-android
+        run: ./epearl.sh test --target aarch64-linux-android
   
   # Check if the Linux build works.
   linux:
@@ -78,8 +78,8 @@ jobs:
         with:
           python-version: 3.11
       - name: Give permission to run epearl
-        run: sh +x epearl
+        run: chmod +x ./epearl.sh
       - name: Build Android
-        run: sh ./epearl build
+        run: ./epearl.sh build
       - name: Test Android
-        run: sh ./epearl test
+        run: ./epearl.sh test
