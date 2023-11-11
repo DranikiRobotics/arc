@@ -6,8 +6,8 @@ members = [
     "libs/macros",
 
     # Main crates
-    "libtrig",
-    "llm",
+    "libs/libtrig",
+    "libs/llm",
 ]
 
 [workspace.package]

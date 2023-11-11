@@ -9,7 +9,7 @@ license.workspace = true
 
 [dependencies.macros]
 package = "macros"
-path = "../libs/macros"
+path = "../macros"
 
 [dependencies.llm]
 package = "llm"
