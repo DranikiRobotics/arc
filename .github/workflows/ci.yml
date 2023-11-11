@@ -1,5 +1,9 @@
 name: CI
 
+env:
+  RUST_BACKTRACE: 1
+  CARGO_INCREMENTAL: 0
+
 on: 
   push:
     branches: [ main ]
@@ -28,6 +32,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
+      - name: Give permission to run epearl
+        run: chmod +x epearl
       - name: Check style
         run: ./epearl fmt --check
   
@@ -48,6 +54,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
+      - name: Give permission to run epearl
+        run: chmod +x epearl
       - name: Build Android
         run: ./epearl build --target aarch64-linux-android
       - name: Test Android
@@ -69,6 +77,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
+      - name: Give permission to run epearl
+        run: chmod +x epearl
       - name: Build Android
         run: ./epearl build
       - name: Test Android
