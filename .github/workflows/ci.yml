@@ -30,6 +30,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
+      - name: Install toolchain
+        run: rustup component add rustfmt
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
