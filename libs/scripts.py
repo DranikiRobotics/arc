@@ -22,7 +22,7 @@ def test(cd: str, args: list[str]) -> str | int | None:
     
     # Install tarpaulin
     def install_tarpaulin() -> None:
-        res = subprocess.run(["cargo", "binstall", "cargo-tarpaulin"])
+        res = subprocess.run(["cargo", "binstall", "--no-confirm", "cargo-tarpaulin"])
         if res.returncode != 0: exit(res.returncode)
     
     # Check if tarpaulin is installed and install it if it isn't
