@@ -1,6 +1,16 @@
+# IDE Files
+.vscode
+.idea
+
 # Rust files
 /*.lock
 target
 
 # Python files
 __pycache__
+
+# Java / Kotlin files
+.gradle
+local.properties
+build
+out
