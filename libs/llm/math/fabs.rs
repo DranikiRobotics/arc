@@ -1,7 +1,5 @@
 use crate::Float64;
 
-use core::u64;
-
 /// Absolute value (magnitude)
 /// 
 /// Calculates the absolute value (magnitude) of the argument `x`,

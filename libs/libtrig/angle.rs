@@ -419,6 +419,11 @@ impl crate::traits::Float<Float64> for Angle2D {
     fn sin_cos(&self) -> (Float64, Float64) {
         self.0.sin_cos()
     }
+    #[inline]
+    #[must_use]
+    fn signof(&self, rhs: Self) -> Float64 {
+        self.0.signof(rhs.0)
+    }
 
     i!(floor ceil round trunc fract abs signum sqrt exp exp2 ln log2 log10 cbrt
        sin cos tan asin acos atan exp_m1 ln_1p sinh cosh tanh asinh acosh atanh);

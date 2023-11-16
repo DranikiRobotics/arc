@@ -115,6 +115,7 @@ import!(pub pow, powf);
 import!(pub remainder, remainderf, remquo, remquof, rint, rintf, round, roundf);
 import!(pub scalbn, scalbnf, sin, sincos, sincosf, sinf, sinh, sinhf, sqrt, sqrtf);
 import!(pub tan, tanf, tanh, tanhf, tgamma, tgammaf, trunc, truncf);
+import!(pub ulp);
 
 // Private modules
 import!(

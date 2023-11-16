@@ -125,6 +125,11 @@ pub trait Float<Output = Self>: Number {
     #[must_use = "method returns a new number and does not mutate the original value"]
     fn signum(&self) -> Output;
 
+    /// Returns `self` with the sign of `rhs`.
+    /// This method computes `self.abs() * rhs.signum()`.
+    #[must_use]
+    fn signof(&self, rhs: Self) -> Output;
+
     /// Fused multiply-add. Computes `(self * a) + b` with only one rounding
     /// error, yielding a more accurate result than an unfused multiply-add.
     ///

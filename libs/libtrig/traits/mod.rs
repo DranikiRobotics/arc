@@ -52,6 +52,11 @@ impl Float for Float64 {
     }
     #[inline]
     #[must_use]
+    fn signof(&self, rhs: Self) -> Self {
+        self.abs() * rhs.signum()
+    }
+    #[inline]
+    #[must_use]
     fn powi(&self, n: Int) -> Self {
         llm::pow(*self, n as Float64)
     }
