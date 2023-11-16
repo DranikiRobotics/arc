@@ -7,6 +7,9 @@ members = [
 
     # Main crates
     "libs/libtrig",
+    "libs/libpath",
+    "libs/libodo",
+    "libs/llm/bindings",
     "libs/llm",
 ]
 

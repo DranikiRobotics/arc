@@ -1,5 +1,6 @@
 #![feature(const_mut_refs)]
 #![no_std]
+#![feature(const_fn_floating_point_arithmetic)]
 #![warn(missing_docs, unused, clippy::all)]
 #![doc = include_str!("./README.md")]
 
@@ -16,7 +17,7 @@ pub mod prelude {
     pub use super::traits::*;
 }
 
-pub use angle::*;
-pub use coords::*;
+pub use angle::Angle2D;
+pub use coords::Coord2D;
 pub use types::*;
-pub use vectors::*;
+pub use vectors::{Vec3D, Vec2D};

@@ -86,3 +86,75 @@ impl Float for Float64 {
         *self - self.floor()
     }
 }
+
+impl Float for Float32 {
+    simpl!(floor => floorf ceil => ceilf round => roundf trunc => truncf
+        abs => fabsf sqrt => sqrtf exp => expf exp2 => exp2f ln => lnf
+        log2 => log2f log10 => log10f cbrt => cbrtf sin => sinf cos => cosf
+        tan => tanf asin => asinf acos => acosf atan => atanf exp_m1 => expm1f
+        ln_1p => log1pf sinh => sinhf cosh => coshf tanh => tanhf
+        asinh => asinhf acosh => acoshf atanh => atanhf);
+    #[inline]
+    #[must_use]
+    fn mul_add(&self, a: Self, b: Self) -> Self {
+        llm::fmaf(*self, a, b)
+    }
+    #[inline]
+    #[must_use]
+    #[allow(unused)]
+    fn div_euclid(&self, rhs: Self) -> Self {
+        todo!("div_euclid")
+    }
+    #[inline]
+    #[must_use]
+    #[allow(unused)]
+    fn rem_euclid(&self, rhs: Self) -> Self {
+        todo!("rem_euclid")
+    }
+    #[inline]
+    #[must_use]
+    fn signum(&self) -> Self {
+        if *self > 0.0 {
+            1.0
+        } else if *self < 0.0 {
+            -1.0
+        } else {
+            Float32::NAN
+        }
+    }
+    #[inline]
+    #[must_use]
+    fn signof(&self, rhs: Self) -> Self {
+        self.abs() * rhs.signum()
+    }
+    #[inline]
+    #[must_use]
+    fn powi(&self, n: Int) -> Self {
+        llm::powf(*self, n as Float32)
+    }
+    #[inline]
+    #[must_use]
+    fn powf(&self, n: Self) -> Self {
+        llm::powf(*self, n)
+    }
+    #[inline]
+    #[must_use]
+    fn log(&self, base: Self) -> Self {
+        llm::logf(*self) / llm::logf(base)
+    }
+    #[inline]
+    #[must_use]
+    fn hypot(&self, other: Self) -> Self {
+        llm::hypotf(*self, other)
+    }
+    #[inline]
+    #[must_use]
+    fn atan2(&self, other: Self) -> Self {
+        llm::atan2f(*self, other)
+    }
+    #[inline]
+    #[must_use]
+    fn fract(&self) -> Self {
+        *self - self.floor()
+    }
+}

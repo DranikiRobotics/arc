@@ -2,7 +2,7 @@ use super::Number;
 use crate::Int;
 
 /// A trait for floating point numbers.
-pub trait Float<Output = Self>: Number {
+pub trait Float<Output = Self, Multiplier: Number = Self>: Number<Multiplier> {
     /// Returns the largest integer less than or equal to `self`.
     ///
     /// # Examples

@@ -1,0 +1,18 @@
+[package]
+name = "llm-bindings"
+description = "Low Level Math Bindings"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+path = "lib.rs"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies.llm]
+path = ".."
+
+[dependencies.macros]
+path = "../../macros"

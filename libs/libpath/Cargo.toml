@@ -1,0 +1,20 @@
+[package]
+name = "libpath"
+description = "Pathing"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies.libtrig]
+path = "../libtrig"
+
+[dependencies.libodo]
+path = "../libodo"
+
+[dependencies.llm]
+path = "../llm"
+
+[lib]
+path = "lib.rs"
