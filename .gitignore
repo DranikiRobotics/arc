@@ -14,3 +14,9 @@ __pycache__
 local.properties
 build
 out
+
+# Compiled Item
+*.dylib
+*.dll
+*.lib
+*.so
