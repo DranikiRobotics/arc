@@ -1,4 +1,4 @@
-use llm::{Float64, Radian64, Float32, Radian32};
+use llm::{Float32, Float64, Radian32, Radian64};
 type Int = i32;
 
 macro_rules! bind {
@@ -39,7 +39,7 @@ tup!(Tuple_Float32_Int f: Float32, i: Int);
 tup!(Tuple_Float64_Float64 f1: Float64, f2: Float64);
 tup!(Tuple_Float32_Float32 f1: Float32, f2: Float32);
 
-bind!{
+bind! {
 /// Arccosine
 acos(x: Float64) -> Radian64;
 /// Arccosine (Float32)

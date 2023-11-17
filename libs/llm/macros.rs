@@ -1,5 +1,5 @@
 /// Sigma `Σ` macro
-/// 
+///
 /// This is basically a for loop that sums up the values of the expression
 #[macro_export(local_inner_macros)]
 macro_rules! Σ {

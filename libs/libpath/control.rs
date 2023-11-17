@@ -1,5 +1,5 @@
+use libtrig::Vec2D;
 use llm::Float64;
-use libtrig::{Vec2D};
 
 /// Kinematic motor feedforward
 #[derive(Debug, Clone, Copy, PartialEq, Default)]

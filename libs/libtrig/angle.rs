@@ -85,17 +85,17 @@ impl Angle2D {
         }
     }
     /// Sets the mode of self.
-    /// 
+    ///
     /// If `mode` is `true`, then the angle is in radians.
     /// If `mode` is `false`, then the angle is in degrees.
-    /// 
+    ///
     /// This is unsafe because it does not convert the internal value.
     #[inline(always)]
     pub const unsafe fn modify_self_mode_unchecked(&mut self, mode: bool) {
         self.1 = mode;
     }
     /// Sets the value of self.
-    /// 
+    ///
     /// This is unsafe because it does not convert the internal value.
     #[inline(always)]
     pub const unsafe fn modify_self_value_unchecked(&mut self, value: RadianOrDegree64) {

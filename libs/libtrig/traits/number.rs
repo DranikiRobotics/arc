@@ -1,9 +1,7 @@
 use core::ops;
 
 /// A trait for types that can be used as numbers.
-pub trait Number<
-    Multiplier: Number = Self,
->:
+pub trait Number<Multiplier: Number = Self>:
     core::fmt::Debug
     + Copy
     + Clone

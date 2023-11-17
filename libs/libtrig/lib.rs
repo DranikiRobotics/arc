@@ -20,4 +20,4 @@ pub mod prelude {
 pub use angle::Angle2D;
 pub use coords::Coord2D;
 pub use types::*;
-pub use vectors::{Vec3D, Vec2D};
+pub use vectors::{Vec2D, Vec3D};

@@ -5,8 +5,8 @@
 
 extern crate alloc;
 
-mod rotation2d;
 mod dualnum;
+mod rotation2d;
 
-pub use rotation2d::Rotation2D;
 pub use dualnum::DualNum;
+pub use rotation2d::Rotation2D;

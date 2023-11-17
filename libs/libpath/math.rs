@@ -42,11 +42,15 @@ fn range(begin: Float64, end: Float64, samples: usize) -> Vec<Float64> {
 fn range_centered(begin: Float64, end: Float64, samples: usize) -> Vec<Float64> {
     assert!(samples >= 1);
     let dx = (end - begin) / samples as Float64;
-    (0..samples).map(|i| begin + 0.5 * dx + dx * i as Float64).collect()
+    (0..samples)
+        .map(|i| begin + 0.5 * dx + dx * i as Float64)
+        .collect()
 }
 
 fn lerp(x: Float64, from_lo: Float64, from_hi: Float64, to_lo: Float64, to_hi: Float64) -> Float64 {
-    if from_lo == from_hi { return 0.0; }
+    if from_lo == from_hi {
+        return 0.0;
+    }
     to_lo + (x - from_lo) * (to_hi - to_lo) / (from_hi - from_lo)
 }
 
@@ -74,15 +78,16 @@ impl<F: (Fn(Float64) -> Float64) + Clone> IntegralScanResult<F> {
         let fa = f(a);
         let fm = f(m);
         let fb = f(b);
-    
-        let mut i = (b - a) / 8.0 * (
-            fa + fm + fb +
-                f(a + 0.9501 * (b - a)) +
-                f(a + 0.2311 * (b - a)) +
-                f(a + 0.6068 * (b - a)) +
-                f(a + 0.4860 * (b - a)) +
-                f(a + 0.8913 * (b - a))
-            );
+
+        let mut i = (b - a) / 8.0
+            * (fa
+                + fm
+                + fb
+                + f(a + 0.9501 * (b - a))
+                + f(a + 0.2311 * (b - a))
+                + f(a + 0.6068 * (b - a))
+                + f(a + 0.4860 * (b - a))
+                + f(a + 0.8913 * (b - a)));
         if i == 0.0 {
             i = b - a;
         }
@@ -95,7 +100,15 @@ impl<F: (Fn(Float64) -> Float64) + Clone> IntegralScanResult<F> {
 
         this
     }
-    fn helper(&mut self, a: Float64, m: Float64, b: Float64, fa: Float64, fm: Float64, fb: Float64) {
+    fn helper(
+        &mut self,
+        a: Float64,
+        m: Float64,
+        b: Float64,
+        fa: Float64,
+        fm: Float64,
+        fb: Float64,
+    ) {
         let h = (b - a) / 4.0;
         let ml = a + h;
         let mr = b - h;
@@ -132,9 +145,11 @@ fn binsearch(values: &[Float64], query: &Float64) -> Result<usize, usize> {
         // `size/2 < size`. Thus `left + size/2 < left + size`, which
         // coupled with the `left + size <= self.len()` invariant means
         // we have `left + size/2 < self.len()`, and this is in-bounds.
-        let cmp = unsafe { 
-            values.get_unchecked(mid).partial_cmp(&query)
-            .unwrap_or_else(|| core::hint::unreachable_unchecked())
+        let cmp = unsafe {
+            values
+                .get_unchecked(mid)
+                .partial_cmp(&query)
+                .unwrap_or_else(|| core::hint::unreachable_unchecked())
         };
 
         // The reason why we use if/else control flow rather than match
@@ -179,7 +194,7 @@ fn lerpLookup(source: &[Float64], target: &[Float64], query: Float64) -> Float64
 // fun lerpLookup(source: List<Double>, target: List<Double>, query: Double): Double {
 //     require(source.size == target.size)
 //     require(source.isNotEmpty())
-// 
+//
 //     val index = source.binarySearch(query)
 //     return if (index >= 0) {
 //         target[index]
@@ -198,36 +213,36 @@ fn lerpLookup(source: &[Float64], target: &[Float64], query: Float64) -> Float64
 //         }
 //     }
 // }
-// 
+//
 // // precondition: source, target sorted and share the same length; queries sorted
 // fun lerpLookupMap(source: List<Double>, target: List<Double>, queries: List<Double>): List<Double> {
 //     require(source.size == target.size)
 //     require(source.isNotEmpty())
-// 
+//
 //     val result = mutableListOf<Double>()
-// 
+//
 //     var i = 0
 //     for (query in queries) {
 //         if (query < source[0]) {
 //             result.add(target[0])
 //             continue
 //         }
-// 
+//
 //         while (i + 1 < source.size && source[i + 1] < query) {
 //             i++
 //         }
-// 
+//
 //         if (i + 1 == source.size) {
 //             result.add(target.last())
 //             continue
 //         }
-// 
+//
 //         val sLo = source[i]
 //         val sHi = source[i + 1]
 //         val tLo = target[i]
 //         val tHi = target[i + 1]
 //         result.add(lerp(query, sLo, sHi, tLo, tHi))
 //     }
-// 
+//
 //     return result
 // }
