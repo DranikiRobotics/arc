@@ -10,20 +10,19 @@ const EPS: Float64 = 2.2e-15;
 /// for use in singularity handling.
 fn snz(x: Float64) -> Float64 {
     if x >= 0.0 {
-        EPS
-    } else {
-        -EPS
+        return EPS;
     }
+    -EPS
 }
 
 fn clamp(x: Float64, lo: Float64, hi: Float64) -> Float64 {
     if x < lo {
-        lo
-    } else if x > hi {
-        hi
-    } else {
-        x
+        return lo;
     }
+    if x > hi {
+        return hi;
+    }
+    x
 }
 
 struct MinMax {
@@ -33,14 +32,14 @@ struct MinMax {
 
 /// Partitions `[a, b]` into `n` equal intervals and returns the center values.
 fn range(begin: Float64, end: Float64, samples: usize) -> Vec<Float64> {
-    assert!(samples >= 2);
+    debug_assert!(samples >= 2);
     let dx = (end - begin) / (samples - 1) as Float64;
     (0..samples).map(|i| begin + dx * i as Float64).collect()
 }
 
 /// Partitions `[a, b]` into `n` equal intervals and returns the center values.
 fn range_centered(begin: Float64, end: Float64, samples: usize) -> Vec<Float64> {
-    assert!(samples >= 1);
+    debug_assert!(samples >= 1);
     let dx = (end - begin) / samples as Float64;
     (0..samples)
         .map(|i| begin + 0.5 * dx + dx * i as Float64)
@@ -127,58 +126,16 @@ impl<F: (Fn(Float64) -> Float64) + Clone> IntegralScanResult<F> {
     }
 }
 
-#[test]
-fn test_integral_scan() {
-    let f = |x: Float64| x * x;
-    let scan = IntegralScanResult::scan(0.0, 1.0, 1e-6, f);
-    panic!("{:?} {:?}", scan.sums, scan.values);
-}
-
-fn binsearch(values: &[Float64], query: &Float64) -> Result<usize, usize> {
-    let mut size = values.len();
-    let mut left = 0;
-    let mut right = size;
-    while left < right {
-        let mid = left + size / 2;
-
-        // SAFETY: the while condition means `size` is strictly positive, so
-        // `size/2 < size`. Thus `left + size/2 < left + size`, which
-        // coupled with the `left + size <= self.len()` invariant means
-        // we have `left + size/2 < self.len()`, and this is in-bounds.
-        let cmp = unsafe {
-            values
-                .get_unchecked(mid)
-                .partial_cmp(&query)
-                .unwrap_or_else(|| core::hint::unreachable_unchecked())
-        };
-
-        // The reason why we use if/else control flow rather than match
-        // is because match reorders comparison operations, which is perf sensitive.
-        // This is x86 asm for u8: https://rust.godbolt.org/z/8Y8Pra.
-        if cmp == core::cmp::Ordering::Less {
-            left = mid + 1;
-        } else if cmp == core::cmp::Ordering::Greater {
-            right = mid;
-        } else {
-            // SAFETY: same as the `get_unchecked` above
-            unsafe { core::intrinsics::assume(mid < values.len()) };
-            return Ok(mid);
-        }
-
-        size = right - left;
-    }
-
-    // SAFETY: directly true from the overall invariant.
-    // Note that this is `<=`, unlike the assume in the `Ok` path.
-    unsafe { core::intrinsics::assume(left <= values.len()) };
-    Err(left)
-}
-
+/// Linearly interpolates `query` between `source` and `target`.
+///
+/// precondition: source, target sorted and share the same length
 fn lerpLookup(source: &[Float64], target: &[Float64], query: Float64) -> Float64 {
-    assert_eq!(source.len(), target.len());
-    assert!(!source.is_empty());
+    debug_assert_eq!(source.len(), target.len());
+    debug_assert!(!source.is_empty());
 
-    let index = binsearch(source, &query).unwrap_or_else(|i| i);
+    let index = source
+        .binary_search_by(|&x| x.partial_cmp(&query).unwrap())
+        .unwrap_or_else(|i| i);
     if index < source.len() {
         target[index]
     } else {
@@ -190,29 +147,41 @@ fn lerpLookup(source: &[Float64], target: &[Float64], query: Float64) -> Float64
     }
 }
 
-// // precondition: source, target sorted and share the same length
-// fun lerpLookup(source: List<Double>, target: List<Double>, query: Double): Double {
-//     require(source.size == target.size)
-//     require(source.isNotEmpty())
-//
-//     val index = source.binarySearch(query)
-//     return if (index >= 0) {
-//         target[index]
-//     } else {
-//         val insIndex = -(index + 1)
-//         when {
-//             insIndex <= 0 -> target.first()
-//             insIndex >= source.size -> target.last()
-//             else -> {
-//                 val sLo = source[insIndex - 1]
-//                 val sHi = source[insIndex]
-//                 val tLo = target[insIndex - 1]
-//                 val tHi = target[insIndex]
-//                 lerp(query, sLo, sHi, tLo, tHi)
-//             }
-//         }
-//     }
-// }
+/// Linearly interpolates `queries` between `source` and `target`.
+///
+/// precondition: source, target sorted and share the same length; queries sorted
+fn lerpLookupMap(source: &[Float64], target: &[Float64], queries: &[Float64]) -> Vec<Float64> {
+    debug_assert_eq!(source.len(), target.len());
+    debug_assert!(!source.is_empty());
+
+    let mut result = Vec::with_capacity(queries.len());
+
+    let mut i = 0;
+    for &query in queries {
+        if query < source[0] {
+            result.push(target[0]);
+            continue;
+        }
+
+        while i + 1 < source.len() && source[i + 1] < query {
+            i += 1;
+        }
+
+        if i + 1 == source.len() {
+            result.push(target.last().copied().unwrap());
+            continue;
+        }
+
+        let s_lo = source[i];
+        let s_hi = source[i + 1];
+        let t_lo = target[i];
+        let t_hi = target[i + 1];
+        result.push(lerp(query, s_lo, s_hi, t_lo, t_hi));
+    }
+
+    result
+}
+
 //
 // // precondition: source, target sorted and share the same length; queries sorted
 // fun lerpLookupMap(source: List<Double>, target: List<Double>, queries: List<Double>): List<Double> {

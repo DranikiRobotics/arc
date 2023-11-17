@@ -14,6 +14,7 @@ pub trait Number<Multiplier: Number = Self>:
     + ops::MulAssign
     + ops::Div<Multiplier, Output = Self>
     + ops::DivAssign
+    + From<crate::u2>
 {
 }
 

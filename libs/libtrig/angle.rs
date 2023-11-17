@@ -10,13 +10,19 @@ pub struct Angle2D(RadianOrDegree64, bool);
 const DEG_TO_RAD_MULTIPLIER: Float64 = 0.0174532925199432957692369076848861271344287188854172545609;
 const RAD_TO_DEG_MULTIPLIER: Float64 = 57.29577951308232087679815481410517033240547246656432154916;
 
-#[inline]
-const fn deg_to_rad(deg: Float64) -> Float64 {
-    deg * DEG_TO_RAD_MULTIPLIER
-}
-#[inline]
-const fn rad_to_deg(rad: Float64) -> Float64 {
-    rad * RAD_TO_DEG_MULTIPLIER
+impl Angle2D {
+    /// Converts the given `deg` value to radians.
+    #[inline]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn deg_to_rad(deg: Float64) -> Float64 {
+        deg * DEG_TO_RAD_MULTIPLIER
+    }
+    /// Converts the given `rad` value to degrees.
+    #[inline]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn rad_to_deg(rad: Float64) -> Float64 {
+        rad * RAD_TO_DEG_MULTIPLIER
+    }
 }
 
 impl Angle2D {
@@ -53,34 +59,38 @@ impl Angle2D {
     /// Returns the value of the angle in radians.
     #[inline]
     #[must_use]
-    pub const fn to_radians(&self) -> Radian64 {
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn to_radians(&self) -> Radian64 {
         if self.1 {
             return self.0;
         }
-        deg_to_rad(self.0)
+        Self::deg_to_rad(self.0)
     }
     /// Returns the value of the angle in degrees.
     #[inline]
     #[must_use]
-    pub const fn to_degrees(&self) -> Degree64 {
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn to_degrees(&self) -> Degree64 {
         if !self.1 {
             return self.0;
         }
-        rad_to_deg(self.0)
+        Self::rad_to_deg(self.0)
     }
     /// If the angle is in degrees, converts it to radians.
     #[inline]
-    pub const fn set_self_radians(&mut self) {
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn set_self_radians(&mut self) {
         if !self.1 {
-            self.0 = deg_to_rad(self.0);
+            self.0 = Self::deg_to_rad(self.0);
             self.1 = true;
         }
     }
     /// If the angle is in radians, converts it to degrees.
     #[inline]
-    pub const fn set_self_degrees(&mut self) {
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn set_self_degrees(&mut self) {
         if self.1 {
-            self.0 = rad_to_deg(self.0);
+            self.0 = Self::rad_to_deg(self.0);
             self.1 = false;
         }
     }
@@ -91,14 +101,18 @@ impl Angle2D {
     ///
     /// This is unsafe because it does not convert the internal value.
     #[inline(always)]
-    pub const unsafe fn modify_self_mode_unchecked(&mut self, mode: bool) {
+    #[allow(unsafe_code)]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub unsafe fn modify_self_mode_unchecked(&mut self, mode: bool) {
         self.1 = mode;
     }
     /// Sets the value of self.
     ///
     /// This is unsafe because it does not convert the internal value.
     #[inline(always)]
-    pub const unsafe fn modify_self_value_unchecked(&mut self, value: RadianOrDegree64) {
+    #[allow(unsafe_code)]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub unsafe fn modify_self_value_unchecked(&mut self, value: RadianOrDegree64) {
         self.0 = value;
     }
 }
@@ -414,6 +428,14 @@ macro_rules! i {
         i!($($t)*);
     );
     () => ();
+}
+
+impl From<u2> for Angle2D {
+    #[inline]
+    #[must_use]
+    fn from(u: u2) -> Self {
+        Self::from_radians(u.into())
+    }
 }
 
 impl crate::traits::Float<Float64> for Angle2D {

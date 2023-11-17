@@ -32,7 +32,6 @@ impl MassImplMacroConfig {
 // parses this:
 // $SELF = @R @M Vec2D,
 // $OTHER = @R @M Vec2D
-//
 impl syn::parse::Parse for MassImplMacroConfig {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let mut type_variants = Vec::new();

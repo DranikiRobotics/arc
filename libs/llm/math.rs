@@ -9,28 +9,8 @@ macro_rules! i {
     ($array:expr, $index:expr) => {
         unsafe { *$array.get_unchecked($index) }
     };
-    ($array:expr, $index:expr, = , $rhs:expr) => {
-        unsafe {
-            *$array.get_unchecked_mut($index) = $rhs;
-        }
-    };
-    ($array:expr, $index:expr, += , $rhs:expr) => {
-        unsafe {
-            *$array.get_unchecked_mut($index) += $rhs;
-        }
-    };
-    ($array:expr, $index:expr, -= , $rhs:expr) => {
-        unsafe {
-            *$array.get_unchecked_mut($index) -= $rhs;
-        }
-    };
-    ($array:expr, $index:expr, &= , $rhs:expr) => {
-        unsafe {
-            *$array.get_unchecked_mut($index) &= $rhs;
-        }
-    };
-    ($array:expr, $index:expr, == , $rhs:expr) => {
-        unsafe { *$array.get_unchecked_mut($index) == $rhs }
+    ($array:expr, $index:expr, $t:tt, $rhs:expr) => {
+        unsafe { *$array.get_unchecked_mut($index) $t $rhs }
     };
 }
 
@@ -39,20 +19,8 @@ macro_rules! i {
     ($array:expr, $index:expr) => {
         *$array.get($index).unwrap()
     };
-    ($array:expr, $index:expr, = , $rhs:expr) => {
-        *$array.get_mut($index).unwrap() = $rhs;
-    };
-    ($array:expr, $index:expr, -= , $rhs:expr) => {
-        *$array.get_mut($index).unwrap() -= $rhs;
-    };
-    ($array:expr, $index:expr, += , $rhs:expr) => {
-        *$array.get_mut($index).unwrap() += $rhs;
-    };
-    ($array:expr, $index:expr, &= , $rhs:expr) => {
-        *$array.get_mut($index).unwrap() &= $rhs;
-    };
-    ($array:expr, $index:expr, == , $rhs:expr) => {
-        *$array.get_mut($index).unwrap() == $rhs
+    ($array:expr, $index:expr, $t:tt, $rhs:expr) => {
+        *$array.get_mut($index).unwrap() $t $rhs
     };
 }
 
@@ -60,17 +28,28 @@ macro_rules! i {
 // the time of this writing this is only used in a few places, and once
 // rust-lang/rust#72751 is fixed then this macro will no longer be necessary and
 // the native `/` operator can be used and panics won't be codegen'd.
-#[cfg(debug_assertions)]
+#[cfg(any(debug_assertions, not(feature = "unstable")))]
 macro_rules! div {
     ($a:expr, $b:expr) => {
         $a / $b
     };
 }
 
-#[cfg(not(debug_assertions))]
+#[cfg(all(not(debug_assertions), feature = "unstable"))]
 macro_rules! div {
     ($a:expr, $b:expr) => {
         unsafe { core::intrinsics::unchecked_div($a, $b) }
+    };
+}
+
+macro_rules! llvm_intrinsically_optimized {
+    (#[cfg($($clause:tt)*)] $e:expr) => {
+        #[cfg(all(not(debug_assertions), feature = "unstable", $($clause)*))]
+        {
+            if true { // thwart the dead code lint
+                $e
+            }
+        }
     };
 }
 
@@ -84,19 +63,9 @@ macro_rules! consts {
     () => ();
 }
 
-macro_rules! llvm_intrinsically_optimized {
-    (#[cfg($($clause:tt)*)] $e:expr) => {
-        #[cfg(all($($clause)*))]
-        { $e }
-    };
-}
-
 macro_rules! import {
-    ($p:vis $n:ident) => (
-        mod $n; #[allow(unused_imports)] $p use self::$n::*;
-    );
-    ($p:vis $n:ident $(, $m:ident)*) => (
-        import!($p $n); import!($p $($m),*);
+    ($p:vis $($m:ident),+) => (
+        $(mod $m; #[allow(unused_imports)] $p use self::$m::*;)+
     );
 }
 
