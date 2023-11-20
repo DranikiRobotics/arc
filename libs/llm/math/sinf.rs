@@ -27,8 +27,9 @@ const S3_PIO2: Float64 = 3. * FRAC_PI_2; /* 0x4012D97C, 0x7F3321D2 */
 const S4_PIO2: Float64 = 4. * FRAC_PI_2; /* 0x401921FB, 0x54442D18 */
 
 /// Returns the sine of the argument x.
+#[export_name = "__llm_sinf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sinf(x: Radian32) -> Float32 {
+pub extern "C" fn sinf(x: Radian32) -> Float32 {
     let x64 = x as Float64;
 
     let x1p120 = Float32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120

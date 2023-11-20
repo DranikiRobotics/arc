@@ -66,7 +66,8 @@ const S05: Float32 = 1.2354227016e-11; /* 0x2d59567e */
 /// Bessel function of the first kind of order one
 /// 
 /// Calculates the Bessel function of the first kind of order one of `x`.
-pub fn j1f(x: Float32) -> Float32 {
+#[export_name = "__llm_j1f"]
+pub extern "C" fn j1f(x: Float32) -> Float32 {
     let mut z: Float32;
     let mut ix = x.to_bits();
     let sign = (ix >> 31) != 0;
@@ -110,8 +111,9 @@ const V0: [Float32; 5] = [
 /// Bessel function of the second kind of order one
 /// 
 /// Calculates the Bessel function of the second kind of order one of `x`.
+#[export_name = "__llm_y1f"]
 #[allow(clippy::zero_divided_by_zero)]
-pub fn y1f(x: Float32) -> Float32 {
+pub extern "C" fn y1f(x: Float32) -> Float32 {
     let ix = x.to_bits();
     if (ix & 0x7fffffff) == 0 {
         return -1.0 / 0.0;

@@ -61,7 +61,7 @@
  * to produce the hexadecimal values shown.
 */
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 consts!{
 const LN2_HI: Float64 = 6.93147180369123816490e-01; /* 3fe62e42 fee00000 */
@@ -76,13 +76,14 @@ const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
 }
 
 /// Returns the logarithm of `x`.
+#[export_name = "__llm_log"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log(mut x: Float64) -> Float64 {
+pub extern "C" fn log(mut x: Float64) -> Float64 {
     let x1p54 = Float64::from_bits(0x4350000000000000); // 0x1p54 === 2 ^ 54
 
     let mut ui = x.to_bits();
     let mut hx: u32 = (ui >> 32) as u32;
-    let mut k: i32 = 0;
+    let mut k: Int = 0;
 
     if (hx < 0x00100000) || ((hx >> 31) != 0) {
         /* x < 2**-126  */
@@ -105,7 +106,7 @@ pub fn log(mut x: Float64) -> Float64 {
 
     /* reduce x into [sqrt(2)/2, sqrt(2)] */
     hx += 0x3ff00000 - 0x3fe6a09e;
-    k += ((hx >> 20) as i32) - 0x3ff;
+    k += ((hx >> 20) as Int) - 0x3ff;
     hx = (hx & 0x000fffff) + 0x3fe6a09e;
     ui = ((hx as u64) << 32) | (ui & 0xffffffff);
     x = Float64::from_bits(ui);

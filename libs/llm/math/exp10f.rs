@@ -12,8 +12,9 @@ const P10: &[Float32] = &[
 /// Exponential, base 10
 ///
 /// Calculate `10^x`, that is, 10 raised to the power `x`.
+#[export_name = "__llm_exp10f"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn exp10f(x: Float32) -> Float32 {
+pub extern "C" fn exp10f(x: Float32) -> Float32 {
     let (mut y, n) = modff(x);
     let u = n.to_bits();
     /* fabsf(n) < 8 without raising invalid on nan */

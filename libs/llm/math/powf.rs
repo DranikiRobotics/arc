@@ -13,7 +13,7 @@
  * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
 */
 
-use crate::Float32;
+use crate::{Float32, Int};
 
 use super::{fabsf, scalbnf, sqrtf};
 
@@ -48,9 +48,10 @@ const IVLN2_L: Float32 = 7.0526075433e-06;
 }
 
 /// Returns `x` raised to the power `y`.
+#[export_name = "__llm_powf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 #[allow(clippy::comparison_chain)]
-pub fn powf(x: Float32, y: Float32) -> Float32 {
+pub extern "C" fn powf(x: Float32, y: Float32) -> Float32 {
     let mut z: Float32;
     let mut ax: Float32;
     let z_h: Float32;
@@ -66,16 +67,16 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
     let mut u: Float32;
     let mut v: Float32;
     let mut w: Float32;
-    let mut j: i32;
-    let mut k: i32;
-    let mut yisint: i32;
-    let mut n: i32;
-    let mut ix: i32;
-    let mut is: i32;
-    let hx: i32 = x.to_bits() as i32;
-    let hy: i32 = y.to_bits() as i32;
+    let mut j: Int;
+    let mut k: Int;
+    let mut yisint: Int;
+    let mut n: Int;
+    let mut ix: Int;
+    let mut is: Int;
+    let hx: Int = x.to_bits() as Int;
+    let hy: Int = y.to_bits() as Int;
     ix = hx & 0x7fffffff;
-    let iy: i32 = hy & 0x7fffffff;
+    let iy: Int = hy & 0x7fffffff;
 
     /* x**0 = 1, even if x is NaN */
     if iy == 0 {
@@ -202,7 +203,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         u = IVLN2_H * t; /* IVLN2_H has 16 sig. bits */
         v = t * IVLN2_L - w * IVLN2;
         t1 = u + v;
-        is = t1.to_bits() as i32;
+        is = t1.to_bits() as Int;
         t1 = Float32::from_bits(is as u32 & 0xfffff000);
         t2 = v - (t1 - u);
     } else {
@@ -217,7 +218,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         if ix < 0x00800000 {
             ax *= TWO24;
             n -= 24;
-            ix = ax.to_bits() as i32;
+            ix = ax.to_bits() as Int;
         }
         n += ((ix) >> 23) - 0x7f;
         j = ix & 0x007fffff;
@@ -241,10 +242,10 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         v = 1.0 / (ax + i!(BP, k as usize));
         s = u * v;
         s_h = s;
-        is = s_h.to_bits() as i32;
+        is = s_h.to_bits() as Int;
         s_h = Float32::from_bits(is as u32 & 0xfffff000);
         /* t_h=ax+bp[k] High */
-        is = (((ix as u32 >> 1) & 0xfffff000) | 0x20000000) as i32;
+        is = (((ix as u32 >> 1) & 0xfffff000) | 0x20000000) as Int;
         t_h = Float32::from_bits(is as u32 + 0x00400000 + ((k as u32) << 21));
         t_l = ax - (t_h - i!(BP, k as usize));
         let s_l: Float32 = v * ((u - s_h * t_h) - s_h * t_l);
@@ -254,7 +255,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         r += s_l * (s_h + s);
         s2 = s_h * s_h;
         t_h = 3.0 + s2 + r;
-        is = t_h.to_bits() as i32;
+        is = t_h.to_bits() as Int;
         t_h = Float32::from_bits(is as u32 & 0xfffff000);
         t_l = r - ((t_h - 3.0) - s2);
         /* u+v = s*(1+...) */
@@ -262,7 +263,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         v = s_l * t_h + t_l * s;
         /* 2/(3log2)*(s+...) */
         p_h = u + v;
-        is = p_h.to_bits() as i32;
+        is = p_h.to_bits() as Int;
         p_h = Float32::from_bits(is as u32 & 0xfffff000);
         p_l = v - (p_h - u);
         z_h = CP_H * p_h; /* cp_h+cp_l = 2/(3*log2) */
@@ -270,18 +271,18 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         /* log2(ax) = (s+..)*2/(3*log2) = n + dp_h + z_h + z_l */
         t = n as Float32;
         t1 = ((z_h + z_l) + i!(DP_H, k as usize)) + t;
-        is = t1.to_bits() as i32;
+        is = t1.to_bits() as Int;
         t1 = Float32::from_bits(is as u32 & 0xfffff000);
         t2 = z_l - (((t1 - t) - i!(DP_H, k as usize)) - z_h);
     };
 
     /* split up y into y1+y2 and compute (y1+y2)*(t1+t2) */
-    is = y.to_bits() as i32;
+    is = y.to_bits() as Int;
     let y1: Float32 = Float32::from_bits(is as u32 & 0xfffff000);
     p_l = (y - y1) * t1 + y * t2;
     p_h = y1 * t1;
     z = p_l + p_h;
-    j = z.to_bits() as i32;
+    j = z.to_bits() as Int;
     if j > 0x43000000 {
         /* if z > 128 */
         return sn * HUGE * HUGE; /* overflow */
@@ -302,7 +303,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
     /*
      * compute 2**(p_h+p_l)
      */
-    let i: i32 = j & 0x7fffffff;
+    let i: Int = j & 0x7fffffff;
     k = (i >> 23) - 0x7f;
     n = 0;
     if i > 0x3f000000 {
@@ -317,7 +318,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
         p_h -= t;
     }
     t = p_l + p_h;
-    is = t.to_bits() as i32;
+    is = t.to_bits() as Int;
     t = Float32::from_bits(is as u32 & 0xffff8000);
     u = t * LG2_H;
     v = (p_l - (t - p_h)) * LG2 + t * LG2_L;
@@ -327,7 +328,7 @@ pub fn powf(x: Float32, y: Float32) -> Float32 {
     t1 = z - t * (P1 + t * (P2 + t * (P3 + t * (P4 + t * P5))));
     r = (z * t1) / (t1 - 2.0) - (w + z * w);
     z = 1.0 - (r - z);
-    j = z.to_bits() as i32;
+    j = z.to_bits() as Int;
     j += n << 23;
     if (j >> 23) <= 0 {
         /* subnormal output */

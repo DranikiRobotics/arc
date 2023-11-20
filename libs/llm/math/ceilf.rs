@@ -1,10 +1,11 @@
-use crate::Float32;
+use crate::{Float32, Int};
 
 /// Ceil
 ///
 /// Finds the nearest integer greater than or equal to `x`.
+#[export_name = "__llm_ceilf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn ceilf(x: Float32) -> Float32 {
+pub extern "C" fn ceilf(x: Float32) -> Float32 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
     // `Float32.ceil` native instruction, so we can leverage this for both code size
     // and speed.
@@ -14,7 +15,7 @@ pub fn ceilf(x: Float32) -> Float32 {
         }
     }
     let mut ui = x.to_bits();
-    let e = (((ui >> 23) & 0xff).wrapping_sub(0x7f)) as i32;
+    let e = (((ui >> 23) & 0xff).wrapping_sub(0x7f)) as Int;
 
     if e >= 23 {
         return x;

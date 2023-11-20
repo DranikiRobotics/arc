@@ -11,8 +11,8 @@ license.workspace = true
 path = "lib.rs"
 crate-type = ["cdylib", "staticlib"]
 
+[features]
+no_std = []
+
 [dependencies.llm]
 path = ".."
-
-[dependencies.macros]
-path = "../../macros"

@@ -4,8 +4,10 @@ use super::copysign;
 use super::trunc;
 
 /// Rounds `x` to the nearest integer in the direction of the current rounding mode.
+#[inline]
+#[export_name = "__llm_round"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn round(x: Float64) -> Float64 {
+pub extern "C" fn round(x: Float64) -> Float64 {
     trunc(x + copysign(0.5 - 0.25 * Float64::EPSILON, x))
 }
 

@@ -79,7 +79,7 @@
  *
 */
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 use super::{floor, k_cos, k_sin, log};
 
@@ -151,12 +151,12 @@ const W6: Float64 = -1.63092934096575273989e-03; /* 0xBF5AB89D, 0x0B9E43E4 */
 
 /* sin(PI*x) assuming x > 2^-100, if sin(PI*x)==0 the sign is arbitrary */
 fn sin_pi(mut x: Float64) -> Float64 {
-    let mut n: i32;
+    let mut n: Int;
 
     /* spurious inexact if odd int */
     x = 2.0 * (x * 0.5 - floor(x * 0.5)); /* x mod 2.0 */
 
-    n = (x * 4.0) as i32;
+    n = (x * 4.0) as Int;
     n = div!(n + 1, 2);
     x -= (n as Float64) * 0.5;
     x *= PI;
@@ -174,7 +174,7 @@ fn sin_pi(mut x: Float64) -> Float64 {
 /// Returns the natural logarithm of the absolute value of the gamma function of x,
 /// and the sign of the gamma function of x
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn lgamma_r(mut x: Float64) -> (Float64, i32) {
+pub fn lgamma_r(mut x: Float64) -> (Float64, Int) {
     let u: u64 = x.to_bits();
     let mut t: Float64;
     let y: Float64;
@@ -189,8 +189,8 @@ pub fn lgamma_r(mut x: Float64) -> (Float64, i32) {
     let w: Float64;
     
     
-    let i: i32;
-    let mut signgam: i32;
+    let i: Int;
+    let mut signgam: Int;
 
     /* purge off +-inf, NaN, +-0, tiny and negative arguments */
     signgam = 1;
@@ -287,7 +287,7 @@ pub fn lgamma_r(mut x: Float64) -> (Float64, i32) {
         }
     } else if ix < 0x40200000 {
         /* x < 8.0 */
-        i = x as i32;
+        i = x as Int;
         y = x - (i as Float64);
         p = y * (S0 + y * (S1 + y * (S2 + y * (S3 + y * (S4 + y * (S5 + y * S6))))));
         q = 1.0 + y * (R1 + y * (R2 + y * (R3 + y * (R4 + y * (R5 + y * R6)))));
@@ -326,4 +326,12 @@ pub fn lgamma_r(mut x: Float64) -> (Float64, i32) {
         r = nadj - r;
     }
     return (r, signgam);
+}
+
+/// FFI bindings for lgamma_r
+#[inline]
+#[doc(hidden)]
+#[export_name = "__llm_lgamma_r"]
+pub extern "C" fn __llm_lgamma_r(x: Float64) -> super::Tuple_Float64_Int {
+    super::Tuple_Float64_Int::from(lgamma_r(x))
 }

@@ -26,8 +26,9 @@ const B2: u32 = 642849266; /* B2 = (127-127.0/3-24/3-0.03306235651)*2**23 */
 /// Cube root
 ///
 /// Computes the cube root of the argument.
+#[export_name = "__llm_cbrtf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn cbrtf(x: Float32) -> Float32 {
+pub extern "C" fn cbrtf(x: Float32) -> Float32 {
     let x1p24 = Float32::from_bits(0x4b800000); // 0x1p24f === 2 ^ 24
 
     let mut r: Float64;

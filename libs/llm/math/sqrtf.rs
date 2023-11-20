@@ -13,11 +13,13 @@
  * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
 */
 
-use crate::Float32;
+#[allow(unused_imports)]
+use crate::{Float32, Int};
 
 /// Returns the square root of `x`.
+#[export_name = "__llm_sqrtf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sqrtf(x: Float32) -> Float32 {
+pub extern "C" fn sqrtf(x: Float32) -> Float32 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
     // `Float32.sqrt` native instruction, so we can leverage this for both code size
     // and speed.
@@ -50,16 +52,16 @@ pub fn sqrtf(x: Float32) -> Float32 {
         const TINY: Float32 = 1.0e-30;
 
         let mut z: Float32;
-        let sign: i32 = 0x80000000u32 as i32;
-        let mut ix: i32;
-        let mut s: i32;
-        let mut q: i32;
-        let mut m: i32;
-        let mut t: i32;
-        let mut i: i32;
+        let sign: Int = 0x80000000u32 as Int;
+        let mut ix: Int;
+        let mut s: Int;
+        let mut q: Int;
+        let mut m: Int;
+        let mut t: Int;
+        let mut i: Int;
         let mut r: u32;
 
-        ix = x.to_bits() as i32;
+        ix = x.to_bits() as Int;
 
         /* take care of Inf and NaN */
         if (ix as u32 & 0x7f800000) == 0x7f800000 {
@@ -102,11 +104,11 @@ pub fn sqrtf(x: Float32) -> Float32 {
         r = 0x01000000; /* r = moving bit from right to left */
 
         while r != 0 {
-            t = s + r as i32;
+            t = s + r as Int;
             if t <= ix {
-                s = t + r as i32;
+                s = t + r as Int;
                 ix -= t;
-                q += r as i32;
+                q += r as Int;
             }
             ix += ix;
             r >>= 1;

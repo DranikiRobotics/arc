@@ -1,14 +1,15 @@
-use crate::Float64;
+use crate::{Float64, Int};
 
-const FP_ILOGBNAN: i32 = -1 - 0x7fffffff;
-const FP_ILOGB0: i32 = FP_ILOGBNAN;
+const FP_ILOGBNAN: Int = -1 - 0x7fffffff;
+const FP_ILOGB0: Int = FP_ILOGBNAN;
 
 /// Get exponent of floating point value
+#[export_name = "__llm_ilogb"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 #[allow(clippy::zero_divided_by_zero)]
-pub fn ilogb(x: Float64) -> i32 {
+pub fn ilogb(x: Float64) -> Int {
     let mut i: u64 = x.to_bits();
-    let e = ((i >> 52) & 0x7ff) as i32;
+    let e = ((i >> 52) & 0x7ff) as Int;
 
     if e == 0 {
         i <<= 12;
@@ -28,7 +29,7 @@ pub fn ilogb(x: Float64) -> i32 {
         if (i << 12) != 0 {
             FP_ILOGBNAN
         } else {
-            i32::max_value()
+            Int::max_value()
         }
     } else {
         e - 0x3ff

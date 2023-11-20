@@ -119,7 +119,8 @@ const S04: Float64 = 1.16614003333790000205e-09; /* 0x3E1408BC, 0xF4745D8F */
 /// Bessel function of the first kind of order zero
 /// 
 /// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/j0.html)
-pub fn j0(mut x: Float64) -> Float64 {
+#[export_name = "__llm_j0"]
+pub extern "C" fn j0(mut x: Float64) -> Float64 {
     let z: Float64;
     let r: Float64;
     let s: Float64;
@@ -177,8 +178,9 @@ const V04: Float64 = 4.41110311332675467403e-10; /* 0x3DFE5018, 0x3BD6D9EF */
 /// Bessel function of the second kind of order zero
 /// 
 /// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/y0.html)
+#[export_name = "__llm_y0"]
 #[allow(clippy::zero_divided_by_zero)]
-pub fn y0(x: Float64) -> Float64 {
+pub extern "C" fn y0(x: Float64) -> Float64 {
     let z: Float64;
     let u: Float64;
     let v: Float64;

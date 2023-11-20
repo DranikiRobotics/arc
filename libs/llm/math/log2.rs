@@ -17,7 +17,7 @@
  *    log2(x) = (f - f*f/2 + r)/log(2) + k
 */
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 consts!{
 const IVLN2HI: Float64 = 1.44269504072144627571e+00; /* 0x3ff71547, 0x65200000 */
@@ -32,8 +32,9 @@ const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
 }
 
 /// Returns the base 2 logarithm of `x`.
+#[export_name = "__llm_log2"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log2(mut x: Float64) -> Float64 {
+pub extern "C" fn log2(mut x: Float64) -> Float64 {
     let x1p54 = Float64::from_bits(0x4350000000000000); // 0x1p54 === 2 ^ 54
     let mut ui: u64 = x.to_bits();
     let mut w: Float64;
@@ -41,7 +42,7 @@ pub fn log2(mut x: Float64) -> Float64 {
     let mut val_hi: Float64;
     let mut val_lo: Float64;
     let mut hx: u32;
-    let mut k: i32;
+    let mut k: Int;
 
     hx = (ui >> 32) as u32;
     k = 0;
@@ -65,7 +66,7 @@ pub fn log2(mut x: Float64) -> Float64 {
 
     /* reduce x into [sqrt(2)/2, sqrt(2)] */
     hx += 0x3ff00000 - 0x3fe6a09e;
-    k += (hx >> 20) as i32 - 0x3ff;
+    k += (hx >> 20) as Int - 0x3ff;
     hx = (hx & 0x000fffff) + 0x3fe6a09e;
     ui = (hx as u64) << 32 | (ui & 0xffffffff);
     x = Float64::from_bits(ui);

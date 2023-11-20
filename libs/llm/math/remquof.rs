@@ -1,12 +1,12 @@
-use crate::Float32;
+use crate::{Float32, Int};
 
 /// Return the remainder and part of the quotient of `x` and `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn remquof(mut x: Float32, mut y: Float32) -> (Float32, i32) {
+pub fn remquof(mut x: Float32, mut y: Float32) -> (Float32, Int) {
     let ux: u32 = x.to_bits();
     let mut uy: u32 = y.to_bits();
-    let mut ex = ((ux >> 23) & 0xff) as i32;
-    let mut ey = ((uy >> 23) & 0xff) as i32;
+    let mut ex = ((ux >> 23) & 0xff) as Int;
+    let mut ey = ((uy >> 23) & 0xff) as Int;
     let sx = (ux >> 31) != 0;
     let sy = (uy >> 31) != 0;
     let mut q: u32;
@@ -91,10 +91,18 @@ pub fn remquof(mut x: Float32, mut y: Float32) -> (Float32, i32) {
         q += 1;
     }
     q &= 0x7fffffff;
-    let quo = if sx ^ sy { -(q as i32) } else { q as i32 };
+    let quo = if sx ^ sy { -(q as Int) } else { q as Int };
     if sx {
         (-x, quo)
     } else {
         (x, quo)
     }
+}
+
+/// FFI bindings for remquof
+#[inline]
+#[doc(hidden)]
+#[export_name = "__llm_remquof"]
+pub extern "C" fn __llm_remquof(x: Float32, y: Float32) -> super::Tuple_Float32_Int {
+    super::Tuple_Float32_Int::from(remquof(x, y))
 }

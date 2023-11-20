@@ -11,7 +11,7 @@
 //
 // Optimized by Bruce D. Evans.
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 use super::rem_pio2_large;
 
@@ -44,13 +44,13 @@ const PIO2_3T: Float64 = 8.47842766036889956997e-32; /* 0x397B839A, 0x252049C1 *
 ///
 /// caller must handle the case when reduction is not needed: |x| ~<= pi/4 */
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub(crate) fn rem_pio2(x: Float64) -> (i32, Float64, Float64) {
+pub(crate) fn rem_pio2(x: Float64) -> (Int, Float64, Float64) {
     let x1p24 = Float64::from_bits(0x4170000000000000);
 
-    let sign = (Float64::to_bits(x) >> 63) as i32;
+    let sign = (Float64::to_bits(x) >> 63) as Int;
     let ix = (Float64::to_bits(x) >> 32) as u32 & 0x7fffffff;
 
-    fn medium(x: Float64, ix: u32) -> (i32, Float64, Float64) {
+    fn medium(x: Float64, ix: u32) -> (Int, Float64, Float64) {
         /* rint(x/(pi/2)), Assume round-to-nearest. */
         let tmp = x as Float64 * INV_PIO2 + TO_INT;
         // force rounding of tmp to it's storage format on x87 to avoid
@@ -58,13 +58,13 @@ pub(crate) fn rem_pio2(x: Float64) -> (i32, Float64, Float64) {
         #[cfg(all(target_arch = "x86", not(target_feature = "sse2")))]
         let tmp = force_eval!(tmp);
         let f_n = tmp - TO_INT;
-        let n = f_n as i32;
+        let n = f_n as Int;
         let mut r = x - f_n * PIO2_1;
         let mut w = f_n * PIO2_1T; /* 1st round, good to 85 bits */
         let mut y0 = r - w;
         let ui = Float64::to_bits(y0);
-        let ey = (ui >> 52) as i32 & 0x7ff;
-        let ex = (ix >> 20) as i32;
+        let ey = (ui >> 52) as Int & 0x7ff;
+        let ex = (ix >> 20) as Int;
         if ex - ey > 16 {
             /* 2nd round, good to 118 bits */
             let t = r;
@@ -72,7 +72,7 @@ pub(crate) fn rem_pio2(x: Float64) -> (i32, Float64, Float64) {
             r = t - w;
             w = f_n * PIO2_2T - ((t - r) - w);
             y0 = r - w;
-            let ey = (Float64::to_bits(y0) >> 52) as i32 & 0x7ff;
+            let ey = (Float64::to_bits(y0) >> 52) as Int & 0x7ff;
             if ex - ey > 49 {
                 /* 3rd round, good to 151 bits, covers all cases */
                 let t = r;
@@ -174,7 +174,7 @@ pub(crate) fn rem_pio2(x: Float64) -> (i32, Float64, Float64) {
     let mut z = Float64::from_bits(ui);
     let mut tx = [0.0; 3];
     for i in 0..2 {
-        i!(tx,i, =, z as i32 as Float64);
+        i!(tx,i, =, z as Int as Float64);
         z = (z - i!(tx, i)) * x1p24;
     }
     i!(tx,2, =, z);
@@ -184,7 +184,7 @@ pub(crate) fn rem_pio2(x: Float64) -> (i32, Float64, Float64) {
         i -= 1;
     }
     let mut ty = [0.0; 3];
-    let n = rem_pio2_large(&tx[..=i], &mut ty, ((ix as i32) >> 20) - (0x3ff + 23), 1);
+    let n = rem_pio2_large(&tx[..=i], &mut ty, ((ix as Int) >> 20) - (0x3ff + 23), 1);
     if sign != 0 {
         return (-n, -i!(ty, 0), -i!(ty, 1));
     }

@@ -56,8 +56,9 @@ const PI_LO: Float64 = 1.2246467991473531772E-16; /* 0x3CA1A626, 0x33145C07 */
 /// Computes the inverse tangent (arc tangent) of `y/x`.
 /// Produces the correct result even for angles near pi/2 or -pi/2 (that is, when `x` is near 0).
 /// Returns a value in radians, in the range of -pi to pi.
+#[export_name = "__llm_atan2"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn atan2(y: Float64, x: Float64) -> Radian64 {
+pub extern "C" fn atan2(y: Float64, x: Float64) -> Radian64 {
     if x.is_nan() || y.is_nan() {
         return x + y;
     }

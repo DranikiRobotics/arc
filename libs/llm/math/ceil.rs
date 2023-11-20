@@ -7,8 +7,9 @@ const TOINT: Float64 = 1. / Float64::EPSILON;
 /// Ceil
 ///
 /// Finds the nearest integer greater than or equal to `x`.
+#[export_name = "__llm_ceil"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn ceil(x: Float64) -> Float64 {
+pub extern "C" fn ceil(x: Float64) -> Float64 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
     // `Float64.ceil` native instruction, so we can leverage this for both code size
     // and speed.

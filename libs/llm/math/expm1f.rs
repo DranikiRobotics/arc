@@ -13,7 +13,7 @@
  * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
 */
 
-use crate::Float32;
+use crate::{Float32, Int};
 
 consts!{
 const O_THRESHOLD: Float32 = 8.8721679688e+01; /* 0x42b17180 */
@@ -36,8 +36,9 @@ const Q2: Float32 = 1.5807170421e-3; /*  0xcf3010.0p-33 */
 /// system of logarithms, approximately 2.71828).
 /// The result is accurate even for small values of `x`,
 /// where using `exp(x)-1` would lose many significant digits.
+#[export_name = "__llm_expm1f"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn expm1f(mut x: Float32) -> Float32 {
+pub extern "C" fn expm1f(mut x: Float32) -> Float32 {
     let x1p127 = Float32::from_bits(0x7f000000); // 0x1p127f === 2 ^ 127
 
     let mut hx = x.to_bits();
@@ -60,7 +61,7 @@ pub fn expm1f(mut x: Float32) -> Float32 {
         }
     }
 
-    let k: i32;
+    let k: Int;
     let hi: Float32;
     let lo: Float32;
     let mut c = 0f32;
@@ -79,7 +80,7 @@ pub fn expm1f(mut x: Float32) -> Float32 {
                 k = -1;
             }
         } else {
-            k = (INV_LN2 * x + (if sign { -0.5 } else { 0.5 })) as i32;
+            k = (INV_LN2 * x + (if sign { -0.5 } else { 0.5 })) as Int;
             let t = k as Float32;
             hi = x - t * LN2_HI; /* t*ln2_hi is exact here */
             lo = t * LN2_LO;

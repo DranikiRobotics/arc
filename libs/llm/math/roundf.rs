@@ -4,8 +4,10 @@ use super::copysignf;
 use super::truncf;
 
 /// Rounds `x` to the nearest integer in the direction of the current rounding mode.
+#[inline]
+#[export_name = "__llm_roundf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn roundf(x: Float32) -> Float32 {
+pub extern "C" fn roundf(x: Float32) -> Float32 {
     truncf(x + copysignf(0.5 - 0.25 * Float32::EPSILON, x))
 }
 

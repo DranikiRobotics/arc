@@ -2,8 +2,9 @@ use crate::Float64;
 
 /// Returns the integer part of self.
 /// This means that non-integer numbers are always truncated towards zero.
+#[export_name = "__llm_trunc"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn trunc(x: Float64) -> Float64 {
+pub extern "C" fn trunc(x: Float64) -> Float64 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
     // `Float64.trunc` native instruction, so we can leverage this for both code size
     // and speed.

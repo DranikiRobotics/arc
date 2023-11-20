@@ -13,7 +13,7 @@
  * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
 */
 
-use crate::Float32;
+use crate::{Float32, Int};
 
 use super::scalbnf;
 
@@ -34,12 +34,13 @@ const P2: Float32 = -2.7667332906e-3; /* -0xb55215.0p-32 */
 ///
 /// Calculate the exponential of `x`, that is, *e* raised to the power `x`
 /// (where *e* is the base of the natural system of logarithms, approximately 2.71828).
+#[export_name = "__llm_expf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn expf(mut x: Float32) -> Float32 {
+pub extern "C" fn expf(mut x: Float32) -> Float32 {
     let x1p127 = Float32::from_bits(0x7f000000); // 0x1p127f === 2 ^ 127
     let x1p_126 = Float32::from_bits(0x800000); // 0x1p-126f === 2 ^ -126  /*original 0x1p-149f    ??????????? */
     let mut hx = x.to_bits();
-    let sign = (hx >> 31) as i32; /* sign bit of x */
+    let sign = (hx >> 31) as Int; /* sign bit of x */
     let signb: bool = sign != 0;
     hx &= 0x7fffffff; /* high word of |x| */
 
@@ -67,14 +68,14 @@ pub fn expf(mut x: Float32) -> Float32 {
     }
 
     /* argument reduction */
-    let k: i32;
+    let k: Int;
     let hi: Float32;
     let lo: Float32;
     if hx > 0x3eb17218 {
         /* if |x| > 0.5 ln2 */
         if hx > 0x3f851592 {
             /* if |x| > 1.5 ln2 */
-            k = (INV_LN2 * x + i!(HALF, sign as usize)) as i32;
+            k = (INV_LN2 * x + i!(HALF, sign as usize)) as Int;
         } else {
             k = 1 - sign - sign;
         }

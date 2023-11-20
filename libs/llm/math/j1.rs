@@ -117,7 +117,8 @@ const S05: Float64 = 1.23542274426137913908e-11; /* 0x3DAB2ACF, 0xCFB97ED8 */
 /// Bessel function of the first kind of order one
 /// 
 /// Calculates the Bessel function of the first kind of order one of `x`.
-pub fn j1(x: Float64) -> Float64 {
+#[export_name = "__llm_j1"]
+pub extern "C" fn j1(x: Float64) -> Float64 {
     let mut z: Float64;
     let r: Float64;
     let s: Float64;
@@ -164,8 +165,9 @@ const V0: [Float64; 5] = [
 /// Bessel function of the second kind of order one
 /// 
 /// Calculates the Bessel function of the second kind of order one of `x`.
+#[export_name = "__llm_y1"]
 #[allow(clippy::zero_divided_by_zero)]
-pub fn y1(x: Float64) -> Float64 {
+pub extern "C" fn y1(x: Float64) -> Float64 {
     let ix = get_high_word(x);
     let lx = get_low_word(x);
 

@@ -1,10 +1,10 @@
-use crate::Float32;
+use crate::{Float32, Int};
 
 /// Breaks the given number into an integral and a fractional part.
 pub fn modff(x: Float32) -> (Float32, Float32) {
     let rv2: Float32;
     let mut u: u32 = x.to_bits();
-    let e = ((u >> 23 & 0xff) as i32) - 0x7f;
+    let e = ((u >> 23 & 0xff) as Int) - 0x7f;
 
     /* no fractional part */
     if e >= 23 {
@@ -32,4 +32,12 @@ pub fn modff(x: Float32) -> (Float32, Float32) {
     u &= !mask;
     rv2 = Float32::from_bits(u);
     return (x - rv2, rv2);
+}
+
+/// FFI bindings for modff
+#[inline]
+#[doc(hidden)]
+#[export_name = "__llm_modff"]
+pub extern "C" fn __llm_modff(x: Float32) -> super::Tuple_Float32_Float32 {
+    super::Tuple_Float32_Float32::from(modff(x))
 }

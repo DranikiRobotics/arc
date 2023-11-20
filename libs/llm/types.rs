@@ -9,3 +9,6 @@ pub type Float64 = f64;
 
 /// A floating point number (32bit)
 pub type Float32 = f32;
+
+/// A signed integer (32bit)
+pub type Int = i32;

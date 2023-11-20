@@ -1,8 +1,9 @@
 use crate::Float32;
 
 /// Returns the maximum of the two arguments, signaling NaNs if either argument is a signaling NaN.
+#[export_name = "__llm_fmaxf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fmaxf(x: Float32, y: Float32) -> Float32 {
+pub extern "C" fn fmaxf(x: Float32, y: Float32) -> Float32 {
     // IEEE754 says: maxNum(x, y) is the canonicalized number y if x < y, x if y < x, the
     // canonicalized number if one operand is a number and the other a quiet NaN. Otherwise it
     // is either x or y, canonicalized (this means results might differ among implementations).

@@ -1,8 +1,9 @@
-use crate::Float64;
+use crate::{Float64, Int};
 
 /// Returns `x * 2^n`
+#[export_name = "__llm_scalbn"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn scalbn(x: Float64, mut n: i32) -> Float64 {
+pub extern "C" fn scalbn(x: Float64, mut n: Int) -> Float64 {
     let x1p1023 = Float64::from_bits(0x7fe0000000000000); // 0x1p1023 === 2 ^ 1023
     let x1p53 = Float64::from_bits(0x4340000000000000); // 0x1p53 === 2 ^ 53
     let x1p_1022 = Float64::from_bits(0x0010000000000000); // 0x1p-1022 === 2 ^ (-1022)

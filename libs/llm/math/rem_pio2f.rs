@@ -14,7 +14,7 @@
  * Debugged and optimized by Bruce D. Evans.
 */
 
-use crate::{Float64, Float32};
+use crate::{Float64, Float32, Int};
 
 use super::rem_pio2_large;
 
@@ -34,7 +34,7 @@ const PIO2_1T: Float64 = 1.58932547735281966916e-08; /* 0x3E5110b4, 0x611A6263 *
 /// use double precision for everything except passing x
 /// use __rem_pio2_large() for large x
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub(crate) fn rem_pio2f(x: Float32) -> (i32, Float64) {
+pub(crate) fn rem_pio2f(x: Float32) -> (Int, Float64) {
     let x64 = x as Float64;
 
     let mut tx: [Float64; 1] = [0.];
@@ -51,7 +51,7 @@ pub(crate) fn rem_pio2f(x: Float32) -> (i32, Float64) {
         #[cfg(all(target_arch = "x86", not(target_feature = "sse2")))]
         let tmp = force_eval!(tmp);
         let f_n = tmp - TOINT;
-        return (f_n as i32, x64 - f_n * PIO2_1 - f_n * PIO2_1T);
+        return (f_n as Int, x64 - f_n * PIO2_1 - f_n * PIO2_1T);
     }
     if ix >= 0x7f800000 {
         /* x is inf or NaN */
@@ -59,7 +59,7 @@ pub(crate) fn rem_pio2f(x: Float32) -> (i32, Float64) {
     }
     /* scale x into [2^23, 2^24-1] */
     let sign = (x.to_bits() >> 31) != 0;
-    let e0 = ((ix >> 23) - (0x7f + 23)) as i32; /* e0 = ilogb(|x|)-23, positive */
+    let e0 = ((ix >> 23) - (0x7f + 23)) as Int; /* e0 = ilogb(|x|)-23, positive */
     tx[0] = Float32::from_bits(ix - (e0 << 23) as u32) as Float64;
     let n = rem_pio2_large(&tx, &mut ty, e0, 0);
     if sign {

@@ -1,8 +1,9 @@
 use crate::Float64;
 
 /// Returns the maximum of the two arguments, signaling NaNs if either argument is a signaling NaN.
+#[export_name = "__llm_fmax"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fmax(x: Float64, y: Float64) -> Float64 {
+pub extern "C" fn fmax(x: Float64, y: Float64) -> Float64 {
     // IEEE754 says: maxNum(x, y) is the canonicalized number y if x < y, x if y < x, the
     // canonicalized number if one operand is a number and the other a quiet NaN. Otherwise it
     // is either x or y, canonicalized (this means results might differ among implementations).

@@ -64,8 +64,9 @@ fn r(z: Float64) -> Float64 {
 /// Computes the inverse cosine (arc cosine) of the input value.
 /// Arguments must be in the range -1 to 1.
 /// Returns values in radians, in the range of 0 to pi.
+#[export_name = "__llm_acos"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn acos(x: Float64) -> Radian64 {
+pub extern "C" fn acos(x: Float64) -> Radian64 {
     let x1p_120f = Float64::from_bits(0x3870000000000000); // 0x1p-120 === 2 ^ -120
     let z: Float64;
     let w: Float64;

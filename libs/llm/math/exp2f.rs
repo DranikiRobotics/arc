@@ -76,8 +76,9 @@ static EXP2FT: [u64; TBLSIZE] = [
 /// Exponential, base 2
 ///
 /// Calculate `2^x`, that is, 2 raised to the power `x`.
+#[export_name = "__llm_exp2f"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn exp2f(mut x: Float32) -> Float32 {
+pub extern "C" fn exp2f(mut x: Float32) -> Float32 {
     let redux = Float32::from_bits(0x4b400000) / TBLSIZE as Float32;
     let p1 = Float32::from_bits(0x3f317218);
     let p2 = Float32::from_bits(0x3e75fdf0);

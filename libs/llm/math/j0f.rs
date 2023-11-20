@@ -70,7 +70,8 @@ const S04: Float32 = 1.1661400734e-09; /* 0x30a045e8 */
 /// Bessel function of the first kind of order zero
 /// 
 /// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/j0.html)
-pub fn j0f(mut x: Float32) -> Float32 {
+#[export_name = "__llm_j0f"]
+pub extern "C" fn j0f(mut x: Float32) -> Float32 {
     let z: Float32;
     let r: Float32;
     let s: Float32;
@@ -120,8 +121,9 @@ const V04: Float32 = 4.4111031494e-10; /* 0x2ff280c2 */
 /// Bessel function of the second kind of order zero
 /// 
 /// [CPP Reference](https://pubs.opengroup.org/onlinepubs/7908799/xsh/y0.html)
+#[export_name = "__llm_y0f"]
 #[allow(clippy::zero_divided_by_zero)]
-pub fn y0f(x: Float32) -> Float32 {
+pub extern "C" fn y0f(x: Float32) -> Float32 {
     let ix: u32 = x.to_bits();
     if (ix & 0x7fffffff) == 0 {
         return -1.0 / 0.0;

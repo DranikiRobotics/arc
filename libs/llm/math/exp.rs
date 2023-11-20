@@ -66,7 +66,7 @@
  *          if x < -745.133219101941108420 then exp(x) underflows
 */
 
-use crate::{Float64, Float32};
+use crate::{Float64, Float32, Int};
 
 use super::scalbn;
 
@@ -86,16 +86,17 @@ const P5: Float64 = 4.13813679705723846039e-08; /* 0x3E663769, 0x72BEA4D0 */
 ///
 /// Calculate the exponential of `x`, that is, *e* raised to the power `x`
 /// (where *e* is the base of the natural system of logarithms, approximately 2.71828).
+#[export_name = "__llm_exp"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn exp(mut x: Float64) -> Float64 {
+pub extern "C" fn exp(mut x: Float64) -> Float64 {
     let x1p1023 = Float64::from_bits(0x7fe0000000000000); // 0x1p1023 === 2 ^ 1023
     let x1p_149 = Float64::from_bits(0x36a0000000000000); // 0x1p-149 === 2 ^ -149
     let hi: Float64;
     let lo: Float64;
-    let k: i32;
+    let k: Int;
     let mut hx: u32;
     hx = (x.to_bits() >> 32) as u32;
-    let sign: i32 = (hx >> 31) as i32;
+    let sign: Int = (hx >> 31) as Int;
     hx &= 0x7fffffff; /* high word of |x| */
     /* special cases */
     if hx >= 0x4086232b {
@@ -125,7 +126,7 @@ pub fn exp(mut x: Float64) -> Float64 {
         /* if |x| > 0.5 ln2 */
         if hx >= 0x3ff0a2b2 {
             /* if |x| >= 1.5 ln2 */
-            k = (INVLN2 * x + i!(HALF, sign as usize)) as i32;
+            k = (INVLN2 * x + i!(HALF, sign as usize)) as Int;
         } else {
             k = 1 - sign - sign;
         }

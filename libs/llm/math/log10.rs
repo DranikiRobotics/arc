@@ -17,7 +17,7 @@
  *    log10(x) = (f - f*f/2 + r)/log(10) + k*log10(2)
 */
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 consts!{
 const IVLN10HI: Float64 = 4.34294481878168880939e-01; /* 0x3fdbcb7b, 0x15200000 */
@@ -34,8 +34,9 @@ const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
 }
 
 /// Returns the base 10 logarithm of `x`.
+#[export_name = "__llm_log10"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log10(mut x: Float64) -> Float64 {
+pub extern "C" fn log10(mut x: Float64) -> Float64 {
     let x1p54 = Float64::from_bits(0x4350000000000000); // 0x1p54 === 2 ^ 54
     let mut ui: u64 = x.to_bits();
     let mut w: Float64;
@@ -43,7 +44,7 @@ pub fn log10(mut x: Float64) -> Float64 {
     let mut val_hi: Float64;
     let mut val_lo: Float64;
     let mut hx: u32;
-    let mut k: i32;
+    let mut k: Int;
 
     hx = (ui >> 32) as u32;
     k = 0;
@@ -67,7 +68,7 @@ pub fn log10(mut x: Float64) -> Float64 {
 
     /* reduce x into [sqrt(2)/2, sqrt(2)] */
     hx += 0x3ff00000 - 0x3fe6a09e;
-    k += (hx >> 20) as i32 - 0x3ff;
+    k += (hx >> 20) as Int - 0x3ff;
     hx = (hx & 0x000fffff) + 0x3fe6a09e;
     ui = (hx as u64) << 32 | (ui & 0xffffffff);
     x = Float64::from_bits(ui);

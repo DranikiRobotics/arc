@@ -44,8 +44,9 @@ use super::{k_tan, rem_pio2};
 /// Accuracy:
 ///      TRIG(x) returns trig(x) nearly rounded
 /// ```
+#[export_name = "__llm_tan"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn tan(x: Radian64) -> Float64 {
+pub extern "C" fn tan(x: Radian64) -> Float64 {
     let x1p120 = Float32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120
 
     let ix = (Float64::to_bits(x) >> 32) as u32 & 0x7fffffff;

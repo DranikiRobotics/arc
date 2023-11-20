@@ -15,5 +15,5 @@ doctest = false
 path = "../macros"
 
 [features]
-default = ["unstable"]
 unstable = []
+ffi = []

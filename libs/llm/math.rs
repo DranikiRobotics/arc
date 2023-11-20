@@ -53,6 +53,31 @@ macro_rules! llvm_intrinsically_optimized {
     };
 }
 
+macro_rules! tup {
+    ($name:ident $($k:ident:$v:ty),+) => (
+        #[repr(C)]
+        #[doc(hidden)]
+        #[allow(non_camel_case_types)]
+        pub struct $name {
+            $( pub $k: $v ),+
+        }
+        impl $name {
+            #[inline(always)]
+            #[must_use = "this is a constructor"]
+            pub const fn from(($($k),+): ($($v),+)) -> Self {
+                Self { $($k),+ }
+            }
+        }
+    );
+}
+
+use crate::{Float32, Float64, Int};
+
+tup!(Tuple_Float64_Int f: Float64, i: Int);
+tup!(Tuple_Float32_Int f: Float32, i: Int);
+tup!(Tuple_Float64_Float64 f1: Float64, f2: Float64);
+tup!(Tuple_Float32_Float32 f1: Float32, f2: Float32);
+
 macro_rules! consts {
     (const $name:ident: $ty:ty = $value:expr; $($t:tt)* ) => (
         #[allow(clippy::excessive_precision)]
@@ -102,8 +127,6 @@ import!(
     rem_pio2_large,
     rem_pio2f
 );
-
-use crate::Float64;
 
 #[inline]
 fn get_high_word(x: Float64) -> u32 {

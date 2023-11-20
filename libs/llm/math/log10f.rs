@@ -13,7 +13,7 @@
  * See comments in log10.c.
 */
 
-use crate::Float32;
+use crate::{Float32, Int};
 
 consts!{
 const IVLN10HI: Float32 = 4.3432617188e-01; /* 0x3ede6000 */
@@ -28,14 +28,15 @@ const LG4: Float32 = 0.24279078841; /* 0xf89e26.0p-26 */
 }
 
 /// Returns the base 10 logarithm of `x`.
+#[export_name = "__llm_log10f"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log10f(mut x: Float32) -> Float32 {
+pub extern "C" fn log10f(mut x: Float32) -> Float32 {
     let x1p25f = Float32::from_bits(0x4c000000); // 0x1p25f === 2 ^ 25
 
     let mut ui: u32 = x.to_bits();
     let mut hi: Float32;
     let mut ix: u32;
-    let mut k: i32;
+    let mut k: Int;
 
     ix = ui;
     k = 0;
@@ -60,7 +61,7 @@ pub fn log10f(mut x: Float32) -> Float32 {
 
     /* reduce x into [sqrt(2)/2, sqrt(2)] */
     ix += 0x3f800000 - 0x3f3504f3;
-    k += (ix >> 23) as i32 - 0x7f;
+    k += (ix >> 23) as Int - 0x7f;
     ix = (ix & 0x007fffff) + 0x3f3504f3;
     ui = ix;
     x = Float32::from_bits(ui);

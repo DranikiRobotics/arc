@@ -1,6 +1,7 @@
 #![doc = include_str!("./README.md")]
 #![no_std]
 #![cfg_attr(feature = "unstable", feature(core_intrinsics))]
+#![warn(missing_docs, unused, clippy::all)]
 #![allow(unused_unsafe)]
 #![allow(clippy::unreadable_literal)]
 #![allow(clippy::many_single_char_names)]
@@ -28,7 +29,7 @@ pub(crate) fn _eqf(a: Float32, b: Float32) -> Result<(), u32> {
     if a.is_nan() && b.is_nan() {
         Ok(())
     } else {
-        let err = (a.to_bits() as i32).wrapping_sub(b.to_bits() as i32).abs();
+        let err = (a.to_bits() as Int).wrapping_sub(b.to_bits() as Int).abs();
 
         if err <= 1 {
             Ok(())

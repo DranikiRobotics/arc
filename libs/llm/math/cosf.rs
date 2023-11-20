@@ -30,8 +30,9 @@ const C4_PIO2: Float64 = 4. * FRAC_PI_2; /* 0x401921FB, 0x54442D18 */
 /// 
 /// Computes the cosine of a number (in radians).
 /// Returns a number between -1 and 1.
+#[export_name = "__llm_cosf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn cosf(x: Float32) -> Float32 {
+pub extern "C" fn cosf(x: Float32) -> Float32 {
     let x64 = x as Float64;
 
     let x1p120 = Float32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120

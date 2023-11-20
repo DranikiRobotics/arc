@@ -135,8 +135,9 @@ fn s(x: Float64) -> Float64 {
 }
 
 /// Returns the gamma function of `x`.
+#[export_name = "__llm_tgamma"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn tgamma(mut x: Float64) -> Float64 {
+pub extern "C" fn tgamma(mut x: Float64) -> Float64 {
     let u: u64 = x.to_bits();
     let ix: u32 = ((u >> 32) as u32) & 0x7fffffff;
     let sign: bool = (u >> 63) != 0;

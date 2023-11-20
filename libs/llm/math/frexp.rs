@@ -1,4 +1,4 @@
-use crate::Float64;
+use crate::{Float64, Int};
 
 /// Breaks the number into a normalized fraction and a base-2 exponent
 /// 
@@ -6,9 +6,9 @@ use crate::Float64;
 /// 
 /// * `x = f * 2^exp`
 /// * `0.5 <= abs(f) < 1.0`
-pub fn frexp(x: Float64) -> (Float64, i32) {
+pub fn frexp(x: Float64) -> (Float64, Int) {
     let mut y = x.to_bits();
-    let ee = ((y >> 52) & 0x7ff) as i32;
+    let ee = ((y >> 52) & 0x7ff) as Int;
 
     if ee == 0 {
         if x != 0.0 {
@@ -25,4 +25,12 @@ pub fn frexp(x: Float64) -> (Float64, i32) {
     y &= 0x800fffffffffffff;
     y |= 0x3fe0000000000000;
     return (Float64::from_bits(y), e);
+}
+
+/// FFI bindings for frexp
+#[inline]
+#[doc(hidden)]
+#[export_name = "__llm_frexp"]
+pub extern "C" fn __llm_frexp(x: Float64) -> super::Tuple_Float64_Int {
+    super::Tuple_Float64_Int::from(frexp(x))
 }

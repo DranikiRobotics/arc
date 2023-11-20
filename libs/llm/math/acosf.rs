@@ -37,8 +37,9 @@ fn r(z: Float32) -> Float32 {
 /// Computes the inverse cosine (arc cosine) of the input value.
 /// Arguments must be in the range -1 to 1.
 /// Returns values in radians, in the range of 0 to pi.
+#[export_name = "__llm_acosf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn acosf(x: Float32) -> Radian32 {
+pub extern "C" fn acosf(x: Float32) -> Radian32 {
     let x1p_120 = Float32::from_bits(0x03800000); // 0x1p-120 === 2 ^ (-120)
 
     let z: Float32;

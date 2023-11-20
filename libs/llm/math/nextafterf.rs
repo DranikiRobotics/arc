@@ -1,8 +1,9 @@
 use crate::Float32;
 
 /// Returns the next representable floating-point value following `x` in the direction of `y`.
+#[export_name = "__llm_nextafterf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn nextafterf(x: Float32, y: Float32) -> Float32 {
+pub extern "C" fn nextafterf(x: Float32, y: Float32) -> Float32 {
     if x.is_nan() || y.is_nan() {
         return x + y;
     }

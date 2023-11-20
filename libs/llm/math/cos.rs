@@ -44,7 +44,7 @@
  *      TRIG(x) returns trig(x) nearly rounded
 */
 
-use crate::{Float64, Radian64};
+use crate::{Float64, Radian64, Int};
 
 use super::{k_cos, k_sin, rem_pio2};
 
@@ -52,8 +52,9 @@ use super::{k_cos, k_sin, rem_pio2};
 /// 
 /// Computes the cosine of a number (in radians).
 /// Returns a number between -1 and 1.
+#[export_name = "__llm_cos"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn cos(x: Radian64) -> Float64 {
+pub extern "C" fn cos(x: Radian64) -> Float64 {
     let ix = (Float64::to_bits(x) >> 32) as u32 & 0x7fffffff;
 
     /* |x| ~< pi/4 */
@@ -61,7 +62,7 @@ pub fn cos(x: Radian64) -> Float64 {
         if ix < 0x3e46a09e {
             /* if x < 2**-27 * sqrt(2) */
             /* raise inexact if x != 0 */
-            if x as i32 == 0 {
+            if x as Int == 0 {
                 return 1.0;
             }
         }

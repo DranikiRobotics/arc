@@ -1,4 +1,4 @@
-use crate::Float64;
+use crate::{Float64, Int};
 
 use super::{combine_words, exp};
 
@@ -10,7 +10,7 @@ use super::{combine_words, exp};
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub(crate) fn expo2(x: Float64) -> Float64 {
     /* k is such that k*ln2 has minimal relative error and x - kln2 > log(DBL_MIN) */
-    const K: i32 = 2043;
+    const K: Int = 2043;
     let kln2 = Float64::from_bits(0x40962066151add8b);
 
     /* note that k is odd and scale*scale overflows */

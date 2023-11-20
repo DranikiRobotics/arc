@@ -57,6 +57,14 @@ pub fn sincos(x: Radian64) -> (Float64, Float64) {
     }
 }
 
+/// FFI bindings for sincos
+#[inline]
+#[doc(hidden)]
+#[export_name = "__llm_sincos"]
+pub extern "C" fn __llm_sincos(x: Float64) -> super::Tuple_Float64_Float64 {
+    super::Tuple_Float64_Float64::from(sincos(x))
+}
+
 // These tests are based on those from sincosf.rs
 #[cfg(test)]
 mod tests {

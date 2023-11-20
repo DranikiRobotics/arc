@@ -54,7 +54,7 @@
  *       See HP-15C Advanced Functions Handbook, p.193.
 */
 
-use crate::{Float64, Float32};
+use crate::{Float64, Float32, Int};
 
 consts!{
 const LN2_HI: Float64 = 6.93147180369123816490e-01; /* 3fe62e42 fee00000 */
@@ -69,13 +69,14 @@ const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
 }
 
 /// Return the natural logarithm of `1+x`.
+#[export_name = "__llm_log1p"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log1p(x: Float64) -> Float64 {
+pub extern "C" fn log1p(x: Float64) -> Float64 {
     let mut ui: u64 = x.to_bits();
     let mut f: Float64 = 0.;
     let mut c: Float64 = 0.;
     let mut hu: u32;
-    let mut k: i32;
+    let mut k: Int;
 
     let hx: u32 = (ui >> 32) as u32;
     k = 1;
@@ -109,7 +110,7 @@ pub fn log1p(x: Float64) -> Float64 {
         ui = (1. + x).to_bits();
         hu = (ui >> 32) as u32;
         hu += 0x3ff00000 - 0x3fe6a09e;
-        k = (hu >> 20) as i32 - 0x3ff;
+        k = (hu >> 20) as Int - 0x3ff;
         /* correction term ~ log(1+x)-log(u), avoid underflow in c/u */
         if k < 54 {
             c = if k >= 2 {

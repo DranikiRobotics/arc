@@ -10,7 +10,7 @@
  * ====================================================
 */
 
-use crate::Float32;
+use crate::{Float32, Int};
 
 consts!{
 const LN2_HI: Float32 = 6.9313812256e-01; /* 0x3f317180 */
@@ -23,13 +23,14 @@ const LG4: Float32 = 0.24279078841; /* 0xf89e26.0p-26 */
 }
 
 /// Return the natural logarithm of `1+x`.
+#[export_name = "__llm_log1pf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 pub fn log1pf(x: Float32) -> Float32 {
     let mut ui: u32 = x.to_bits();
     let mut f: Float32 = 0.;
     let mut c: Float32 = 0.;
     let mut iu: u32;
-    let mut k: i32;
+    let mut k: Int;
     let ix: u32 = ui;
     k = 1;
     if ix < 0x3ed413d0 || (ix >> 31) > 0 {
@@ -62,7 +63,7 @@ pub fn log1pf(x: Float32) -> Float32 {
         ui = (1. + x).to_bits();
         iu = ui;
         iu += 0x3f800000 - 0x3f3504f3;
-        k = (iu >> 23) as i32 - 0x7f;
+        k = (iu >> 23) as Int - 0x7f;
         /* correction term ~ log(1+x)-log(u), avoid underflow in c/u */
         if k < 25 {
             c = if k >= 2 {

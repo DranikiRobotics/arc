@@ -14,8 +14,9 @@ fn sq(x: Float64) -> (Float64, Float64) {
 }
 
 /// Calculate the length of the hypotenuse of a right-angle triangle given legs of length x and y.
+#[export_name = "__llm_hypot"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn hypot(mut x: Float64, mut y: Float64) -> Float64 {
+pub extern "C" fn hypot(mut x: Float64, mut y: Float64) -> Float64 {
     let x1p700 = Float64::from_bits(0x6bb0000000000000); // 0x1p700 === 2 ^ 700
     let x1p_700 = Float64::from_bits(0x1430000000000000); // 0x1p-700 === 2 ^ -700
 

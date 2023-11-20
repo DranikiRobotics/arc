@@ -1,8 +1,9 @@
 use crate::Float64;
 
 /// Returns the next representable floating-point value following `x` in the direction of `y`.
+#[export_name = "__llm_nextafter"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn nextafter(x: Float64, y: Float64) -> Float64 {
+pub extern "C" fn nextafter(x: Float64, y: Float64) -> Float64 {
     if x.is_nan() || y.is_nan() {
         return x + y;
     }
@@ -13,14 +14,14 @@ pub fn nextafter(x: Float64, y: Float64) -> Float64 {
         return y;
     }
 
-    let ax = ux_i & (!1_u64 / 2);
-    let ay = uy_i & (!1_u64 / 2);
+    let ax = ux_i & (!1u64 / 2);
+    let ay = uy_i & (!1u64 / 2);
     if ax == 0 {
         if ay == 0 {
             return y;
         }
-        ux_i = (uy_i & 1_u64 << 63) | 1;
-    } else if ax > ay || ((ux_i ^ uy_i) & 1_u64 << 63) != 0 {
+        ux_i = (uy_i & 1u64 << 63) | 1;
+    } else if ax > ay || ((ux_i ^ uy_i) & 1u64 << 63) != 0 {
         ux_i -= 1;
     } else {
         ux_i += 1;

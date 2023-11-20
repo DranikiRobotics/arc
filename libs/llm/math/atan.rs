@@ -68,8 +68,9 @@ const AT: [Float64; 11] = [
 ///
 /// Computes the inverse tangent (arc tangent) of the input value.
 /// Returns a value in radians, in the range of -pi/2 to pi/2.
+#[export_name = "__llm_atan"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn atan(x: Float64) -> Radian64 {
+pub extern "C" fn atan(x: Float64) -> Radian64 {
     let mut x = x;
     let mut ix = (x.to_bits() >> 32) as u32;
     let sign = ix >> 31;

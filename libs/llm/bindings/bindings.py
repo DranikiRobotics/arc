@@ -1,6 +1,8 @@
 def build_llm_bindings(cd: str, args: list[str]) -> str | int | None:
     import subprocess
 
+    cd = f"{cd}/libs/llm/bindings"
+
     print("Building LLM bindings...")
     cmd = ["cargo", "build", "--release", "--package", "llm-bindings"]
     res = subprocess.run(cmd, cwd=cd)
@@ -21,5 +23,4 @@ def build_llm_bindings(cd: str, args: list[str]) -> str | int | None:
         print("Done!")
         return
     
-    print("Could not find the LLM bindings library!")
-    exit(1)
+    return "Could not find the LLM bindings library!"

@@ -1,14 +1,15 @@
 #![allow(unreachable_code)]
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 const TOINT: Float64 = 1. / Float64::EPSILON;
 
 /// Floor
 ///
 /// Finds the nearest integer less than or equal to `x`.
+#[export_name = "__llm_floor"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn floor(x: Float64) -> Float64 {
+pub extern "C" fn floor(x: Float64) -> Float64 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
     // `Float64.floor` native instruction, so we can leverage this for both code size
     // and speed.
@@ -36,7 +37,7 @@ pub fn floor(x: Float64) -> Float64 {
         }
     }
     let ui = x.to_bits();
-    let e = ((ui >> 52) & 0x7ff) as i32;
+    let e = ((ui >> 52) & 0x7ff) as Int;
 
     if (e >= 0x3ff + 52) || (x == 0.) {
         return x;

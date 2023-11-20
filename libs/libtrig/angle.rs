@@ -14,13 +14,13 @@ impl Angle2D {
     /// Converts the given `deg` value to radians.
     #[inline]
     #[macros::func_mod(const => feature = "unstable")]
-    pub fn deg_to_rad(deg: Float64) -> Float64 {
+    pub fn deg_to_rad(deg: Degree64) -> Radian64 {
         deg * DEG_TO_RAD_MULTIPLIER
     }
     /// Converts the given `rad` value to degrees.
     #[inline]
     #[macros::func_mod(const => feature = "unstable")]
-    pub fn rad_to_deg(rad: Float64) -> Float64 {
+    pub fn rad_to_deg(rad: Radian64) -> Degree64 {
         rad * RAD_TO_DEG_MULTIPLIER
     }
 }

@@ -77,11 +77,13 @@
  *      sqrt(NaN) = NaN         ... with invalid signal for signaling NaN
 */
 
-use crate::Float64;
+#[allow(unused_imports)]
+use crate::{Float64, Int};
 
 /// Returns the square root of `x`.
+#[export_name = "__llm_sqrt"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn sqrt(x: Float64) -> Float64 {
+pub extern "C" fn sqrt(x: Float64) -> Float64 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
     // `Float64.sqrt` native instruction, so we can leverage this for both code size
     // and speed.
@@ -117,19 +119,19 @@ pub fn sqrt(x: Float64) -> Float64 {
 
         let mut z: Float64;
         let sign: Wrapping<u32> = Wrapping(0x80000000);
-        let mut ix0: i32;
-        let mut s0: i32;
-        let mut q: i32;
-        let mut m: i32;
-        let mut t: i32;
-        let mut i: i32;
+        let mut ix0: Int;
+        let mut s0: Int;
+        let mut q: Int;
+        let mut m: Int;
+        let mut t: Int;
+        let mut i: Int;
         let mut r: Wrapping<u32>;
         let mut t1: Wrapping<u32>;
         let mut s1: Wrapping<u32>;
         let mut ix1: Wrapping<u32>;
         let mut q1: Wrapping<u32>;
 
-        ix0 = (x.to_bits() >> 32) as i32;
+        ix0 = (x.to_bits() >> 32) as Int;
         ix1 = Wrapping(x.to_bits() as u32);
 
         /* take care of Inf and NaN */
@@ -138,7 +140,7 @@ pub fn sqrt(x: Float64) -> Float64 {
         }
         /* take care of zero */
         if ix0 <= 0 {
-            if ((ix0 & !(sign.0 as i32)) | ix1.0 as i32) == 0 {
+            if ((ix0 & !(sign.0 as Int)) | ix1.0 as Int) == 0 {
                 return x; /* sqrt(+-0) = +-0 */
             }
             if ix0 < 0 {
@@ -151,7 +153,7 @@ pub fn sqrt(x: Float64) -> Float64 {
             /* subnormal x */
             while ix0 == 0 {
                 m -= 21;
-                ix0 |= (ix1 >> 11).0 as i32;
+                ix0 |= (ix1 >> 11).0 as Int;
                 ix1 <<= 21;
             }
             i = 0;
@@ -160,20 +162,20 @@ pub fn sqrt(x: Float64) -> Float64 {
                 ix0 <<= 1;
             }
             m -= i - 1;
-            ix0 |= (ix1 >> (32 - i) as usize).0 as i32;
+            ix0 |= (ix1 >> (32 - i) as usize).0 as Int;
             ix1 = ix1 << i as usize;
         }
         m -= 1023; /* unbias exponent */
         ix0 = (ix0 & 0x000fffff) | 0x00100000;
         if (m & 1) == 1 {
             /* odd m, double x to make it even */
-            ix0 += ix0 + ((ix1 & sign) >> 31).0 as i32;
+            ix0 += ix0 + ((ix1 & sign) >> 31).0 as Int;
             ix1 += ix1;
         }
         m >>= 1; /* m = [m/2] */
 
         /* generate sqrt(x) bit by bit */
-        ix0 += ix0 + ((ix1 & sign) >> 31).0 as i32;
+        ix0 += ix0 + ((ix1 & sign) >> 31).0 as Int;
         ix1 += ix1;
         q = 0; /* [q,q1] = sqrt(x) */
         q1 = Wrapping(0);
@@ -182,13 +184,13 @@ pub fn sqrt(x: Float64) -> Float64 {
         r = Wrapping(0x00200000); /* r = moving bit from right to left */
 
         while r != Wrapping(0) {
-            t = s0 + r.0 as i32;
+            t = s0 + r.0 as Int;
             if t <= ix0 {
-                s0 = t + r.0 as i32;
+                s0 = t + r.0 as Int;
                 ix0 -= t;
-                q += r.0 as i32;
+                q += r.0 as Int;
             }
-            ix0 += ix0 + ((ix1 & sign) >> 31).0 as i32;
+            ix0 += ix0 + ((ix1 & sign) >> 31).0 as Int;
             ix1 += ix1;
             r >>= 1;
         }
@@ -209,7 +211,7 @@ pub fn sqrt(x: Float64) -> Float64 {
                 ix1 -= t1;
                 q1 += r;
             }
-            ix0 += ix0 + ((ix1 & sign) >> 31).0 as i32;
+            ix0 += ix0 + ((ix1 & sign) >> 31).0 as Int;
             ix1 += ix1;
             r >>= 1;
         }

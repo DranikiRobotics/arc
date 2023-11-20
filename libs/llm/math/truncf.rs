@@ -1,9 +1,10 @@
-use crate::Float32;
+use crate::{Float32, Int};
 
 /// Returns the integer part of self.
 /// This means that non-integer numbers are always truncated towards zero.
+#[export_name = "__llm_truncf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn truncf(x: Float32) -> Float32 {
+pub extern "C" fn truncf(x: Float32) -> Float32 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
     // `Float32.trunc` native instruction, so we can leverage this for both code size
     // and speed.
@@ -15,7 +16,7 @@ pub fn truncf(x: Float32) -> Float32 {
     let x1p120 = Float32::from_bits(0x7b800000); // 0x1p120f === 2 ^ 120
 
     let mut i: u32 = x.to_bits();
-    let mut e: i32 = (i >> 23 & 0xff) as i32 - 0x7f + 9;
+    let mut e: Int = (i >> 23 & 0xff) as Int - 0x7f + 9;
 
     if e >= 23 + 9 {
         return x;

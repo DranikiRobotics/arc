@@ -1,10 +1,11 @@
-use crate::Float32;
+use crate::{Float32, Int};
 
 /// Floor
 ///
 /// Finds the nearest integer less than or equal to `x`.
+#[export_name = "__llm_floorf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn floorf(x: Float32) -> Float32 {
+pub extern "C" fn floorf(x: Float32) -> Float32 {
     // On wasm32 we know that LLVM's intrinsic will compile to an optimized
     // `Float32.floor` native instruction, so we can leverage this for both code size
     // and speed.
@@ -14,7 +15,7 @@ pub fn floorf(x: Float32) -> Float32 {
         }
     }
     let mut ui = x.to_bits();
-    let e = (((ui >> 23) as i32) & 0xff) - 0x7f;
+    let e = (((ui >> 23) as Int) & 0xff) - 0x7f;
 
     if e >= 23 {
         return x;

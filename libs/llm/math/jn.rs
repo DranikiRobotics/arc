@@ -34,7 +34,7 @@
  *      values of n>1.
 */
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 use super::{cos, fabs, get_high_word, get_low_word, j0, j1, log, sin, sqrt, y0, y1};
 
@@ -45,11 +45,12 @@ const INVSQRTPI: Float64 = 5.64189583547756279280e-01; /* 0x3FE20DD7, 0x50429B6D
 /// Bessel function of the first kind of order zero of `x`.
 /// 
 /// Calculates the Bessel function of the first kind of order zero of `x`.
-pub fn jn(n: i32, mut x: Float64) -> Float64 {
+#[export_name = "__llm_jn"]
+pub extern "C" fn jn(n: Int, mut x: Float64) -> Float64 {
     let mut ix = get_high_word(x);
     let lx = get_low_word(x);
-    let nm1: i32;
-    let mut i: i32;
+    let nm1: Int;
+    let mut i: Int;
     let mut sign: bool;
     let mut a: Float64;
     let mut b: Float64;
@@ -180,7 +181,7 @@ pub fn jn(n: i32, mut x: Float64) -> Float64 {
         let mut tmp: Float64;
         
 
-        let mut k: i32;
+        let mut k: Int;
 
         let nf: Float64 = (nm1 as Float64) + 1.0;
         w = 2.0 * nf / x;
@@ -256,14 +257,15 @@ pub fn jn(n: i32, mut x: Float64) -> Float64 {
 /// Bessel function of the second kind of order zero of `x`.
 /// 
 /// Calculates the Bessel function of the second kind of order zero of `x`.
+#[export_name = "__llm_yn"]
 #[allow(clippy::zero_divided_by_zero)]
-pub fn yn(n: i32, x: Float64) -> Float64 {
+pub extern "C" fn yn(n: Int, x: Float64) -> Float64 {
     let mut ix: u32;
     
     let mut ib: u32;
-    let nm1: i32;
+    let nm1: Int;
     let mut sign: bool;
-    let mut i: i32;
+    let mut i: Int;
     let mut a: Float64;
     let mut b: Float64;
     let mut temp: Float64;

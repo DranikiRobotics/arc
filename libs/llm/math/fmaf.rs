@@ -25,7 +25,7 @@
  * SUCH DAMAGE.
 */
 
-use crate::{Float64, Float32};
+use crate::{Float64, Float32, Int};
 
 use core::ptr::read_volatile;
 
@@ -46,14 +46,15 @@ use super::fenv::{
 /// Computes `(x*y)+z`, rounded as one ternary operation:
 /// Computes the value (as if) to infinite precision and rounds once to the result format,
 /// according to the rounding mode characterized by the value of FLT_ROUNDS.
+#[export_name = "__llm_fmaf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fmaf(x: Float32, y: Float32, mut z: Float32) -> Float32 {
+pub extern "C" fn fmaf(x: Float32, y: Float32, mut z: Float32) -> Float32 {
     let mut result: Float64;
     let mut ui: u64;
     let xy: Float64 = x as Float64 * y as Float64;
     result = xy + z as Float64;
     ui = result.to_bits();
-    let e: i32 = (ui >> 52) as i32 & 0x7ff;
+    let e: Int = (ui >> 52) as Int & 0x7ff;
     /* Common case: The double precision result is fine. */
     if (
         /* not a halfway case */

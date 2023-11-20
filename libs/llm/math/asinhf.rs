@@ -9,8 +9,9 @@ use core::f32::consts::LN_2;
 ///
 /// Calculates the inverse hyperbolic sine of `x`.
 /// Is defined as `sgn(x)*log(|x|+sqrt(x*x+1))`.
+#[export_name = "__llm_asinhf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn asinhf(mut x: Float32) -> Radian32 {
+pub extern "C" fn asinhf(mut x: Float32) -> Radian32 {
     let u = x.to_bits();
     let i = u & 0x7fffffff;
     let sign = (u >> 31) != 0;

@@ -1,8 +1,9 @@
-use crate::Float32;
+use crate::{Float32, Int};
 
 /// Returns `x * 2^n`
+#[export_name = "__llm_scalbnf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn scalbnf(mut x: Float32, mut n: i32) -> Float32 {
+pub fn scalbnf(mut x: Float32, mut n: Int) -> Float32 {
     let x1p127 = Float32::from_bits(0x7f000000); // 0x1p127f === 2 ^ 127
     let x1p_126 = Float32::from_bits(0x800000); // 0x1p-126f === 2 ^ -126
     let x1p24 = Float32::from_bits(0x4b800000); // 0x1p24f === 2 ^ 24

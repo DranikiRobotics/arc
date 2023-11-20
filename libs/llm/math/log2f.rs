@@ -13,7 +13,7 @@
  * See comments in log2.c.
 */
 
-use crate::Float32;
+use crate::{Float32, Int};
 
 consts!{
 const IVLN2HI: Float32 = 1.4428710938e+00; /* 0x3fb8b000 */
@@ -26,13 +26,14 @@ const LG4: Float32 = 0.24279078841; /* 0xf89e26.0p-26 */
 }
 
 /// Returns the base 2 logarithm of `x`.
+#[export_name = "__llm_log2f"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log2f(mut x: Float32) -> Float32 {
+pub extern "C" fn log2f(mut x: Float32) -> Float32 {
     let x1p25f = Float32::from_bits(0x4c000000); // 0x1p25f === 2 ^ 25
     let mut ui: u32 = x.to_bits();
     let mut hi: Float32;
     let mut ix: u32;
-    let mut k: i32;
+    let mut k: Int;
 
     ix = ui;
     k = 0;
@@ -57,7 +58,7 @@ pub fn log2f(mut x: Float32) -> Float32 {
 
     /* reduce x into [sqrt(2)/2, sqrt(2)] */
     ix += 0x3f800000 - 0x3f3504f3;
-    k += (ix >> 23) as i32 - 0x7f;
+    k += (ix >> 23) as Int - 0x7f;
     ix = (ix & 0x007fffff) + 0x3f3504f3;
     ui = ix;
     x = Float32::from_bits(ui);

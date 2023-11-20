@@ -9,8 +9,9 @@ use crate::Float32;
 /// * NAN	if either argument is NAN.
 ///
 /// A range error may occur.
+#[export_name = "__llm_fdimf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fdimf(x: Float32, y: Float32) -> Float32 {
+pub extern "C" fn fdimf(x: Float32, y: Float32) -> Float32 {
     if x.is_nan() {
         x
     } else if y.is_nan() {

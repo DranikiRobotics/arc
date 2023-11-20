@@ -9,8 +9,9 @@ use crate::Float64;
 /// * NAN	if either argument is NAN.
 ///
 /// A range error may occur.
+#[export_name = "__llm_fdim"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fdim(x: Float64, y: Float64) -> Float64 {
+pub extern "C" fn fdim(x: Float64, y: Float64) -> Float64 {
     if x.is_nan() {
         x
     } else if y.is_nan() {

@@ -8,7 +8,7 @@
 // is preserved.
 // ====================================================
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 // kernel tan function on ~[-pi/4, pi/4] (except on -0), pi/4 ~ 0.7854
 // Input x is assumed to be bounded by ~pi/4 in magnitude.
@@ -64,7 +64,7 @@ const PIO4_LO: Float64 = 3.06161699786838301793e-17; /* 3C81A626, 33145C07 */
 }
 
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub(crate) fn k_tan(mut x: Float64, mut y: Float64, odd: i32) -> Float64 {
+pub(crate) fn k_tan(mut x: Float64, mut y: Float64, odd: Int) -> Float64 {
     let hx = (Float64::to_bits(x) >> 32) as u32;
     let big = (hx & 0x7fffffff) >= 0x3FE59428; /* |x| >= 0.6744 */
     if big {

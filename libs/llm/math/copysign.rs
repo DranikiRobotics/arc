@@ -4,8 +4,9 @@ use crate::Float64;
 ///
 /// Constructs a number with the magnitude (absolute value) of its
 /// first argument, `x`, and the sign of its second argument, `y`.
+#[export_name = "__llm_copysign"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn copysign(x: Float64, y: Float64) -> Float64 {
+pub extern "C" fn copysign(x: Float64, y: Float64) -> Float64 {
     let mut ux = x.to_bits();
     let uy = y.to_bits();
     ux &= (!0) >> 1;

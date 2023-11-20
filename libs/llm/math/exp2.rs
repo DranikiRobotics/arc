@@ -24,7 +24,7 @@
 // OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 // SUCH DAMAGE.
 
-use crate::{Float64, Float32};
+use crate::{Float64, Float32, Int};
 
 use super::scalbn;
 
@@ -324,8 +324,9 @@ static TBL: [u64; TBLSIZE * 2] = [
 /// Exponential, base 2
 ///
 /// Calculate `2^x`, that is, 2 raised to the power `x`.
+#[export_name = "__llm_exp2"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn exp2(mut x: Float64) -> Float64 {
+pub extern "C" fn exp2(mut x: Float64) -> Float64 {
     let redux = Float64::from_bits(0x4338000000000000) / TBLSIZE as Float64;
     let p1 = Float64::from_bits(0x3fe62e42fefa39ef);
     let p2 = Float64::from_bits(0x3fcebfbdff82c575);
@@ -376,7 +377,7 @@ pub fn exp2(mut x: Float64) -> Float64 {
     let mut i0 = ui as u32;
     i0 = i0.wrapping_add(TBLSIZE as u32 / 2);
     let ku = i0 / TBLSIZE as u32 * TBLSIZE as u32;
-    let ki = div!(ku as i32, TBLSIZE as i32);
+    let ki = div!(ku as Int, TBLSIZE as Int);
     i0 %= TBLSIZE as u32;
     let uf = Float64::from_bits(ui) - redux;
     let mut z = x - uf;

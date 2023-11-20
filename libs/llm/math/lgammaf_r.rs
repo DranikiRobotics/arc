@@ -13,7 +13,7 @@
  * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
 */
 
-use crate::{Float64, Float32};
+use crate::{Float64, Float32, Int};
 
 use super::{floorf, k_cosf, k_sinf, logf};
 
@@ -108,7 +108,7 @@ fn sin_pi(mut x: Float32) -> Float32 {
 /// Returns the natural logarithm of the absolute value of the gamma function of x,
 /// and the sign of the gamma function of x
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn lgammaf_r(mut x: Float32) -> (Float32, i32) {
+pub fn lgammaf_r(mut x: Float32) -> (Float32, Int) {
     let u = x.to_bits();
     let mut t: Float32;
     let y: Float32;
@@ -121,7 +121,7 @@ pub fn lgammaf_r(mut x: Float32) -> (Float32, i32) {
     let q: Float32;
     let mut r: Float32;
     let w: Float32;
-    let i: i32;
+    let i: Int;
     let mut signgam = 1;
 
     /* purge off +-inf, NaN, +-0, tiny and negative arguments */
@@ -218,7 +218,7 @@ pub fn lgammaf_r(mut x: Float32) -> (Float32, i32) {
         }
     } else if ix < 0x41000000 {
         /* x < 8.0 */
-        i = x as i32;
+        i = x as Int;
         y = x - (i as Float32);
         p = y * (S0 + y * (S1 + y * (S2 + y * (S3 + y * (S4 + y * (S5 + y * S6))))));
         q = 1.0 + y * (R1 + y * (R2 + y * (R3 + y * (R4 + y * (R5 + y * R6)))));
@@ -257,4 +257,12 @@ pub fn lgammaf_r(mut x: Float32) -> (Float32, i32) {
         r = nadj - r;
     }
     return (r, signgam);
+}
+
+/// FFI bindings for lgammaf_r
+#[inline]
+#[doc(hidden)]
+#[export_name = "__llm_lgammaf_r"]
+pub extern "C" fn __llm_lgammaf_r(x: Float32) -> super::Tuple_Float32_Int {
+    super::Tuple_Float32_Int::from(lgammaf_r(x))
 }

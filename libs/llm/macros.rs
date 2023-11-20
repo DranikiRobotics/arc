@@ -1,7 +1,7 @@
 /// Sigma `Σ` macro
 ///
 /// This is basically a for loop that sums up the values of the expression
-#[macro_export(local_inner_macros)]
+#[macro_export]
 macro_rules! Σ {
     ($finish:expr => $( $tt:tt )*) => (
         $crate::Σ!(0, $finish, 1 => $( $tt )*)
@@ -19,5 +19,3 @@ macro_rules! Σ {
         sum
     }};
 }
-
-pub use Σ;

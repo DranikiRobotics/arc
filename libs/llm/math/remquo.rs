@@ -1,12 +1,12 @@
-use crate::Float64;
+use crate::{Float64, Int};
 
 /// Return the remainder and part of the quotient of `x` and `y`.
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn remquo(mut x: Float64, mut y: Float64) -> (Float64, i32) {
+pub fn remquo(mut x: Float64, mut y: Float64) -> (Float64, Int) {
     let ux: u64 = x.to_bits();
     let mut uy: u64 = y.to_bits();
-    let mut ex = ((ux >> 52) & 0x7ff) as i32;
-    let mut ey = ((uy >> 52) & 0x7ff) as i32;
+    let mut ex = ((ux >> 52) & 0x7ff) as Int;
+    let mut ey = ((uy >> 52) & 0x7ff) as Int;
     let sx = (ux >> 63) != 0;
     let sy = (uy >> 63) != 0;
     let mut q: u32;
@@ -93,8 +93,16 @@ pub fn remquo(mut x: Float64, mut y: Float64) -> (Float64, i32) {
         q = q.wrapping_add(1);
     }
     q &= 0x7fffffff;
-    let quo = if sx ^ sy { -(q as i32) } else { q as i32 };
+    let quo = if sx ^ sy { -(q as Int) } else { q as Int };
     (if sx { -x } else { x }, quo)
+}
+
+/// FFI bindings for remquo
+#[inline]
+#[doc(hidden)]
+#[export_name = "__llm_remquo"]
+pub extern "C" fn __llm_remquo(x: Float64, y: Float64) -> super::Tuple_Float64_Int {
+    super::Tuple_Float64_Int::from(remquo(x, y))
 }
 
 #[cfg(test)]

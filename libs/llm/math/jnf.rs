@@ -13,18 +13,19 @@
  * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
 */
 
-use crate::Float32;
+use crate::{Float32, Int};
 
 use super::{fabsf, j0f, j1f, logf, y0f, y1f};
 
 /// Bessel function of the first kind of order zero
 /// 
 /// Calculates the Bessel function of the first kind of order zero of `x`.
-pub fn jnf(n: i32, mut x: Float32) -> Float32 {
+#[export_name = "__llm_jnf"]
+pub extern "C" fn jnf(n: Int, mut x: Float32) -> Float32 {
     let mut ix: u32;
-    let mut nm1: i32;
+    let mut nm1: Int;
     let mut sign: bool;
-    let mut i: i32;
+    let mut i: Int;
     let mut a: Float32;
     let mut b: Float32;
     let mut temp: Float32;
@@ -123,7 +124,7 @@ pub fn jnf(n: i32, mut x: Float32) -> Float32 {
         let mut z: Float32;
         let mut tmp: Float32;
         
-        let mut k: i32;
+        let mut k: Int;
 
         let nf: Float32 = (nm1 as Float32) + 1.0;
         w = 2.0 * (nf as Float32) / x;
@@ -198,13 +199,14 @@ pub fn jnf(n: i32, mut x: Float32) -> Float32 {
 /// Bessel function of the second kind of order zero
 /// 
 /// Calculates the Bessel function of the second kind of order zero of `x`.
+#[export_name = "__llm_ynf"]
 #[allow(clippy::zero_divided_by_zero)]
-pub fn ynf(n: i32, x: Float32) -> Float32 {
+pub extern "C" fn ynf(n: Int, x: Float32) -> Float32 {
     let mut ix: u32;
     let mut ib: u32;
-    let nm1: i32;
+    let nm1: Int;
     let mut sign: bool;
-    let mut i: i32;
+    let mut i: Int;
     let mut a: Float32;
     let mut b: Float32;
     let mut temp: Float32;

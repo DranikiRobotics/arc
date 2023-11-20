@@ -7,8 +7,9 @@ use super::log1pf;
 ///
 /// Calculates the inverse hyperbolic tangent of `x`.
 /// Is defined as `log((1+x)/(1-x))/2 = log1p(2x/(1-x))/2`.
+#[export_name = "__llm_atanhf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn atanhf(mut x: Float32) -> Radian32 {
+pub extern "C" fn atanhf(mut x: Float32) -> Radian32 {
     let mut u = x.to_bits();
     let sign = (u >> 31) != 0;
 

@@ -120,6 +120,14 @@ pub fn sincosf(x: Radian32) -> (Float32, Float32) {
     }
 }
 
+/// FFI bindings for sincosf
+#[inline]
+#[doc(hidden)]
+#[export_name = "__llm_sincosf"]
+pub extern "C" fn __llm_sincosf(x: Float32) -> super::Tuple_Float32_Float32 {
+    super::Tuple_Float32_Float32::from(sincosf(x))
+}
+
 // PowerPC tests are failing on LLVM 13: https://github.com/rust-lang/rust/issues/88520
 #[cfg(not(target_arch = "powerpc64"))]
 #[cfg(test)]

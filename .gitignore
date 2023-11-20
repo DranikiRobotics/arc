@@ -3,7 +3,7 @@
 .idea
 
 # Rust files
-/*.lock
+*.lock
 target
 
 # Python files

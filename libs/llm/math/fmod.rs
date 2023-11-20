@@ -5,8 +5,9 @@ use crate::Float64;
 /// A.K.A. `modulus` or `modulo` in other languages.
 /// 
 /// Computes the floating-point remainder of the division operation `x/y`.
+#[export_name = "__llm_fmod"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fmod(x: Float64, y: Float64) -> Float64 {
+pub extern "C" fn fmod(x: Float64, y: Float64) -> Float64 {
     let mut uxi = x.to_bits();
     let mut uyi = y.to_bits();
     let mut ex = (uxi >> 52 & 0x7ff) as i64;

@@ -13,9 +13,10 @@ const NEG_ZERO_BITS: u64 = 0x8000000000000000;
 /// - [`const_fn_floating_point_arithmetic`](https://github.com/rust-lang/rust/issues/57241)
 #[inline]
 #[allow(unused_variables)]
+#[export_name = "__llm_ulp"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
 #[must_use = "This function returns the least significant bit of the argument."]
-pub fn ulp(x: Float64) -> Float64 {
+pub extern "C" fn ulp(x: Float64) -> Float64 {
     // SAFETY: x is a normal number, so it is finite and not zero.
     if x.is_nan() {
         return x;

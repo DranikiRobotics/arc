@@ -1,25 +1,25 @@
-use crate::{Float64, Float32};
+use crate::{Float64, Float32, Int};
 
 use super::scalbn;
 
-const ZEROINFNAN: i32 = 0x7ff - 0x3ff - 52 - 1;
+const ZEROINFNAN: Int = 0x7ff - 0x3ff - 52 - 1;
 
 struct Num {
     m: u64,
-    e: i32,
-    sign: i32,
+    e: Int,
+    sign: Int,
 }
 
 fn normalize(x: Float64) -> Num {
     let x1p63: Float64 = Float64::from_bits(0x43e0000000000000); // 0x1p63 === 2 ^ 63
 
     let mut ix: u64 = x.to_bits();
-    let mut e: i32 = (ix >> 52) as i32;
-    let sign: i32 = e & 0x800;
+    let mut e: Int = (ix >> 52) as Int;
+    let sign: Int = e & 0x800;
     e &= 0x7ff;
     if e == 0 {
         ix = (x * x1p63).to_bits();
-        e = (ix >> 52) as i32 & 0x7ff;
+        e = (ix >> 52) as Int & 0x7ff;
         e = if e != 0 { e - 63 } else { 0x800 };
     }
     ix &= (1 << 52) - 1;
@@ -40,8 +40,9 @@ fn mul(x: u64, y: u64) -> (u64, u64) {
 /// Computes `(x*y)+z`, rounded as one ternary operation:
 /// Computes the value (as if) to infinite precision and rounds once to the result format,
 /// according to the rounding mode characterized by the value of FLT_ROUNDS.
+#[export_name = "__llm_fma"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn fma(x: Float64, y: Float64, z: Float64) -> Float64 {
+pub extern "C" fn fma(x: Float64, y: Float64, z: Float64) -> Float64 {
     let x1p63: Float64 = Float64::from_bits(0x43e0000000000000); // 0x1p63 === 2 ^ 63
     let x0_ffffff8p_63 = Float64::from_bits(0x3bfffffff0000000); // 0x0.ffffff8p-63
 
@@ -68,8 +69,8 @@ pub fn fma(x: Float64, y: Float64, z: Float64) -> Float64 {
     /* either top 20 or 21 bits of rhi and last 2 bits of rlo are 0 */
 
     /* align exponents */
-    let mut e: i32 = nx.e + ny.e;
-    let mut d: i32 = nz.e - e;
+    let mut e: Int = nx.e + ny.e;
+    let mut d: Int = nz.e - e;
     /* shift bits z<<=kz, r>>=kr, so kz+kr == d, set e = e+kr (== ez-kz) */
     if d > 0 {
         if d < 64 {
@@ -102,9 +103,9 @@ pub fn fma(x: Float64, y: Float64, z: Float64) -> Float64 {
     }
 
     /* add */
-    let mut sign: i32 = nx.sign ^ ny.sign;
+    let mut sign: Int = nx.sign ^ ny.sign;
     let samesign: bool = (sign ^ nz.sign) == 0;
-    let mut nonzero: i32 = 1;
+    let mut nonzero: Int = 1;
     if samesign {
         /* r += z */
         rlo = rlo.wrapping_add(zlo);
@@ -117,19 +118,19 @@ pub fn fma(x: Float64, y: Float64, z: Float64) -> Float64 {
         if (rhi >> 63) != 0 {
             rlo = (rlo as i64).wrapping_neg() as u64;
             rhi = (rhi as i64).wrapping_neg() as u64 - (rlo != 0) as u64;
-            sign = (sign == 0) as i32;
+            sign = (sign == 0) as Int;
         }
-        nonzero = (rhi != 0) as i32;
+        nonzero = (rhi != 0) as Int;
     }
 
     /* set rhi to top 63bit of the result (last bit is sticky) */
     if nonzero != 0 {
         e += 64;
-        d = rhi.leading_zeros() as i32 - 1;
+        d = rhi.leading_zeros() as Int - 1;
         /* note: d > 0 */
         rhi = rhi << d | rlo >> (64 - d) | ((rlo << d) != 0) as u64;
     } else if rlo != 0 {
-        d = rlo.leading_zeros() as i32 - 1;
+        d = rlo.leading_zeros() as Int - 1;
         if d < 0 {
             rhi = rlo >> 1 | (rlo & 1);
         } else {

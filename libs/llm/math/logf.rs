@@ -13,7 +13,7 @@
  * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
 */
 
-use crate::Float32;
+use crate::{Float32, Int};
 
 consts!{
 const LN2_HI: Float32 = 6.9313812256e-01; /* 0x3f317180 */
@@ -26,12 +26,13 @@ const LG4: Float32 = 0.24279078841; /*  0xf89e26.0p-26 */
 }
 
 /// Returns the logarithm of `x`
+#[export_name = "__llm_logf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn logf(mut x: Float32) -> Float32 {
+pub extern "C" fn logf(mut x: Float32) -> Float32 {
     let x1p25 = Float32::from_bits(0x4c000000); // 0x1p25f === 2 ^ 25
 
     let mut ix = x.to_bits();
-    let mut k = 0i32;
+    let mut k: Int = 0;
 
     if (ix < 0x00800000) || ((ix >> 31) != 0) {
         /* x < 2**-126  */
@@ -53,7 +54,7 @@ pub fn logf(mut x: Float32) -> Float32 {
 
     /* reduce x into [sqrt(2)/2, sqrt(2)] */
     ix += 0x3f800000 - 0x3f3504f3;
-    k += ((ix >> 23) as i32) - 0x7f;
+    k += ((ix >> 23) as Int) - 0x7f;
     ix = (ix & 0x007fffff) + 0x3f3504f3;
     x = Float32::from_bits(ix);
 

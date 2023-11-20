@@ -58,7 +58,7 @@
 // to produce the hexadecimal values shown.
 //
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 use super::{fabs, get_high_word, scalbn, sqrt, with_set_high_word, with_set_low_word};
 
@@ -95,16 +95,17 @@ const IVLN2_L: Float64 = 1.92596299112661746887e-08; /* 0x3e54ae0b_f85ddf44 =1/l
 }
 
 /// Returns `x` raised to the power `y`.
+#[export_name = "__llm_pow"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn pow(x: Float64, y: Float64) -> Float64 {
+pub extern "C" fn pow(x: Float64, y: Float64) -> Float64 {
     let t1: Float64;
     let t2: Float64;
 
-    let (hx, lx): (i32, u32) = ((x.to_bits() >> 32) as i32, x.to_bits() as u32);
-    let (hy, ly): (i32, u32) = ((y.to_bits() >> 32) as i32, y.to_bits() as u32);
+    let (hx, lx): (Int, u32) = ((x.to_bits() >> 32) as Int, x.to_bits() as u32);
+    let (hy, ly): (Int, u32) = ((y.to_bits() >> 32) as Int, y.to_bits() as u32);
 
-    let mut ix: i32 = hx & 0x7fffffff;
-    let iy: i32 = hy & 0x7fffffff;
+    let mut ix: Int = hx & 0x7fffffff;
+    let iy: Int = hy & 0x7fffffff;
 
     /* x**0 = 1, even if x is NaN */
     if ((iy as u32) | ly) == 0 {
@@ -130,9 +131,9 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
      * yisint = 1       ... y is an odd int
      * yisint = 2       ... y is an even int
      */
-    let mut yisint: i32 = 0;
-    let mut k: i32;
-    let mut j: i32;
+    let mut yisint: Int = 0;
+    let mut k: Int;
+    let mut j: Int;
     if hx < 0 {
         if iy >= 0x43400000 {
             yisint = 2; /* even integer y */
@@ -140,9 +141,9 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
             k = (iy >> 20) - 0x3ff; /* exponent */
 
             if k > 20 {
-                j = (ly >> (52 - k)) as i32;
+                j = (ly >> (52 - k)) as Int;
 
-                if (j << (52 - k)) == (ly as i32) {
+                if (j << (52 - k)) == (ly as Int) {
                     yisint = 2 - (j & 1);
                 }
             } else if ly == 0 {
@@ -160,7 +161,7 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
         if iy == 0x7ff00000 {
             /* y is +-inf */
 
-            return if ((ix - 0x3ff00000) | (lx as i32)) == 0 {
+            return if ((ix - 0x3ff00000) | (lx as Int)) == 0 {
                 /* (-1)**+-inf is 1 */
                 1.0
             } else if ix >= 0x3ff00000 {
@@ -277,20 +278,20 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
         t2 = v - (t1 - u);
     } else {
         // double ss,s2,s_h,s_l,t_h,t_l;
-        let mut n: i32 = 0;
+        let mut n: Int = 0;
 
         if ix < 0x00100000 {
             /* take care subnormal number */
             ax *= TWO53;
             n -= 53;
-            ix = get_high_word(ax) as i32;
+            ix = get_high_word(ax) as Int;
         }
 
         n += (ix >> 20) - 0x3ff;
         j = ix & 0x000fffff;
 
         /* determine interval */
-        let k: i32;
+        let k: Int;
         ix = j | 0x3ff00000; /* normalize ix */
         if j <= 0x3988E {
             /* |x|<sqrt(3/2) */
@@ -348,9 +349,9 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
     let p_l: Float64 = (y - y1) * t1 + y * t2;
     let mut p_h: Float64 = y1 * t1;
     let z: Float64 = p_l + p_h;
-    let mut j: i32 = (z.to_bits() >> 32) as i32;
-    let i: i32 = z.to_bits() as i32;
-    // let (j, i): (i32, i32) = ((z.to_bits() >> 32) as i32, z.to_bits() as i32);
+    let mut j: Int = (z.to_bits() >> 32) as Int;
+    let i: Int = z.to_bits() as Int;
+    // let (j, i): (Int, Int) = ((z.to_bits() >> 32) as Int, z.to_bits() as Int);
 
     if j >= 0x40900000 {
         /* z >= 1024 */
@@ -377,9 +378,9 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
     }
 
     /* compute 2**(p_h+p_l) */
-    let i: i32 = j & 0x7fffffff_i32;
+    let i: Int = j & 0x7fffffff;
     k = (i >> 20) - 0x3ff;
-    let mut n: i32 = 0;
+    let mut n: Int = 0;
 
     if i > 0x3fe00000 {
         /* if |z| > 0.5, set n = [z+0.5] */
@@ -402,7 +403,7 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
     let t1: Float64 = z - t * (P1 + t * (P2 + t * (P3 + t * (P4 + t * P5))));
     let r: Float64 = (z * t1) / (t1 - 2.0) - (w + z * w);
     z = 1.0 - (r - z);
-    j = get_high_word(z) as i32;
+    j = get_high_word(z) as Int;
     j += n << 20;
 
     if (j >> 20) <= 0 {
@@ -417,11 +418,10 @@ pub fn pow(x: Float64, y: Float64) -> Float64 {
 
 #[cfg(test)]
 mod tests {
-    extern crate core;
     use super::Float64;
 
-    use self::core::f64::consts::{E, PI};
-    use self::core::f64::{EPSILON, INFINITY, MAX, MIN, MIN_POSITIVE, NAN, NEG_INFINITY};
+    use ::core::f64::consts::{E, PI};
+    use ::core::f64::{EPSILON, INFINITY, MAX, MIN, MIN_POSITIVE, NAN, NEG_INFINITY};
     use super::pow;
 
     const POS_ZERO: &[Float64] = &[0.0];

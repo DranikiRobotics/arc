@@ -10,7 +10,7 @@
  * ====================================================
 */
 
-use crate::Float64;
+use crate::{Float64, Int};
 
 consts!{
 const O_THRESHOLD: Float64 = 7.09782712893383973096e+02; /* 0x40862E42, 0xFEFA39EF */
@@ -32,18 +32,19 @@ const Q5: Float64 = -2.01099218183624371326e-07; /* BE8AFDB7 6E09C32D */
 /// system of logarithms, approximately 2.71828).
 /// The result is accurate even for small values of `x`,
 /// where using `exp(x)-1` would lose many significant digits.
+#[export_name = "__llm_expm1"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn expm1(mut x: Float64) -> Float64 {
+pub extern "C" fn expm1(mut x: Float64) -> Float64 {
     let hi: Float64;
     let lo: Float64;
-    let k: i32;
+    let k: Int;
     let c: Float64;
     let mut t: Float64;
     let mut y: Float64;
 
     let mut ui = x.to_bits();
     let hx = ((ui >> 32) & 0x7fffffff) as u32;
-    let sign = (ui >> 63) as i32;
+    let sign = (ui >> 63) as Int;
 
     /* filter out huge and non-finite argument */
     if hx >= 0x4043687A {
@@ -75,7 +76,7 @@ pub fn expm1(mut x: Float64) -> Float64 {
                 k = -1;
             }
         } else {
-            k = (INVLN2 * x + if sign != 0 { -0.5 } else { 0.5 }) as i32;
+            k = (INVLN2 * x + if sign != 0 { -0.5 } else { 0.5 }) as Int;
             t = k as Float64;
             hi = x - t * LN2_HI; /* t*ln2_hi is exact here */
             lo = t * LN2_LO;

@@ -11,8 +11,9 @@ const LN2: Float64 = 0.693147180559945309417232121458176568; /* 0x3fe62e42,  0xf
 ///
 /// Calculates the inverse hyperbolic sine of `x`.
 /// Is defined as `sgn(x)*log(|x|+sqrt(x*x+1))`.
+#[export_name = "__llm_asinh"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn asinh(mut x: Float64) -> Radian64 {
+pub extern "C" fn asinh(mut x: Float64) -> Radian64 {
     let mut u = x.to_bits();
     let e = ((u >> 52) as usize) & 0x7ff;
     let sign = (u >> 63) != 0;
