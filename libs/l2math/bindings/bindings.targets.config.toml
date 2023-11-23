@@ -13,10 +13,12 @@ macos = [
 ]
 
 android = [
-    "aarch64-linux-android",
-    "armv7-linux-androideabi",
-    "x86_64-linux-android",
-    "i686-linux-android",
+    "armeabi-v7a",
+    "arm64-v8a",
+
+    # These also work, but are not needed for me.
+    # "x86_64-linux-android",
+    # "i686-linux-android",
 ]
 
 # You may add more targets below, as long as they are supported by the Rust.

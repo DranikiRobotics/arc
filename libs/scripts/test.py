@@ -14,7 +14,7 @@ def llvm_test(cd: str, args: list[str]) -> str | int | None:
         cwd = cd,
         env = {
             "RUSTFLAGS": "-Cinstrument-coverage",
-            "LLVM_PROFILE_FILE": "cargo-test-%p-%m.profraw"
+            "LLVM_PROFILE_FILE": "./target/cargo-test-%p-%m.profraw"
         }
     )
 

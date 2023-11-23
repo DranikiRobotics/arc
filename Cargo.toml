@@ -19,3 +19,8 @@ repository = "https://github.com/AtomicGamer9523/librobomath"
 version = "0.1.0-dev"
 edition = "2021"
 license = "MIT"
+
+[profile.release]
+opt-level = 3
+debug = false
+panic = "abort"

@@ -18,7 +18,7 @@ def clean(cd: str, args: list[str]) -> str | int | None:
     
     import shutil, os
 
-    CLEAN_DIRS = ["target", ".gradle", ".idea", "out", "build", "__pycache__"]
+    CLEAN_DIRS = ["target", ".build", ".gradle", ".idea", "out", "build", "__pycache__"]
     CLEAN_EXTENSIONS = [".jar", ".dylib", ".dll", ".lib", ".so"]
     CLEAN_FILES = ["Cargo.lock"]
 

@@ -46,39 +46,110 @@ def get_current_platform() -> str:
     else:
         return "unknown"
 
-def build_llm_bindings(cd: str, args: list[str]) -> str | int | None:
-    import subprocess
-
+def build_l2math_bindings(cd: str, args: list[str]) -> str | int | None:
     architecture = args[0] if len(args) > 0 else get_current_platform()
 
     print(f"Building L2Math bindings for {architecture}...")
 
     config = BindingsTargetsConfig(cd)
+    targets = config.get(architecture)
 
-    print(config.get_all_targets())
+    if len(targets) == 0: return f"No targets found for {architecture}!"
 
-    cmd = ["cargo", "build", "--release", "--package", "l2math-bindings"]
-    res = subprocess.run(cmd, cwd=cd)
-    if res.returncode != 0: exit(res.returncode)
+    if architecture == "windows":
+        return build_l2math_bindings_windows(cd, targets)
+    elif architecture == "linux":
+        return build_l2math_bindings_linux(cd, targets)
+    elif architecture == "macos":
+        return build_l2math_bindings_macos(cd, targets)
+    elif architecture == "android":
+        return build_l2math_bindings_android(cd, targets)
+    else:
+        return build_l2math_bindings_unknown(cd, targets)
 
-    print("Copying L2Math bindings...")
-    import shutil, os
+from typing import Callable
 
-    def move_if_needed(name: str) -> bool:
-        TO = f"{cd}/libs/l2math/bindings/{name}"
+def common_build_l2math_bindings(
+    cd: str, targets: list[str],
+    to_f: Callable[[str], str],
+    from_f: Callable[[str], str]
+) -> str | None:
+    import subprocess, shutil, os
+
+    for target in targets:
+        print(f"Building L2Math bindings for {target}...")
+
+        cmd = ["cargo", "build", "--target", target, "-r", "-p", "l2math-bindings"]
+        res = subprocess.run(cmd, cwd=cd)
+        if res.returncode != 0: exit(res.returncode)
+
+        print("Copying L2Math bindings...")
+
+        TO_DIR = f"{cd}/libs/l2math/bindings/.build"
+        if not os.path.exists(TO_DIR):
+            os.mkdir(TO_DIR)
+        TO = f"{TO_DIR}/{to_f(target)}"
         if os.path.exists(TO):
             print(f"Removing {TO}...")
             os.remove(TO)
-        FROM = f"{cd}/target/release/{name}"
+        FROM = f"{cd}/target/{target}/release/{from_f(target)}"
         if os.path.exists(FROM) and not os.path.exists(TO):
-            shutil.copy(FROM, TO)
-            return True
-        return False
-
-    if move_if_needed("libl2math_bindings.so") \
-    or move_if_needed("l2math_bindings.dll") \
-    or move_if_needed("libl2math_bindings.dylib"):
-        print("Done!")
-        return
-    
+            shutil.move(FROM, TO)
+            print("Done!")
+            return
     return "Could not find the L2Math bindings library!"
+
+def build_l2math_bindings_windows(cd: str, targets: list[str]) -> str | None:
+    return common_build_l2math_bindings(
+        cd, targets, lambda t: f"l2math-{t}.dll", lambda _: "l2math_bindings.dll"
+    )
+
+def build_l2math_bindings_linux(cd: str, targets: list[str]) -> str | None:
+    return common_build_l2math_bindings(
+        cd, targets, lambda t: f"libl2math-{t}.so", lambda _: "libl2math_bindings.so"
+    )
+
+def build_l2math_bindings_macos(cd: str, targets: list[str]) -> str | None:
+    return common_build_l2math_bindings(
+        cd, targets, lambda t: f"libl2math-{t}.dylib", lambda _: "libl2math_bindings.dylib"
+    )
+
+def build_l2math_bindings_android(cd: str, targets: list[str]) -> str | None:
+    import shutil, os
+
+    TO_DIR = f"{cd}/libs/l2math/bindings/.build"
+    if not os.path.exists(TO_DIR): os.mkdir(TO_DIR)
+
+    for target in targets:
+        import subprocess
+
+        print(f"Building L2Math bindings for {target}...")
+
+        cmd = ["cargo", "ndk", "-t", target, "-o", f"{cd}/target/ndk/", "build", "--release", "-p", "l2math-bindings"]
+        res = subprocess.run(cmd, cwd = cd)
+        if res.returncode != 0: exit(res.returncode)
+
+        print(f"Copying L2Math bindings for {target}...")
+
+        TO = f"{TO_DIR}/libl2math-{target}.so"
+        if os.path.exists(TO):
+            print(f"Removing {TO}...")
+            os.remove(TO)
+        FROM = f"{cd}/target/ndk/{target}/libl2math_bindings.so"
+        if os.path.exists(FROM) and not os.path.exists(TO):
+            shutil.move(FROM, TO)
+    
+    print("Copying libc++_shared.so...")
+
+    TO = f"{TO_DIR}/libc++_shared.so"
+    if os.path.exists(TO):
+        print(f"Removing {TO}...")
+        os.remove(TO)
+    FROM = f"{cd}/target/ndk/libc++_shared.so"
+    if os.path.exists(FROM) and not os.path.exists(TO):
+        shutil.move(FROM, TO)
+
+    print("Done!")
+
+def build_l2math_bindings_unknown(cd: str, targets: list[str]) -> str | None:
+    return "Unknown platform!"
