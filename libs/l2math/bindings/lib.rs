@@ -7,5 +7,6 @@ pub use l2math::*;
 
 #[no_mangle]
 #[panic_handler]
+#[rustfmt::skip]
 #[cfg(feature = "no_std")]
 pub extern "C" fn panic(_info: &core::panic::PanicInfo) -> ! { loop {} }
