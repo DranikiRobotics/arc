@@ -1,16 +1,16 @@
 [workspace]
 resolver = "2"
 members = [
+    # Main crates
+    "libs/l2math/bindings",
+    "libs/l2math",
+    "libs/libodo",
+    "libs/libpath",
+    "libs/libtrig",
+
     # Helper crates
     "libs/macros-core",
     "libs/macros",
-
-    # Main crates
-    "libs/libtrig",
-    "libs/libpath",
-    "libs/libodo",
-    "libs/llm/bindings",
-    "libs/llm",
 ]
 
 [workspace.package]

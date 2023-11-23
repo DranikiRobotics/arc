@@ -13,8 +13,8 @@ path = "../libtrig"
 [dependencies.libodo]
 path = "../libodo"
 
-[dependencies.llm]
-path = "../llm"
+[dependencies.l2math]
+path = "../l2math"
 
 [lib]
 path = "lib.rs"

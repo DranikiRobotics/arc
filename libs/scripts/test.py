@@ -11,8 +11,8 @@ def llvm_test(cd: str, args: list[str]) -> str | int | None:
     # Run the tests
     res = subprocess.run(
         ["cargo", "test"],
-        cwd=cd,
-        env={
+        cwd = cd,
+        env = {
             "RUSTFLAGS": "-Cinstrument-coverage",
             "LLVM_PROFILE_FILE": "cargo-test-%p-%m.profraw"
         }
@@ -44,7 +44,7 @@ def llvm_test(cd: str, args: list[str]) -> str | int | None:
     # Generate the coverage report
     res = subprocess.run(
         cov("html"),
-        cwd=cd
+        cwd = cd
     )
 
 def tarpaulin_test(cd: str, args: list[str]) -> str | int | None:

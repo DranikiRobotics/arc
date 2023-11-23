@@ -11,7 +11,7 @@ macro_rules! simpl {
         #[inline]
         #[must_use]
         fn $n(&self) -> Self {
-            llm::$m(*self)
+            l2math::$m(*self)
         }
         simpl!($($t)*);
     );
@@ -27,7 +27,7 @@ impl Float for Float64 {
     #[inline]
     #[must_use]
     fn mul_add(&self, a: Self, b: Self) -> Self {
-        llm::fma(*self, a, b)
+        l2math::fma(*self, a, b)
     }
     #[inline]
     #[must_use]
@@ -58,27 +58,27 @@ impl Float for Float64 {
     #[inline]
     #[must_use]
     fn powi(&self, n: Int) -> Self {
-        llm::pow(*self, n as Float64)
+        l2math::pow(*self, n as Float64)
     }
     #[inline]
     #[must_use]
     fn powf(&self, n: Self) -> Self {
-        llm::pow(*self, n)
+        l2math::pow(*self, n)
     }
     #[inline]
     #[must_use]
     fn log(&self, base: Self) -> Self {
-        llm::log(*self) / llm::log(base)
+        l2math::log(*self) / l2math::log(base)
     }
     #[inline]
     #[must_use]
     fn hypot(&self, other: Self) -> Self {
-        llm::hypot(*self, other)
+        l2math::hypot(*self, other)
     }
     #[inline]
     #[must_use]
     fn atan2(&self, other: Self) -> Self {
-        llm::atan2(*self, other)
+        l2math::atan2(*self, other)
     }
     #[inline]
     #[must_use]
@@ -97,7 +97,7 @@ impl Float for Float32 {
     #[inline]
     #[must_use]
     fn mul_add(&self, a: Self, b: Self) -> Self {
-        llm::fmaf(*self, a, b)
+        l2math::fmaf(*self, a, b)
     }
     #[inline]
     #[must_use]
@@ -130,27 +130,27 @@ impl Float for Float32 {
     #[inline]
     #[must_use]
     fn powi(&self, n: Int) -> Self {
-        llm::powf(*self, n as Float32)
+        l2math::powf(*self, n as Float32)
     }
     #[inline]
     #[must_use]
     fn powf(&self, n: Self) -> Self {
-        llm::powf(*self, n)
+        l2math::powf(*self, n)
     }
     #[inline]
     #[must_use]
     fn log(&self, base: Self) -> Self {
-        llm::logf(*self) / llm::logf(base)
+        l2math::logf(*self) / l2math::logf(base)
     }
     #[inline]
     #[must_use]
     fn hypot(&self, other: Self) -> Self {
-        llm::hypotf(*self, other)
+        l2math::hypotf(*self, other)
     }
     #[inline]
     #[must_use]
     fn atan2(&self, other: Self) -> Self {
-        llm::atan2f(*self, other)
+        l2math::atan2f(*self, other)
     }
     #[inline]
     #[must_use]

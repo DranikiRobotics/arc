@@ -492,62 +492,62 @@ impl crate::traits::Float<Float64> for Angle2D {
     #[inline]
     #[must_use]
     fn sin(&self) -> Float64 {
-        llm::sin(self.to_radians())
+        l2math::sin(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn cos(&self) -> Float64 {
-        llm::cos(self.to_radians())
+        l2math::cos(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn tan(&self) -> Float64 {
-        llm::tan(self.to_radians())
+        l2math::tan(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn asin(&self) -> Float64 {
-        llm::asin(self.to_radians())
+        l2math::asin(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn acos(&self) -> Float64 {
-        llm::acos(self.to_radians())
+        l2math::acos(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn atan(&self) -> Float64 {
-        llm::atan(self.to_radians())
+        l2math::atan(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn sinh(&self) -> Float64 {
-        llm::sinh(self.to_radians())
+        l2math::sinh(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn cosh(&self) -> Float64 {
-        llm::cosh(self.to_radians())
+        l2math::cosh(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn tanh(&self) -> Float64 {
-        llm::tanh(self.to_radians())
+        l2math::tanh(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn asinh(&self) -> Float64 {
-        llm::asinh(self.to_radians())
+        l2math::asinh(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn acosh(&self) -> Float64 {
-        llm::acosh(self.to_radians())
+        l2math::acosh(self.to_radians())
     }
     #[inline]
     #[must_use]
     fn atanh(&self) -> Float64 {
-        llm::atanh(self.to_radians())
+        l2math::atanh(self.to_radians())
     }
 
     i!(floor ceil round trunc fract abs signum sqrt exp exp2 ln log2 log10 cbrt exp_m1 ln_1p);

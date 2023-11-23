@@ -1,6 +1,6 @@
+use l2math::Float64;
 use libtrig::prelude::*;
-use libtrig::{Int, Vec2D};
-use llm::Float64;
+use libtrig::Vec2D;
 
 use crate::DualNum;
 

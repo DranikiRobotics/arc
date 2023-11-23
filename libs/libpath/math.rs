@@ -2,7 +2,7 @@
 // private const val EPS = 2.2e-15
 
 use alloc::{vec, vec::Vec};
-use llm::Float64;
+use l2math::Float64;
 
 const EPS: Float64 = 2.2e-15;
 
@@ -90,7 +90,7 @@ impl<F: (Fn(Float64) -> Float64) + Clone> IntegralScanResult<F> {
         if i == 0.0 {
             i = b - a;
         }
-        i *= eps / llm::ulp(1.0);
+        i *= eps / l2math::ulp(1.0);
 
         this.__func = Some(f);
         this.__i = i;

@@ -1,7 +1,7 @@
 use core::mem::zeroed;
 
+use l2math::Float64;
 use libtrig::prelude::*;
-use llm::Float64;
 
 /**
  * [Dual number](https://en.wikipedia.org/wiki/Dual_number) to implement forward autodifferentiation.

@@ -12,7 +12,7 @@ pub(crate) mod traits;
 pub(crate) mod types;
 pub(crate) mod vectors;
 
-pub use llm;
+pub use l2math;
 
 pub mod prelude {
     //! Re-exports all the traits.

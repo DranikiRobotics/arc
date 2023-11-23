@@ -4,8 +4,8 @@
 
 ### Features
 
-- **[`libtrig`](./libs/libtrig/)** - Trigonometry functionality (angles, vectors, etc.)
-- **[`llm`](./libs/llm/)** - <ins>L</ins>ow <ins>L</ins>evel <ins>M</ins>ath - Fundamental math functions and types
+- **[`l2math`](./libs/l2math/)** - <ins>L</ins>ow <ins>L</ins>evel <ins>Math</ins> - Fundamental math functions and types.
+- **[`libtrig`](./libs/libtrig/)** - Trigonometry functionality (angles, vectors, etc.).
 
 ### Documentation
 

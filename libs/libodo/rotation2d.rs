@@ -1,4 +1,4 @@
-use llm::{Float64, Radian64};
+use l2math::{Float64, Radian64};
 
 pub struct Rotation2D {
     pub real: Float64,
@@ -10,7 +10,7 @@ impl Rotation2D {
         Self { real, imag }
     }
     pub fn log(self) -> Float64 {
-        llm::atan2(self.imag, self.real)
+        l2math::atan2(self.imag, self.real)
     }
 }
 
