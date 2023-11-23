@@ -12,7 +12,6 @@ path = "lib.rs"
 crate-type = ["cdylib", "staticlib"]
 
 [features]
-default = ["no_std"]
 no_std = []
 
 [dependencies.l2math]
