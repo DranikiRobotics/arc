@@ -102,4 +102,4 @@ jobs:
       - name: Give permission to run epearl
         run: chmod +x ./epearl
       - name: Run tests
-        run: ./epearl test
+        run: ./epearl test all
