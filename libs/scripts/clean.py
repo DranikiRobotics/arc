@@ -19,8 +19,9 @@ def clean(cd: str, args: list[str]) -> str | int | None:
     import shutil, os
 
     CLEAN_DIRS = ["target", ".build", ".gradle", ".idea", "out", "build", "__pycache__"]
-    CLEAN_EXTENSIONS = [".jar", ".dylib", ".dll", ".lib", ".so"]
+    CLEAN_DIRS_EXTENSIONS = ["bazel-"]
     CLEAN_FILES = ["Cargo.lock"]
+    CLEAN_FILES_EXTENSIONS = [".jar", ".dylib", ".dll", ".lib", ".so"]
 
     KEEP_FILES = ["gradle-wrapper.jar"]
 
@@ -29,9 +30,13 @@ def clean(cd: str, args: list[str]) -> str | int | None:
             if file in CLEAN_FILES:
                 if file not in KEEP_FILES:
                     os.remove(os.path.join(full_dir_path, file))
-            elif os.path.splitext(file)[1] in CLEAN_EXTENSIONS:
+            elif os.path.splitext(file)[1] in CLEAN_FILES_EXTENSIONS:
                 if file not in KEEP_FILES:
                     os.remove(os.path.join(full_dir_path, file))
+        for dr in CLEAN_DIRS_EXTENSIONS:
+            if os.path.basename(full_dir_path).startswith(dr):
+                try: shutil.rmtree(full_dir_path)
+                except Exception: os.remove(full_dir_path)
         if os.path.basename(full_dir_path) in CLEAN_DIRS:
             shutil.rmtree(full_dir_path)
     

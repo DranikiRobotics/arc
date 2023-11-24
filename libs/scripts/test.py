@@ -1,9 +1,30 @@
-def test(cd: str, args: list[str]) -> str | int | None:
+from libs.l2math.bindings.tests import bindings_test
 
-    # tarpaulin_test(cd, args)
-    llvm_test(cd, args)
+def test(cd: str, args: list[str]) -> str | int | None:
+    if len(args) == 0: return "No test type specified"
+    if 'tarpaulin' == args[0]:
+        args.pop(0)
+        return tarpaulin_test(cd, args)
+    elif 'llvm' == args[0]:
+        args.pop(0)
+        return llvm_test(cd, args)
+    elif 'bindings' == args[0]:
+        args.pop(0)
+        return bindings_test(cd, args)
+    elif 'all' == args[0]:
+        args.pop(0)
+        tarpaulin_test_res = tarpaulin_test(cd, args)
+        if tarpaulin_test_res != None: return tarpaulin_test_res
+        llvm_test_res = llvm_test(cd, args)
+        if llvm_test_res != None: return llvm_test_res
+        bindings_test_res = bindings_test(cd, args)
+        if bindings_test_res != None: return bindings_test_res
+    else: return "Invalid test type"
 
 def llvm_test(cd: str, args: list[str]) -> str | int | None:
+    print("LLVM tests are currently broken")
+    return
+
     import subprocess
 
     print("Running tests with llvm coverage")

@@ -2,6 +2,9 @@
 .vscode
 .idea
 
+# Bazel files
+bazel-*
+
 # Rust files
 Cargo.lock
 

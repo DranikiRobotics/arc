@@ -71,8 +71,8 @@ from typing import Callable
 
 def common_build_l2math_bindings(
     cd: str, targets: list[str],
-    to_f: Callable[[str], str],
-    from_f: Callable[[str], str]
+    to_f: Callable[[str], list[str]],
+    from_f: Callable[[str], list[str]]
 ) -> str | None:
     import subprocess, shutil, os
 
@@ -88,30 +88,40 @@ def common_build_l2math_bindings(
         TO_DIR = f"{cd}/libs/l2math/bindings/.build"
         if not os.path.exists(TO_DIR):
             os.mkdir(TO_DIR)
-        TO = f"{TO_DIR}/{to_f(target)}"
-        if os.path.exists(TO):
-            print(f"Removing {TO}...")
-            os.remove(TO)
-        FROM = f"{cd}/target/{target}/release/{from_f(target)}"
-        if os.path.exists(FROM) and not os.path.exists(TO):
-            shutil.move(FROM, TO)
-            print("Done!")
-            return
+        to_f_res = to_f(target)
+        from_f_res = from_f(target)
+
+        for i in range(len(to_f_res)):
+            TO = f"{TO_DIR}/{to_f_res[i]}"
+            if os.path.exists(TO):
+                print(f"Removing {TO}...")
+                os.remove(TO)
+            FROM = f"{cd}/target/{target}/release/{from_f_res[i]}"
+            if os.path.exists(FROM) and not os.path.exists(TO):
+                shutil.move(FROM, TO)
+        print("Done!")
+        return
     return "Could not find the L2Math bindings library!"
 
 def build_l2math_bindings_windows(cd: str, targets: list[str]) -> str | None:
     return common_build_l2math_bindings(
-        cd, targets, lambda t: f"l2math-{t}.dll", lambda _: "l2math_bindings.dll"
+        cd, targets,
+        lambda t: [f"l2math-{t}.dll", f"l2math-{t}.lib"],
+        lambda _: ["l2math_bindings.dll", "l2math_bindings.lib"]
     )
 
 def build_l2math_bindings_linux(cd: str, targets: list[str]) -> str | None:
     return common_build_l2math_bindings(
-        cd, targets, lambda t: f"libl2math-{t}.so", lambda _: "libl2math_bindings.so"
+        cd, targets,
+        lambda t: [f"libl2math-{t}.so"],
+        lambda _: ["libl2math_bindings.so"]
     )
 
 def build_l2math_bindings_macos(cd: str, targets: list[str]) -> str | None:
     return common_build_l2math_bindings(
-        cd, targets, lambda t: f"libl2math-{t}.dylib", lambda _: "libl2math_bindings.dylib"
+        cd, targets,
+        lambda t: [f"libl2math-{t}.dylib"],
+        lambda _: ["libl2math_bindings.dylib"]
     )
 
 def build_l2math_bindings_android(cd: str, targets: list[str]) -> str | None:
