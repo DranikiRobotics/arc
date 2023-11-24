@@ -19,7 +19,8 @@ def test_with_clang(cd: str, args: list[str]) -> str | int | None:
         return "Failed to get target triplet"
     
     # Build bindings for current target triplet just in case
-    build_l2math_bindings(cd, [target_triplet])
+    res = build_l2math_bindings(cd, [])
+    if res != None: return res
 
     bin_name = "l2mathtestbin"
     if "windows" in target_triplet:
@@ -45,7 +46,13 @@ def test_with_clang(cd: str, args: list[str]) -> str | int | None:
     print("Compiling test binary")
 
     res = subprocess.run(cmd, cwd = cd)
-    if res.returncode != 0: return res.returncode
+    if res.returncode != 0:
+        if res.returncode == 1:
+            print("Compilation failed")
+            print(res.stderr.decode())
+        else:
+            print("Compilation failed with error code", res.returncode)
+        return res.returncode
 
     print("Running test binary")
 
