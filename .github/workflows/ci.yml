@@ -63,7 +63,7 @@ jobs:
         id: setup-ndk
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r26e
+          ndk-version: r26b
           local-cache: true
           add-to-path: true
       - name: Give permission to run epearl
