@@ -59,10 +59,19 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
+      - name: Install Android NDK
+        id: setup-ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26e
+          local-cache: true
+          add-to-path: true
       - name: Give permission to run epearl
         run: chmod +x ./epearl
       - name: Build Android
         run: ./epearl build --target aarch64-linux-android
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
   
   # Check if the Linux build works.
   linux:
