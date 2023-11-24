@@ -13,6 +13,7 @@ crate-type = ["cdylib", "staticlib"]
 
 [features]
 no_std = []
+__android__ = []
 
 [dependencies.l2math]
 path = ".."
