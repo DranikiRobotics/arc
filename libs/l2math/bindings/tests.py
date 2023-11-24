@@ -1,3 +1,5 @@
+from libs.l2math.bindings.bindings import build_l2math_bindings
+
 def get_current_target_triplet() -> str | None:
     target_triplet = ""
     import subprocess
@@ -15,6 +17,9 @@ def test_with_clang(cd: str, args: list[str]) -> str | int | None:
     target_triplet = get_current_target_triplet()
     if target_triplet is None:
         return "Failed to get target triplet"
+    
+    # Build bindings for current target triplet just in case
+    build_l2math_bindings(cd, [target_triplet])
 
     bin_name = "l2mathtestbin"
     if "windows" in target_triplet:
