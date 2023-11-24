@@ -47,6 +47,8 @@ def test_with_clang(cd: str, args: list[str]) -> str | int | None:
     res = subprocess.run(cmd, cwd = cd)
     if res.returncode != 0: return res.returncode
 
+    print("Running test binary")
+
     res = os.system(BIN_PATH)
     if res != 0: return res
 
