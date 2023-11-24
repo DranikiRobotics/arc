@@ -17,4 +17,4 @@ def doc(cd: str, args: list[str]) -> str | int | None:
 
     cmd.extend(args)
     res = subprocess.run(cmd, cwd=cd)
-    if res.returncode != 0: exit(res.returncode)
+    if res.returncode != 0: return res.returncode

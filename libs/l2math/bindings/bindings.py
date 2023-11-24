@@ -73,7 +73,7 @@ def common_build_l2math_bindings(
     cd: str, targets: list[str],
     to_f: Callable[[str], list[str]],
     from_f: Callable[[str], list[str]]
-) -> str | None:
+) -> int | str | None:
     import subprocess, shutil, os
 
     for target in targets:
@@ -81,7 +81,7 @@ def common_build_l2math_bindings(
 
         cmd = ["cargo", "build", "--target", target, "-r", "-p", "l2math-bindings"]
         res = subprocess.run(cmd, cwd=cd)
-        if res.returncode != 0: exit(res.returncode)
+        if res.returncode != 0: return res.returncode
 
         print("Copying L2Math bindings...")
 
@@ -103,28 +103,28 @@ def common_build_l2math_bindings(
         return
     return "Could not find the L2Math bindings library!"
 
-def build_l2math_bindings_windows(cd: str, targets: list[str]) -> str | None:
+def build_l2math_bindings_windows(cd: str, targets: list[str]) -> int | str | None:
     return common_build_l2math_bindings(
         cd, targets,
         lambda t: [f"l2math-{t}.dll", f"l2math-{t}.lib"],
         lambda _: ["l2math_bindings.dll", "l2math_bindings.lib"]
     )
 
-def build_l2math_bindings_linux(cd: str, targets: list[str]) -> str | None:
+def build_l2math_bindings_linux(cd: str, targets: list[str]) -> int | str | None:
     return common_build_l2math_bindings(
         cd, targets,
         lambda t: [f"libl2math-{t}.so"],
         lambda _: ["libl2math_bindings.so"]
     )
 
-def build_l2math_bindings_macos(cd: str, targets: list[str]) -> str | None:
+def build_l2math_bindings_macos(cd: str, targets: list[str]) -> int | str | None:
     return common_build_l2math_bindings(
         cd, targets,
         lambda t: [f"libl2math-{t}.dylib"],
         lambda _: ["libl2math_bindings.dylib"]
     )
 
-def build_l2math_bindings_android(cd: str, targets: list[str]) -> str | None:
+def build_l2math_bindings_android(cd: str, targets: list[str]) -> int | str | None:
     import shutil, os
 
     TO_DIR = f"{cd}/libs/l2math/bindings/.build"
@@ -137,7 +137,7 @@ def build_l2math_bindings_android(cd: str, targets: list[str]) -> str | None:
 
         cmd = ["cargo", "ndk", "-t", target, "-o", f"{cd}/target/ndk/", "build", "--release", "-p", "l2math-bindings"]
         res = subprocess.run(cmd, cwd = cd)
-        if res.returncode != 0: exit(res.returncode)
+        if res.returncode != 0: return res.returncode
 
         print(f"Copying L2Math bindings for {target}...")
 

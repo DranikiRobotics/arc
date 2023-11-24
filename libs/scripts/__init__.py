@@ -16,6 +16,6 @@ def run_cmd(cmd: str, cwd: str, args: list[str]) -> str | int | None:
 
     return f"Unknown command: {cmd}"
 
-def hlp() -> None:
+def hlp() -> str | int | None:
     print("")
-    exit(0)
+    return

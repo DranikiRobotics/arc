@@ -39,7 +39,7 @@ def llvm_test(cd: str, args: list[str]) -> str | int | None:
         }
     )
 
-    if res.returncode != 0: exit(res.returncode)
+    if res.returncode != 0: return res.returncode
     
     print("Generating coverage report")
 
@@ -58,7 +58,7 @@ def llvm_test(cd: str, args: list[str]) -> str | int | None:
             out.extend(["-t", "html", "-o", "target/coverage/html"])
         elif t == "lcov":
             out.extend(["-t", "lcov", "-o", "target/coverage/tests.lcov"])
-        else: exit("Invalid coverage type")
+        else: return "Invalid coverage type"
         return out
         
     
@@ -68,7 +68,7 @@ def llvm_test(cd: str, args: list[str]) -> str | int | None:
         cwd = cd
     )
 
-def tarpaulin_test(cd: str, args: list[str]) -> str | int | None:
+def tarpaulin_test(cd: str, args: list[str]) -> int | str | None:
     import subprocess
 
     # Check if tarpaulin is installed
@@ -77,15 +77,17 @@ def tarpaulin_test(cd: str, args: list[str]) -> str | int | None:
         return res.returncode == 0
     
     # Install tarpaulin
-    def install_tarpaulin() -> None:
+    def install_tarpaulin() -> int | None:
         res = subprocess.run(["cargo", "binstall", "--no-confirm", "cargo-tarpaulin"])
-        if res.returncode != 0: exit(res.returncode)
+        if res.returncode != 0: return res.returncode
     
     # Check if tarpaulin is installed and install it if it isn't
-    if not is_tarpaulin_installed(): install_tarpaulin()
+    if not is_tarpaulin_installed(): 
+        res = install_tarpaulin()
+        if res != None: return res
 
     # Run tarpaulin
     cmd = ["cargo", "tarpaulin"]
     cmd.extend(args)
     res = subprocess.run(cmd, cwd=cd)
-    if res.returncode != 0: exit(res.returncode)
+    if res.returncode != 0: return res.returncode
