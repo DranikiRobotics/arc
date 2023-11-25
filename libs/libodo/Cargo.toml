@@ -10,8 +10,5 @@ license.workspace = true
 [dependencies.libtrig]
 path = "../libtrig"
 
-[dependencies.l2math]
-path = "../l2math"
-
 [lib]
 path = "lib.rs"

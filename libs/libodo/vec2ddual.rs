@@ -1,4 +1,3 @@
-use l2math::Float64;
 use libtrig::prelude::*;
 use libtrig::Vec2D;
 
