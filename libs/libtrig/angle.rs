@@ -430,10 +430,10 @@ macro_rules! i {
     () => ();
 }
 
-impl From<u2> for Angle2D {
+impl From<u3> for Angle2D {
     #[inline]
     #[must_use]
-    fn from(u: u2) -> Self {
+    fn from(u: u3) -> Self {
         Self::from_radians(u.into())
     }
 }

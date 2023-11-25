@@ -1,18 +1,44 @@
 use super::source::*;
 
-impl core::fmt::Debug for u2 {
+impl core::fmt::Display for u2 {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{:?}", u8::from(*self))
+        write!(f, "{}", u8::from(*self))
     }
 }
 
-impl core::fmt::Display for u2 {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{:?}", u8::from(*self))
+impl core::default::Default for u2 {
+    #[must_use]
+    #[inline(always)]
+    fn default() -> Self {
+        Self::ZERO
     }
 }
 
 impl core::cmp::Eq for u2 {}
+
+impl From<u2> for u8 {
+    /// Convert a `u2` to a `u8`.
+    #[must_use]
+    #[inline(always)]
+    fn from(u: u2) -> Self {
+        u2::tou8(u)
+    }
+}
+
+impl From<u8> for u2 {
+    /// Convert a `u8` to a `u3`.
+    ///
+    /// # Safety
+    ///
+    /// In debug mode, this will panic if the `u8` is out of range. In release
+    /// mode, this uses `core::hint::unreachable_unchecked` to enable optimizations.
+    #[must_use]
+    #[inline(always)]
+    fn from(u: u8) -> Self {
+        debug_assert!(u <= 7, "u8 out of range: {}", u);
+        Self::fromu8(u)
+    }
+}
 
 impl From<u2> for u16 {
     #[must_use]

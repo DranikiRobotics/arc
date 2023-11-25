@@ -2,7 +2,7 @@
 #[repr(C)]
 #[derive(Clone, Copy, Hash)]
 #[allow(non_camel_case_types)]
-pub struct u2(bool, bool);
+pub struct u2(pub(crate) bool, pub(crate) bool);
 
 impl u2 {
     /// Maximum value of `u2`. (3)
@@ -22,6 +22,74 @@ impl u2 {
     #[must_use]
     pub const fn new(ones: bool, twos: bool) -> Self {
         Self(ones, twos)
+    }
+    /// Adds two `u2`s.
+    #[inline]
+    #[must_use]
+    #[allow(non_snake_case)]
+    pub const fn bitwiseXORadd(self, rhs: Self) -> Self {
+        let mut result = self;
+        if rhs.0 {
+            result.0 ^= true;
+            if !result.0 {
+                result.1 ^= true;
+            }
+        }
+        if rhs.1 {
+            result.1 ^= true;
+        }
+        result
+    }
+    /// Convert a `u2` to a `u8`.
+    #[must_use]
+    #[inline(always)]
+    pub const fn tou8(self) -> u8 {
+        if self.0 && self.1 {
+            3
+        } else if self.0 {
+            1
+        } else if self.1 {
+            2
+        } else {
+            0
+        }
+    }
+    /// Convert a `u8` to a `u3`.
+    ///
+    /// # Safety
+    ///
+    /// This uses `core::hint::unreachable_unchecked` to enable optimizations, so
+    /// it is unsafe to use in debug mode. Instead, use `u3::fromu8`.
+    #[must_use]
+    #[inline(always)]
+    #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
+    pub const fn fromu8(u: u8) -> Self {
+        match u {
+            0 => Self::ZERO,
+            1 => Self::ONE,
+            2 => Self::TWO,
+            3 => Self::THREE,
+            #[allow(unsafe_code)]
+            _ => unsafe { core::hint::unreachable_unchecked() },
+        }
+    }
+    /// Convert a `u2` to a `u3`.
+    #[must_use]
+    #[inline(always)]
+    pub const fn tou3(self) -> crate::u3 {
+        crate::u3::new(self.0, self.1, false)
+    }
+    /// Convert a `u3` to a `u2`.
+    #[must_use]
+    #[inline(always)]
+    pub const fn fromu3(u: crate::u3) -> Self {
+        Self::new(u.0, u.1)
+    }
+}
+
+impl core::fmt::Debug for u2 {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_set().entry(&self.0).entry(&self.1).finish()
     }
 }
 
@@ -152,51 +220,6 @@ impl core::ops::Sub for u2 {
     #[inline(always)]
     #[cfg(not(debug_assertions))]
     fn sub(self, rhs: Self) -> Self::Output {
-        let carry: bool = self.0 && rhs.0;
-        let ones: bool = self.0 ^ rhs.0 ^ carry;
-        let twos: bool = self.1 ^ rhs.1;
-        Self::new(ones, twos)
-    }
-}
-
-impl From<u2> for u8 {
-    /// Convert a `u2` to a `u8`.
-    #[must_use]
-    #[inline(always)]
-    fn from(u: u2) -> Self {
-        if u.0 && u.1 {
-            3
-        } else if u.0 {
-            1
-        } else if u.1 {
-            2
-        } else {
-            0
-        }
-    }
-}
-
-impl From<u8> for u2 {
-    /// Convert a `u8` to a `u2`.
-    ///
-    /// # Safety
-    ///
-    /// In debug mode, this will panic if the `u8` is out of range. In release
-    /// mode, this uses `core::hint::unreachable_unchecked` to enable optimizations.
-    #[must_use]
-    #[inline(always)]
-    fn from(u: u8) -> Self {
-        #[cfg(debug_assertions)]
-        debug_assert!(u <= 3, "u8 out of range: {}", u);
-        match u {
-            0 => Self::ZERO,
-            1 => Self::ONE,
-            2 => Self::TWO,
-            3 => Self::THREE,
-            #[cfg(debug_assertions)]
-            _ => panic!("u8 out of range: {}", u),
-            #[cfg(not(debug_assertions))]
-            _ => unsafe { core::hint::unreachable_unchecked() },
-        }
+        Self::bitwiseXORadd(self, rhs)
     }
 }
