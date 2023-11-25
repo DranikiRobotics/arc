@@ -6,10 +6,10 @@
 
 pub(crate) mod angle;
 pub(crate) mod coords;
+pub(crate) mod morenums;
 pub(crate) mod traits;
 pub(crate) mod types;
 pub(crate) mod vectors;
-pub(crate) mod morenums;
 
 pub use l2math;
 
@@ -20,6 +20,6 @@ pub mod prelude {
 
 pub use angle::Angle2D;
 pub use coords::Coord2D;
+pub use morenums::{u2, u3};
 pub use types::*;
 pub use vectors::{Vec2D, Vec3D};
-pub use morenums::{u2, u3};

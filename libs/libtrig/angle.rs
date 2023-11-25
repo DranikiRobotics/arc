@@ -438,6 +438,30 @@ impl From<u3> for Angle2D {
     }
 }
 
+impl crate::traits::Sin<Float64> for Angle2D {
+    #[inline]
+    #[must_use]
+    fn sin(&self) -> Float64 {
+        l2math::sin(self.to_radians())
+    }
+}
+
+impl crate::traits::Cos<Float64> for Angle2D {
+    #[inline]
+    #[must_use]
+    fn cos(&self) -> Float64 {
+        l2math::cos(self.to_radians())
+    }
+}
+
+impl crate::traits::Sqrt<Float64> for Angle2D {
+    #[inline]
+    #[must_use]
+    fn sqrt(&self) -> Float64 {
+        self.0.sqrt()
+    }
+}
+
 impl crate::traits::Float<Float64> for Angle2D {
     #[inline]
     #[must_use]
@@ -491,16 +515,6 @@ impl crate::traits::Float<Float64> for Angle2D {
     }
     #[inline]
     #[must_use]
-    fn sin(&self) -> Float64 {
-        l2math::sin(self.to_radians())
-    }
-    #[inline]
-    #[must_use]
-    fn cos(&self) -> Float64 {
-        l2math::cos(self.to_radians())
-    }
-    #[inline]
-    #[must_use]
     fn tan(&self) -> Float64 {
         l2math::tan(self.to_radians())
     }
@@ -550,5 +564,5 @@ impl crate::traits::Float<Float64> for Angle2D {
         l2math::atanh(self.to_radians())
     }
 
-    i!(floor ceil round trunc fract abs signum sqrt exp exp2 ln log2 log10 cbrt exp_m1 ln_1p);
+    i!(floor ceil round trunc fract abs signum exp exp2 ln log2 log10 cbrt exp_m1 ln_1p);
 }

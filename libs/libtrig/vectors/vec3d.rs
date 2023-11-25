@@ -53,7 +53,7 @@ impl Vec3D {
     #[must_use]
     pub fn magnitude(&self) -> Float64 {
         #[allow(unused_imports)]
-        use crate::traits::Float;
+        use crate::traits::*;
         self.dot(*self).sqrt()
     }
     /// Normalizes this vector.

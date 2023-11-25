@@ -1,5 +1,7 @@
-#[path = "./u2/mod.rs"] mod _u2;
-#[path = "./u3/mod.rs"] mod _u3;
+#[path = "./u2/mod.rs"]
+mod _u2;
+#[path = "./u3/mod.rs"]
+mod _u3;
 
 pub use _u2::u2;
 pub use _u3::u3;

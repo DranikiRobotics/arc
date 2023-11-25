@@ -1,8 +1,67 @@
 use super::Number;
 use crate::Int;
 
+/// A trait for things that implement the sine function.
+pub trait Sin<Output = Self> {
+    /// Computes the sine of a number (in radians).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let x = std::f64::consts::FRAC_PI_2;
+    ///
+    /// let abs_difference = (x.sin() - 1.0).abs();
+    ///
+    /// assert!(abs_difference < 1e-10);
+    /// ```
+    #[must_use = "method returns a new number and does not mutate the original value"]
+    fn sin(&self) -> Output;
+}
+
+/// A trait for things that implement the cosine function.
+pub trait Cos<Output = Self> {
+    /// Computes the cosine of a number (in radians).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let x = 2.0 * std::f64::consts::PI;
+    ///
+    /// let abs_difference = (x.cos() - 1.0).abs();
+    ///
+    /// assert!(abs_difference < 1e-10);
+    /// ```
+    #[must_use = "method returns a new number and does not mutate the original value"]
+    fn cos(&self) -> Output;
+}
+
+/// A trait for things that can be square rooted.
+pub trait Sqrt<Output = Self> {
+    /// Returns the square root of a number.
+    ///
+    /// Returns NaN if `self` is a negative number other than `-0.0`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let positive = 4.0_f64;
+    /// let negative = -4.0_f64;
+    /// let negative_zero = -0.0_f64;
+    ///
+    /// let abs_difference = (positive.sqrt() - 2.0).abs();
+    ///
+    /// assert!(abs_difference < 1e-10);
+    /// assert!(negative.sqrt().is_nan());
+    /// assert!(negative_zero.sqrt() == negative_zero);
+    /// ```
+    #[must_use = "method returns a new number and does not mutate the original value"]
+    fn sqrt(&self) -> Output;
+}
+
 /// A trait for floating point numbers.
-pub trait Float<Output = Self, Multiplier: Number = Self>: Number<Multiplier> {
+pub trait Float<Output = Self, Multiplier: Number = Self>:
+    Number<Multiplier> + Sin<Output> + Cos<Output> + Sqrt<Output>
+{
     /// Returns the largest integer less than or equal to `self`.
     ///
     /// # Examples
@@ -229,26 +288,6 @@ pub trait Float<Output = Self, Multiplier: Number = Self>: Number<Multiplier> {
     #[must_use = "method returns a new number and does not mutate the original value"]
     fn powf(&self, n: Self) -> Output;
 
-    /// Returns the square root of a number.
-    ///
-    /// Returns NaN if `self` is a negative number other than `-0.0`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let positive = 4.0_f64;
-    /// let negative = -4.0_f64;
-    /// let negative_zero = -0.0_f64;
-    ///
-    /// let abs_difference = (positive.sqrt() - 2.0).abs();
-    ///
-    /// assert!(abs_difference < 1e-10);
-    /// assert!(negative.sqrt().is_nan());
-    /// assert!(negative_zero.sqrt() == negative_zero);
-    /// ```
-    #[must_use = "method returns a new number and does not mutate the original value"]
-    fn sqrt(&self) -> Output;
-
     /// Returns `e^(self)`, (the exponential function).
     ///
     /// # Examples
@@ -380,34 +419,6 @@ pub trait Float<Output = Self, Multiplier: Number = Self>: Number<Multiplier> {
     /// ```
     #[must_use = "method returns a new number and does not mutate the original value"]
     fn hypot(&self, other: Self) -> Output;
-
-    /// Computes the sine of a number (in radians).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let x = std::f64::consts::FRAC_PI_2;
-    ///
-    /// let abs_difference = (x.sin() - 1.0).abs();
-    ///
-    /// assert!(abs_difference < 1e-10);
-    /// ```
-    #[must_use = "method returns a new number and does not mutate the original value"]
-    fn sin(&self) -> Output;
-
-    /// Computes the cosine of a number (in radians).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let x = 2.0 * std::f64::consts::PI;
-    ///
-    /// let abs_difference = (x.cos() - 1.0).abs();
-    ///
-    /// assert!(abs_difference < 1e-10);
-    /// ```
-    #[must_use = "method returns a new number and does not mutate the original value"]
-    fn cos(&self) -> Output;
 
     /// Computes the tangent of a number (in radians).
     ///
