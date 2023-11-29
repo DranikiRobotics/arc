@@ -1,13 +1,16 @@
 [workspace]
 resolver = "2"
 members = [
+    # Main crates
+    "libs/l2math/bindings",
+    "libs/l2math",
+    "libs/libodo",
+    "libs/libpath",
+    "libs/libtrig",
+
     # Helper crates
     "libs/macros-core",
     "libs/macros",
-
-    # Main crates
-    "libs/libtrig",
-    "libs/llm",
 ]
 
 [workspace.package]
@@ -16,3 +19,8 @@ repository = "https://github.com/AtomicGamer9523/librobomath"
 version = "0.1.0-dev"
 edition = "2021"
 license = "MIT"
+
+[profile.release]
+opt-level = 3
+debug = false
+panic = "abort"

@@ -1,6 +1,27 @@
+# IDE Files
+.vscode
+.idea
+
+# Bazel files
+bazel-*
+
 # Rust files
-/*.lock
-target
+Cargo.lock
 
 # Python files
 __pycache__
+
+# Java / Kotlin files
+.gradle
+local.properties
+
+# Compiled source
+target
+build
+out
+
+# Compiled Item
+*.dylib
+*.dll
+*.lib
+*.so

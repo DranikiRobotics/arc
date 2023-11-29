@@ -1,0 +1,26 @@
+linux = [
+    "x86_64-unknown-linux-gnu",
+    # You may add more targets below, as long as they are supported by the Rust.
+    # ALL target triples will be built and copied to the output directory.
+]
+
+windows = [
+    "x86_64-pc-windows-msvc",
+]
+
+macos = [
+    "x86_64-apple-darwin",
+]
+
+android = [
+    "armeabi-v7a",
+    "arm64-v8a",
+
+    # These also work, but are not needed for me.
+    # "x86_64-linux-android",
+    # "i686-linux-android",
+]
+
+# You may add more targets below, as long as they are supported by the Rust.
+# As an example:
+# wasm = [ "wasm32-unknown-unknown" ]

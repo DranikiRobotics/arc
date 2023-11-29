@@ -1,0 +1,14 @@
+[package]
+name = "libodo"
+description = "Core odometrix functionality, you probably shouldn't use this directly"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies.libtrig]
+path = "../libtrig"
+
+[lib]
+path = "lib.rs"

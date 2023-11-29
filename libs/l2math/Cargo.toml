@@ -1,0 +1,19 @@
+[package]
+name = "l2math"
+description = "Low Level Math"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+path = "lib.rs"
+doctest = false
+
+[dependencies.macros]
+path = "../macros"
+
+[features]
+unstable = []
+ffi = []

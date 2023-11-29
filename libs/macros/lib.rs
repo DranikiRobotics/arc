@@ -14,3 +14,9 @@ pub fn mass_impl(cfg: TokenStream, input: TokenStream) -> TokenStream {
 pub fn ffi(cfg: TokenStream, input: TokenStream) -> TokenStream {
     mc::ffi(cfg, input).into()
 }
+
+/// A macro for generating function modifications.
+#[proc_macro_attribute]
+pub fn func_mod(cfg: TokenStream, input: TokenStream) -> TokenStream {
+    mc::func_mod(cfg, input).into()
+}

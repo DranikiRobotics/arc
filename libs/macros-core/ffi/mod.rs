@@ -23,8 +23,8 @@ use crate::TokenStream;
 /// }
 /// ```
 pub fn ffi<T: Into<TokenStream>>(cfg: T, input: T) -> TokenStream {
-    let res = parse_func(input.into()).to_string();
     let settings = parse_settings(cfg.into());
+    let res = parse_func(input.into(), settings.2).to_string();
     let res = res.replace("__FFI_RAW_MODIFIERS__", &settings.0);
     let res = res.replace("__FFI_EXTERN_MODIFIER__", &settings.1);
     match syn::parse_str::<TokenStream>(&res) {
@@ -34,7 +34,7 @@ pub fn ffi<T: Into<TokenStream>>(cfg: T, input: T) -> TokenStream {
 }
 
 /// parses the function it should be attached to
-fn parse_func(item: TokenStream) -> TokenStream {
+fn parse_func(item: TokenStream, name_override: Option<proc_macro2::Ident>) -> TokenStream {
     let input = match syn::parse2::<syn::ItemFn>(item) {
         Ok(input) => input,
         Err(err) => {
@@ -43,7 +43,7 @@ fn parse_func(item: TokenStream) -> TokenStream {
     };
     let ret = &input.sig.output;
     let inputs = &input.sig.inputs;
-    let name = &input.sig.ident;
+    let name = name_override.unwrap_or(input.sig.ident);
     let generics = &input.sig.generics;
     let body = &input.block;
     let attrs = &input.attrs;
@@ -59,8 +59,9 @@ fn parse_func(item: TokenStream) -> TokenStream {
 }
 
 /// parses the settings (can be none, const, unsafe or both)
-fn parse_settings(attr: TokenStream) -> (String, String) {
+fn parse_settings(attr: TokenStream) -> (String, String, Option<proc_macro2::Ident>) {
     let modifiers_str = attr.to_string();
+    let mut name_override = None;
     let mut res = String::new();
     if modifiers_str.contains("const") {
         res.push_str("const ");
@@ -68,11 +69,30 @@ fn parse_settings(attr: TokenStream) -> (String, String) {
     if modifiers_str.contains("unsafe") {
         res.push_str("unsafe ");
     }
+    if modifiers_str.contains('@') {
+        let type_str = modifiers_str.split('@').collect::<Vec<&str>>()[1];
+        let type_str = type_str.trim();
+        let mut namespace = String::new();
+        let export_name;
+        if type_str.contains('+') {
+            let type_str = type_str.split('+').collect::<Vec<&str>>();
+            namespace = type_str[0].to_string();
+            export_name = type_str[1].to_string();
+        } else {
+            export_name = type_str.to_string();
+        }
+        let mut export_name = export_name.replace('.', "_");
+        if !namespace.is_empty() {
+            export_name = format!("{}{}", namespace, export_name)
+        }
+        export_name = export_name.replace(' ', "");
+        name_override = Some(syn::parse_str::<proc_macro2::Ident>(&export_name).unwrap());
+    };
     let t = if modifiers_str.contains("type=") {
         let type_str = modifiers_str.split("type=").collect::<Vec<&str>>()[1];
         type_str.split(' ').collect::<Vec<&str>>()[0]
     } else {
         "C"
     };
-    (res, format!("\"{}\"", t))
+    (res, format!("\"{}\"", t), name_override)
 }

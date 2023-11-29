@@ -7,6 +7,24 @@ use crate::*;
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct Angle2D(RadianOrDegree64, bool);
 
+const DEG_TO_RAD_MULTIPLIER: Float64 = 0.0174532925199432957692369076848861271344287188854172545609;
+const RAD_TO_DEG_MULTIPLIER: Float64 = 57.29577951308232087679815481410517033240547246656432154916;
+
+impl Angle2D {
+    /// Converts the given `deg` value to radians.
+    #[inline]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn deg_to_rad(deg: Degree64) -> Radian64 {
+        deg * DEG_TO_RAD_MULTIPLIER
+    }
+    /// Converts the given `rad` value to degrees.
+    #[inline]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn rad_to_deg(rad: Radian64) -> Degree64 {
+        rad * RAD_TO_DEG_MULTIPLIER
+    }
+}
+
 impl Angle2D {
     /// Creates a new `Angle2D` from the given `value` and `is_radians` flag.
     #[inline]
@@ -41,22 +59,61 @@ impl Angle2D {
     /// Returns the value of the angle in radians.
     #[inline]
     #[must_use]
+    #[macros::func_mod(const => feature = "unstable")]
     pub fn to_radians(&self) -> Radian64 {
         if self.1 {
-            self.0
-        } else {
-            self.0.to_radians()
+            return self.0;
         }
+        Self::deg_to_rad(self.0)
     }
     /// Returns the value of the angle in degrees.
     #[inline]
     #[must_use]
+    #[macros::func_mod(const => feature = "unstable")]
     pub fn to_degrees(&self) -> Degree64 {
-        if self.1 {
-            self.0.to_degrees()
-        } else {
-            self.0
+        if !self.1 {
+            return self.0;
         }
+        Self::rad_to_deg(self.0)
+    }
+    /// If the angle is in degrees, converts it to radians.
+    #[inline]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn set_self_radians(&mut self) {
+        if !self.1 {
+            self.0 = Self::deg_to_rad(self.0);
+            self.1 = true;
+        }
+    }
+    /// If the angle is in radians, converts it to degrees.
+    #[inline]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub fn set_self_degrees(&mut self) {
+        if self.1 {
+            self.0 = Self::rad_to_deg(self.0);
+            self.1 = false;
+        }
+    }
+    /// Sets the mode of self.
+    ///
+    /// If `mode` is `true`, then the angle is in radians.
+    /// If `mode` is `false`, then the angle is in degrees.
+    ///
+    /// This is unsafe because it does not convert the internal value.
+    #[inline(always)]
+    #[allow(unsafe_code)]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub unsafe fn modify_self_mode_unchecked(&mut self, mode: bool) {
+        self.1 = mode;
+    }
+    /// Sets the value of self.
+    ///
+    /// This is unsafe because it does not convert the internal value.
+    #[inline(always)]
+    #[allow(unsafe_code)]
+    #[macros::func_mod(const => feature = "unstable")]
+    pub unsafe fn modify_self_value_unchecked(&mut self, value: RadianOrDegree64) {
+        self.0 = value;
     }
 }
 
@@ -373,6 +430,38 @@ macro_rules! i {
     () => ();
 }
 
+impl From<u3> for Angle2D {
+    #[inline]
+    #[must_use]
+    fn from(u: u3) -> Self {
+        Self::from_radians(u.into())
+    }
+}
+
+impl crate::traits::Sin<Float64> for Angle2D {
+    #[inline]
+    #[must_use]
+    fn sin(&self) -> Float64 {
+        l2math::sin(self.to_radians())
+    }
+}
+
+impl crate::traits::Cos<Float64> for Angle2D {
+    #[inline]
+    #[must_use]
+    fn cos(&self) -> Float64 {
+        l2math::cos(self.to_radians())
+    }
+}
+
+impl crate::traits::Sqrt<Float64> for Angle2D {
+    #[inline]
+    #[must_use]
+    fn sqrt(&self) -> Float64 {
+        self.0.sqrt()
+    }
+}
+
 impl crate::traits::Float<Float64> for Angle2D {
     #[inline]
     #[must_use]
@@ -407,19 +496,73 @@ impl crate::traits::Float<Float64> for Angle2D {
     #[inline]
     #[must_use]
     fn atan2(&self, other: Self) -> Float64 {
-        self.0.atan2(other.0)
+        self.to_radians().atan2(other.0)
     }
     #[inline]
     #[must_use]
     fn hypot(&self, other: Self) -> Float64 {
-        self.0.hypot(other.0)
+        self.to_radians().hypot(other.0)
     }
     #[inline]
     #[must_use]
     fn sin_cos(&self) -> (Float64, Float64) {
-        self.0.sin_cos()
+        self.to_radians().sin_cos()
+    }
+    #[inline]
+    #[must_use]
+    fn signof(&self, rhs: Self) -> Float64 {
+        self.0.signof(rhs.0)
+    }
+    #[inline]
+    #[must_use]
+    fn tan(&self) -> Float64 {
+        l2math::tan(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn asin(&self) -> Float64 {
+        l2math::asin(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn acos(&self) -> Float64 {
+        l2math::acos(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn atan(&self) -> Float64 {
+        l2math::atan(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn sinh(&self) -> Float64 {
+        l2math::sinh(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn cosh(&self) -> Float64 {
+        l2math::cosh(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn tanh(&self) -> Float64 {
+        l2math::tanh(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn asinh(&self) -> Float64 {
+        l2math::asinh(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn acosh(&self) -> Float64 {
+        l2math::acosh(self.to_radians())
+    }
+    #[inline]
+    #[must_use]
+    fn atanh(&self) -> Float64 {
+        l2math::atanh(self.to_radians())
     }
 
-    i!(floor ceil round trunc fract abs signum sqrt exp exp2 ln log2 log10 cbrt
-       sin cos tan asin acos atan exp_m1 ln_1p sinh cosh tanh asinh acosh atanh);
+    i!(floor ceil round trunc fract abs signum exp exp2 ln log2 log10 cbrt exp_m1 ln_1p);
 }

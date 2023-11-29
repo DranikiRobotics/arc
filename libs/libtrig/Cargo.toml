@@ -8,12 +8,10 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies.macros]
-package = "macros"
 path = "../macros"
 
-[dependencies.llm]
-package = "llm"
-path = "../llm"
+[dependencies.l2math]
+path = "../l2math"
 
 [lib]
 path = "lib.rs"
