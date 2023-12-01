@@ -18,17 +18,11 @@ pub trait Number<Multiplier: Number = Self>:
 {
 }
 
-impl Number for u8 {}
-impl Number for u16 {}
-impl Number for u32 {}
-impl Number for u64 {}
-impl Number for u128 {}
-impl Number for usize {}
-impl Number for i8 {}
-impl Number for i16 {}
-impl Number for i32 {}
-impl Number for i64 {}
-impl Number for i128 {}
-impl Number for isize {}
-impl Number for crate::Float32 {}
-impl Number for crate::Float64 {}
+/// A trait that calculates the dot product of two items.
+pub trait Dot<Rhs = Self> {
+    /// The output type of the dot product.
+    type Output;
+    /// Calculate the dot product of two items.
+    #[must_use]
+    fn dot(self, rhs: Rhs) -> Self::Output;
+}

@@ -265,6 +265,7 @@ fn test_partial_cmp() {
 
 #[test]
 fn test_add() {
+    assert_eq!(u3::ZERO + u3::ZERO, u3::ZERO);
     assert_eq!(u3::ONE + u3::ZERO, u3::ONE);
     assert_eq!(u3::ONE + u3::ONE, u3::TWO);
     assert_eq!(u3::ONE + u3::TWO, u3::THREE);
@@ -333,6 +334,68 @@ fn test_sub() {
     assert_eq!(u3::SEVEN - u3::FIVE, u3::TWO);
     assert_eq!(u3::SEVEN - u3::SIX, u3::ONE);
     assert_eq!(u3::SEVEN - u3::SEVEN, u3::ZERO);
+}
+
+#[test]
+fn test_mult() {
+    assert_eq!(u3::ZERO * u3::ZERO, u3::ZERO);
+    assert_eq!(u3::ZERO * u3::ONE, u3::ZERO);
+    assert_eq!(u3::ZERO * u3::TWO, u3::ZERO);
+    assert_eq!(u3::ZERO * u3::THREE, u3::ZERO);
+    assert_eq!(u3::ZERO * u3::FOUR, u3::ZERO);
+    assert_eq!(u3::ZERO * u3::FIVE, u3::ZERO);
+    assert_eq!(u3::ZERO * u3::SIX, u3::ZERO);
+    assert_eq!(u3::ZERO * u3::SEVEN, u3::ZERO);
+    assert_eq!(u3::ONE * u3::ZERO, u3::ZERO);
+    assert_eq!(u3::ONE * u3::ONE, u3::ONE);
+    assert_eq!(u3::ONE * u3::TWO, u3::TWO);
+    assert_eq!(u3::ONE * u3::THREE, u3::THREE);
+    assert_eq!(u3::ONE * u3::FOUR, u3::FOUR);
+    assert_eq!(u3::ONE * u3::FIVE, u3::FIVE);
+    assert_eq!(u3::ONE * u3::SIX, u3::SIX);
+    assert_eq!(u3::ONE * u3::SEVEN, u3::SEVEN);
+    assert_eq!(u3::TWO * u3::ZERO, u3::ZERO);
+    assert_eq!(u3::TWO * u3::ONE, u3::TWO);
+    assert_eq!(u3::TWO * u3::TWO, u3::FOUR);
+    assert_eq!(u3::TWO * u3::THREE, u3::SIX);
+    assert_eq!(u3::THREE * u3::ZERO, u3::ZERO);
+    assert_eq!(u3::THREE * u3::ONE, u3::THREE);
+    assert_eq!(u3::THREE * u3::TWO, u3::SIX);
+    assert_eq!(u3::FOUR * u3::ZERO, u3::ZERO);
+    assert_eq!(u3::FOUR * u3::ONE, u3::FOUR);
+    assert_eq!(u3::FIVE * u3::ZERO, u3::ZERO);
+    assert_eq!(u3::FIVE * u3::ONE, u3::FIVE);
+    assert_eq!(u3::SIX * u3::ZERO, u3::ZERO);
+    assert_eq!(u3::SIX * u3::ONE, u3::SIX);
+    assert_eq!(u3::SEVEN * u3::ZERO, u3::ZERO);
+    assert_eq!(u3::SEVEN * u3::ONE, u3::SEVEN);
+}
+
+#[test]
+fn test_div() {
+    assert_eq!(u3::ZERO / u3::ONE, u3::ZERO);
+    assert_eq!(u3::ZERO / u3::TWO, u3::ZERO);
+    assert_eq!(u3::ZERO / u3::THREE, u3::ZERO);
+    assert_eq!(u3::ZERO / u3::FOUR, u3::ZERO);
+    assert_eq!(u3::ZERO / u3::FIVE, u3::ZERO);
+    assert_eq!(u3::ZERO / u3::SIX, u3::ZERO);
+    assert_eq!(u3::ZERO / u3::SEVEN, u3::ZERO);
+    assert_eq!(u3::ONE / u3::ONE, u3::ONE);
+    assert_eq!(u3::TWO / u3::ONE, u3::TWO);
+    assert_eq!(u3::TWO / u3::TWO, u3::ONE);
+    assert_eq!(u3::THREE / u3::ONE, u3::THREE);
+    assert_eq!(u3::THREE / u3::THREE, u3::ONE);
+    assert_eq!(u3::FOUR / u3::ONE, u3::FOUR);
+    assert_eq!(u3::FOUR / u3::TWO, u3::TWO);
+    assert_eq!(u3::FOUR / u3::FOUR, u3::ONE);
+    assert_eq!(u3::FIVE / u3::ONE, u3::FIVE);
+    assert_eq!(u3::FIVE / u3::FIVE, u3::ONE);
+    assert_eq!(u3::SIX / u3::ONE, u3::SIX);
+    assert_eq!(u3::SIX / u3::TWO, u3::THREE);
+    assert_eq!(u3::SIX / u3::THREE, u3::TWO);
+    assert_eq!(u3::SIX / u3::SIX, u3::ONE);
+    assert_eq!(u3::SEVEN / u3::ONE, u3::SEVEN);
+    assert_eq!(u3::SEVEN / u3::SEVEN, u3::ONE);
 }
 
 #[test]

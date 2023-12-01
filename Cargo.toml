@@ -22,5 +22,7 @@ license = "MIT"
 
 [profile.release]
 opt-level = 3
-debug = false
-panic = "abort"
+# debug = false
+debug = true
+# panic = "abort"
+panic = "unwind"

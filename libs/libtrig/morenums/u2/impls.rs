@@ -14,8 +14,6 @@ impl core::default::Default for u2 {
     }
 }
 
-impl core::cmp::Eq for u2 {}
-
 impl From<u2> for u8 {
     /// Convert a `u2` to a `u8`.
     #[must_use]
@@ -143,3 +141,33 @@ impl From<u2> for crate::Float64 {
         u8::from(u) as crate::Float64
     }
 }
+
+impl core::ops::AddAssign for u2 {
+    #[inline]
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl core::ops::SubAssign for u2 {
+    #[inline]
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl core::ops::MulAssign for u2 {
+    #[inline]
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = *self * rhs;
+    }
+}
+
+impl core::ops::DivAssign for u2 {
+    #[inline]
+    fn div_assign(&mut self, rhs: Self) {
+        *self = *self / rhs;
+    }
+}
+
+impl crate::traits::Number for u2 {}

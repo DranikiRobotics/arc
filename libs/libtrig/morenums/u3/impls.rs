@@ -36,7 +36,11 @@ impl From<u8> for u3 {
     #[inline(always)]
     fn from(u: u8) -> Self {
         debug_assert!(u <= 7, "u8 out of range: {}", u);
-        Self::fromu8(u)
+        // Safety: u is in range 0..=7
+        // In debug mode, this is verified by the debug_assert above.
+        // In release mode, this uses `core::hint::unreachable_unchecked` to enable optimizations.
+        #[allow(unsafe_code)]
+        unsafe { Self::fromu8(u) }
     }
 }
 
@@ -143,3 +147,33 @@ impl From<u3> for crate::Float64 {
         u8::from(u) as crate::Float64
     }
 }
+
+impl core::ops::AddAssign for u3 {
+    #[inline]
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl core::ops::SubAssign for u3 {
+    #[inline]
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl core::ops::MulAssign for u3 {
+    #[inline]
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = *self * rhs;
+    }
+}
+
+impl core::ops::DivAssign for u3 {
+    #[inline]
+    fn div_assign(&mut self, rhs: Self) {
+        *self = *self / rhs;
+    }
+}
+
+impl crate::traits::Number for u3 {}

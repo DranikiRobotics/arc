@@ -59,12 +59,6 @@ impl Vec2D {
     pub fn inverse(&self) -> Self {
         -self
     }
-    /// Returns the dot product of the vector and the given vector.
-    #[inline]
-    #[must_use]
-    pub fn dot(&self, other: Self) -> Float64 {
-        self.x() * other.x() + self.y() * other.y()
-    }
     /// Returns the magnitude of the vector.
     #[inline]
     #[must_use]
@@ -79,6 +73,19 @@ impl Vec2D {
     pub fn normalize(&self) -> Self {
         let magnitude = self.magnitude();
         Self(self.x() / magnitude, self.y() / magnitude)
+    }
+}
+
+#[macros::mass_impl(
+    $THIS = @ORM Vec2D,
+    $OTHER = @ORM Vec2D
+)]
+impl crate::traits::Dot<OTHER> for THIS {
+    type Output = Float64;
+    #[inline]
+    #[must_use]
+    fn dot(self, rhs: OTHER) -> Self::Output {
+        self.x() * rhs.x() + self.y() * rhs.y()
     }
 }
 

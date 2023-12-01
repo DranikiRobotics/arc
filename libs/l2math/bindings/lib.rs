@@ -1,4 +1,4 @@
-//! For Documentation please refer [LLM](../llm)
+//! For Documentation please refer [L2Math](../l2math)
 
 #![cfg_attr(feature = "no_std", no_std)]
 

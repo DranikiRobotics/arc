@@ -7,7 +7,7 @@ def doc(cd: str, args: list[str]) -> str | int | None:
         "libodo",
         "libpath",
         "libtrig",
-        "llm",
+        "l2math",
         "macros"
     ]
 

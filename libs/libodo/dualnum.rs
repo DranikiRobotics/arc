@@ -454,3 +454,22 @@ impl<T> core::ops::IndexMut<usize> for &mut DualNum<T> {
         &mut self.0[i]
     }
 }
+
+impl<T> core::ops::Mul<Vec2D> for DualNum<T> {
+    type Output = crate::Vec2DDual<T>;
+    #[inline]
+    fn mul(self, rhs: Vec2D) -> Self::Output {
+        let size = self.size();
+        let mut x_array = Array::with_capacity(size);
+        let mut y_array = Array::with_capacity(size);
+        for i in 0..size {
+            x_array[i] = self.0[i] * rhs.x();
+            y_array[i] = self.0[i] * rhs.y();
+        }
+        debug_assert!(x_array.len() <= 4);
+        debug_assert!(y_array.len() <= 4);
+        let x = Self::constructor(x_array);
+        let y = Self::constructor(y_array);
+        crate::Vec2DDual::new(x, y)
+    }
+}

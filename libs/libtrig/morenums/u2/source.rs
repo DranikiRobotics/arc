@@ -1,8 +1,10 @@
+use crate::morenums::bit;
+
 /// The 2-bit unsigned integer type.
 #[repr(C)]
-#[derive(Clone, Copy, Hash)]
+#[derive(Clone, Copy, Eq, Hash)]
 #[allow(non_camel_case_types)]
-pub struct u2(pub(crate) bool, pub(crate) bool);
+pub struct u2(pub(crate) bit, pub(crate) bit);
 
 impl u2 {
     /// Maximum value of `u2`. (3)
@@ -17,28 +19,11 @@ impl u2 {
     pub const TWO: Self = Self::new(false, true);
     /// Three value of `u2`. (3)
     pub const THREE: Self = Self::MAX;
-    /// Create a new `u2` from two `bool`s.
+    /// Create a new `u2`
     #[inline]
     #[must_use]
-    pub const fn new(ones: bool, twos: bool) -> Self {
+    pub const fn new(ones: bit, twos: bit) -> Self {
         Self(ones, twos)
-    }
-    /// Adds two `u2`s.
-    #[inline]
-    #[must_use]
-    #[allow(non_snake_case)]
-    pub const fn bitwiseXORadd(self, rhs: Self) -> Self {
-        let mut result = self;
-        if rhs.0 {
-            result.0 ^= true;
-            if !result.0 {
-                result.1 ^= true;
-            }
-        }
-        if rhs.1 {
-            result.1 ^= true;
-        }
-        result
     }
     /// Convert a `u2` to a `u8`.
     #[must_use]
@@ -85,6 +70,153 @@ impl u2 {
     pub const fn fromu3(u: crate::u3) -> Self {
         Self::new(u.0, u.1)
     }
+    /// Returns `true` if self is `0`.
+    #[must_use]
+    #[inline(always)]
+    pub const fn zero(self) -> bool {
+        !self.0 && !self.1
+    }
+    /// Returns `true` if self is `1`.
+    #[must_use]
+    #[inline(always)]
+    pub const fn one(self) -> bool {
+        self.0 && !self.1
+    }
+    /// Returns `true` if self is `2`.
+    #[must_use]
+    #[inline(always)]
+    pub const fn two(self) -> bool {
+        !self.0 && self.1
+    }
+    /// Returns `true` if self is `3`.
+    #[must_use]
+    #[inline(always)]
+    pub const fn three(self) -> bool {
+        self.0 && self.1
+    }
+    /// Inverts all bits in a `u2`.
+    #[must_use]
+    #[inline(always)]
+    pub const fn bitnot(self) -> Self {
+        Self(!self.0, !self.1)
+    }
+    /// Adds two `u2`s
+    /// 
+    /// # Safety
+    /// 
+    /// This function is unsafe because it may overflow,
+    /// therefore causing undefined behavior.
+    /// The developer must ensure that the result is in the range 0..=3.
+    #[must_use]
+    #[inline(always)]
+    #[allow(non_snake_case, unsafe_code)]
+    pub const unsafe fn unchecked_add(self, rhs: Self) -> Self {
+        #[cfg(feature = "unstable")]
+        {
+            Self::fromu8(self.tou8().unchecked_add(rhs.tou8()))
+        }
+        #[cfg(not(feature = "unstable"))]
+        {
+            // If either is zero, the result is the other
+            if self.zero() {
+                return rhs;
+            }
+            if rhs.zero() {
+                return self;
+            }
+
+            let ones = self.0 ^ rhs.0;
+            let carry = self.0 && rhs.0;
+            let twos = self.1 ^ rhs.1 ^ carry;
+            Self(ones, twos)
+        }
+    }
+    /// Adds two `u2`s
+    /// 
+    /// # Safety
+    /// 
+    /// This function is unsafe because it may overflow,
+    /// therefore causing undefined behavior.
+    /// The developer must ensure that the result is in the range 0..=3.
+    #[must_use]
+    #[inline(always)]
+    #[allow(non_snake_case, unsafe_code)]
+    pub const unsafe fn unchecked_sub(self, rhs: Self) -> Self {
+        #[cfg(feature = "unstable")]
+        {
+            Self::fromu8(self.tou8().unchecked_sub(rhs.tou8()))
+        }
+        #[cfg(not(feature = "unstable"))]
+        {
+            // If either is zero, the result is the other
+            if self.zero() {
+                return rhs;
+            }
+            if rhs.zero() {
+                return self;
+            }
+
+            self.unchecked_add(rhs.bitnot())
+                .unchecked_add(Self::ONE)
+        }
+    }
+    /// Performs an unchecked multiplication of two `u2`s.
+    /// 
+    /// # Safety
+    /// 
+    /// This function is unsafe because it may overflow,
+    /// therefore causing undefined behavior.
+    #[must_use]
+    #[inline(always)]
+    #[allow(unsafe_code)]
+    pub const unsafe fn unchecked_mul(self, rhs: Self) -> Self {
+        // If either is zero, the result is zero
+        if self.zero() || rhs.zero() {
+            return Self::ZERO;
+        }
+        // If either is one, the result is the other
+        if self.one() {
+            return rhs;
+        }
+        if rhs.one() {
+            return self;
+        }
+
+        // Otherwise, the result is not allowed
+        core::hint::unreachable_unchecked()
+    }
+    /// Performs an unchecked division of two `u2`s.
+    /// 
+    /// # Safety
+    /// 
+    /// This function is unsafe because it may overflow,
+    /// therefore causing undefined behavior.
+    #[must_use]
+    #[inline(always)]
+    #[allow(unsafe_code)]
+    pub const unsafe fn unchecked_div(self, rhs: Self) -> Self {
+        // if rhs is zero, the result is undefined
+        if rhs.zero() {
+            core::hint::unreachable_unchecked();
+        }
+        // if this is zero, the result is zero
+        if self.zero() {
+            return Self::ZERO;
+        }
+
+        // if rhs is one, the result is this
+        if rhs.one() {
+            return self;
+        }
+
+        // If they are equal, the result is one
+        if self.0 == rhs.0 && self.1 == rhs.1 {
+            return Self::ONE;
+        }
+
+        // Otherwise, the result is not allowed
+        core::hint::unreachable_unchecked()
+    }
 }
 
 impl core::fmt::Debug for u2 {
@@ -105,19 +237,19 @@ impl core::cmp::PartialOrd for u2 {
     #[inline]
     #[must_use]
     fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        if self.0 == other.0 && self.0 == other.0 {
+        if self.0 == other.0 && self.1 == other.1 {
             return Some(core::cmp::Ordering::Equal);
-        }
-        if self.0 && !other.0 {
-            return Some(core::cmp::Ordering::Greater);
-        }
-        if !self.0 && other.0 {
-            return Some(core::cmp::Ordering::Less);
         }
         if self.1 && !other.1 {
             return Some(core::cmp::Ordering::Greater);
         }
         if !self.1 && other.1 {
+            return Some(core::cmp::Ordering::Less);
+        }
+        if self.0 && !other.0 {
+            return Some(core::cmp::Ordering::Greater);
+        }
+        if !self.0 && other.0 {
             return Some(core::cmp::Ordering::Less);
         }
         None
@@ -176,7 +308,7 @@ impl core::ops::Not for u2 {
     #[inline]
     #[must_use]
     fn not(self) -> Self::Output {
-        Self::new(!self.0, !self.1)
+        self.bitnot()
     }
 }
 
@@ -184,25 +316,16 @@ impl core::ops::Add for u2 {
     type Output = Self;
     #[cfg(debug_assertions)]
     fn add(self, rhs: Self) -> Self::Output {
-        let new = u8::from(self) + u8::from(rhs);
+        let new = self.tou8() + rhs.tou8();
         debug_assert!(new <= 3, "u2 out of range: {}", new);
         new.into()
     }
     #[must_use]
     #[inline(always)]
+    #[allow(unsafe_code)]
     #[cfg(not(debug_assertions))]
     fn add(self, rhs: Self) -> Self::Output {
-        let carry: bool = self.0 && rhs.0;
-        let ones: bool = self.0 ^ rhs.0;
-        let twos: bool = self.1 ^ rhs.1 ^ carry;
-        Self::new(ones, twos)
-    }
-}
-
-impl core::ops::AddAssign for u2 {
-    #[inline]
-    fn add_assign(&mut self, rhs: Self) {
-        *self = *self + rhs;
+        unsafe { self.unchecked_add(rhs) }
     }
 }
 
@@ -212,14 +335,54 @@ impl core::ops::Sub for u2 {
     #[must_use]
     #[cfg(debug_assertions)]
     fn sub(self, rhs: Self) -> Self::Output {
-        let new = u8::from(self) - u8::from(rhs);
-        debug_assert!(new <= 3, "u2 out of range: {}", new);
+        let new = self.tou8() - rhs.tou8();
+        assert!(new <= 3, "u2 out of range: {}", new);
         new.into()
     }
     #[must_use]
     #[inline(always)]
+    #[allow(unsafe_code)]
     #[cfg(not(debug_assertions))]
     fn sub(self, rhs: Self) -> Self::Output {
-        Self::bitwiseXORadd(self, rhs)
+        unsafe { self.unchecked_sub(rhs) }
+    }
+}
+
+impl core::ops::Mul for u2 {
+    type Output = Self;
+    #[must_use]
+    #[inline(always)]
+    #[cfg(debug_assertions)]
+    fn mul(self, rhs: Self) -> Self::Output {
+        let new = self.tou8() * rhs.tou8();
+        assert!(new <= 3, "u2 out of range: {}", new);
+        new.into()
+    }
+    #[must_use]
+    #[inline(always)]
+    #[allow(unsafe_code)]
+    #[cfg(not(debug_assertions))]
+    fn mul(self, rhs: Self) -> Self::Output {
+        unsafe { self.unchecked_mul(rhs) }
+    }
+}
+
+impl core::ops::Div for u2 {
+    type Output = Self;
+    #[must_use]
+    #[inline(always)]
+    #[cfg(debug_assertions)]
+    fn div(self, rhs: Self) -> Self::Output {
+        assert_ne!(rhs, Self::ZERO, "u2 division by zero");
+        let new = self.tou8() / rhs.tou8();
+        assert!(new <= 3, "u2 out of range: {}", new);
+        new.into()
+    }
+    #[must_use]
+    #[inline(always)]
+    #[allow(unsafe_code)]
+    #[cfg(not(debug_assertions))]
+    fn div(self, rhs: Self) -> Self::Output {
+        unsafe { self.unchecked_div(rhs) }
     }
 }
