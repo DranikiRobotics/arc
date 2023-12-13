@@ -18,12 +18,11 @@ def clean(cd: str, args: list[str]) -> str | int | None:
     
     import shutil, os
 
-    CLEAN_DIRS = ["target", ".build", ".gradle", ".idea", "out", "build", "__pycache__"]
-    CLEAN_DIRS_EXTENSIONS = ["bazel-"]
+    CLEAN_DIRS = ["target", ".build", "__pycache__"]
+    CLEAN_DIRS_EXTENSIONS = []
     CLEAN_FILES = ["Cargo.lock"]
-    CLEAN_FILES_EXTENSIONS = [".jar", ".dylib", ".dll", ".lib", ".so"]
-
-    KEEP_FILES = ["gradle-wrapper.jar"]
+    CLEAN_FILES_EXTENSIONS = [".dylib", ".dll", ".lib", ".so"]
+    KEEP_FILES = []
 
     for full_dir_path, _, files in os.walk(cd):
         for file in files:

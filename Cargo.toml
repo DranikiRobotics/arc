@@ -2,21 +2,22 @@
 resolver = "2"
 members = [
     # Main crates
-    "libs/l2math/bindings",
-    "libs/l2math",
-    "libs/libodo",
-    "libs/libpath",
-    "libs/libtrig",
+    "arc", # Client side of the robot (python)
+    "libs/robot", # Robot [Server] side of the robot (rust)
 
     # Helper crates
-    "libs/macros-core",
-    "libs/macros",
+    "libs/helper/l2math",
+    # "libs/libodo",
+    # "libs/libpath",
+    # "libs/libtrig",
+    "libs/helper/macros-core",
+    "libs/helper/macros",
 ]
 
 [workspace.package]
 authors = ["Матвей Т <https://matveit.dev> AtomicGamer9523@github"]
-repository = "https://github.com/AtomicGamer9523/librobomath"
-version = "0.1.0-dev"
+repository = "https://github.com/DranikiRobotics/arc"
+version = "0.0.1-dev"
 edition = "2021"
 license = "MIT"
 

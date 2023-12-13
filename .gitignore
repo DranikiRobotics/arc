@@ -5,8 +5,8 @@
 # Bazel files
 bazel-*
 
-# Rust files
-Cargo.lock
+# Lock files
+*.lock
 
 # Python files
 __pycache__

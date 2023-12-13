@@ -4,9 +4,11 @@ def doc(cd: str, args: list[str]) -> str | int | None:
     cmd = ["cargo", "doc", "--no-deps"]
 
     PACKAGES = [
-        "libodo",
-        "libpath",
-        "libtrig",
+        "arc",
+        "arc-robot",
+        # "libodo",
+        # "libpath",
+        # "libtrig",
         "l2math",
         "macros"
     ]

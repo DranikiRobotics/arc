@@ -1,0 +1,11 @@
+[package]
+name = "arc"
+description = "Advanced Robot Controller"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+path = "lib.rs"
