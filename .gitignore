@@ -1,4 +1,5 @@
 # IDE Files
+*.code-workspace
 .vscode
 .idea
 

@@ -1,7 +1,8 @@
 from arc import *
 
-def main() -> RunResult:
-    print("Hello, world!")
+def auto(op: Op) -> RunResult:
+    op.gamepad
+
     return OK
 
-MAIN(main)
+OP(auto)

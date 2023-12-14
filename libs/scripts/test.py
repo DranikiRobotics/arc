@@ -1,12 +1,16 @@
 def test(cd: str, args: list[str]) -> str | int | None:
     if len(args) == 0: return "No test type specified"
-    if 'tarpaulin' == args[0]:
+
+    if '--release' in args:
+        return "Release mode is not supported for tests"
+    
+    if '--tarpaulin' in args:
         args.pop(0)
         return tarpaulin_test(cd, args)
-    elif 'llvm' == args[0]:
+    elif '--llvm' in args:
         args.pop(0)
         return llvm_test(cd, args)
-    elif 'all' == args[0]:
+    elif '--all' in args:
         args.pop(0)
         tarpaulin_test_res = tarpaulin_test(cd, args)
         if tarpaulin_test_res != None: return tarpaulin_test_res
