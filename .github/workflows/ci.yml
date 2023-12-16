@@ -89,7 +89,7 @@ jobs:
         with:
           python-version: 3.11
       - name: Install Python C headers
-        run: sudo apt install python3-dev
+        run: sudo apt-get install -y python3-dev
       - name: Give permission to run epearl
         run: chmod +x ./epearl
       - name: Build
@@ -112,7 +112,7 @@ jobs:
         with:
           python-version: 3.11
       - name: Install Python C headers
-        run: sudo apt install python3-dev
+        run: sudo apt-get install -y python3-dev
       - name: Give permission to run epearl
         run: chmod +x ./epearl
       - name: Run tests
