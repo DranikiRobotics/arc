@@ -6,7 +6,7 @@ def build(cd: str, args: list[str]) -> str | int | None:
         print("Hopefully they will be back soon.")
         return 0
 
-    cmd = ["cargo", "build"]
+    cmd = ["cargo", "build", "-p", "arc-pylib", "-F", "extension-module", "--workspace"]
     cmd.extend(args)
     res = subprocess.run(cmd, cwd=cd)
     if res.returncode != 0: return res.returncode
