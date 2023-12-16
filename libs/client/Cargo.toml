@@ -1,0 +1,12 @@
+[package]
+name = "arc"
+description = "ARC Software"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "arc"
+path = "main.rs"

@@ -12,8 +12,6 @@ pub(crate) mod traits;
 pub(crate) mod types;
 pub(crate) mod vectors;
 
-pub use l2math;
-
 pub mod prelude {
     //! Re-exports all the traits.
     pub use super::traits::*;
@@ -24,3 +22,12 @@ pub use coords::Coord2D;
 pub use morenums::{u2, u3};
 pub use types::*;
 pub use vectors::{Vec2D, Vec3D};
+
+/// Re-exports all the traits.
+#[macro_export]
+macro_rules! prelude {
+    () => (
+        #[allow(unused_imports)]
+        use $crate::prelude::*;
+    );
+}

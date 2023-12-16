@@ -1,6 +1,6 @@
 [package]
-name = "arc"
-description = "Advanced Robot Controller"
+name = "arc-pylib"
+description = "ARC python interface"
 repository.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -10,6 +10,15 @@ license.workspace = true
 [lib]
 path = "lib.rs"
 
-[[bin]]
-name = "arc"
-path = "bin/main.rs"
+[dependencies.hardware]
+package = "arc-robot-hardware"
+path = "../libs/robot/hardware"
+
+[dependencies]
+#!!! Important - DO NOT ENABLE extension-module FEATURE HERE!!!
+pyo3 = "0.20.0"
+
+[features]
+# instead extension-module feature for pyo3 is enabled conditionally
+# when we want to build a standalone extension module to test our plugins without "main" program
+extension-module = ["pyo3/extension-module"]
