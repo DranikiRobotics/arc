@@ -15,9 +15,12 @@ crate-type = ["cdylib", "rlib"]
 package = "arc-robot-hardware"
 path = "../libs/robot/hardware"
 
-[dependencies]
+[dependencies.pyo3]
 #!!! Important - DO NOT ENABLE extension-module FEATURE HERE!!!
-pyo3 = "0.20.0"
+version = "0.20.0"
+features = [
+    "abi3-py311" # for python 3.11
+]
 
 [features]
 # instead extension-module feature for pyo3 is enabled conditionally
