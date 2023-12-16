@@ -9,6 +9,7 @@ license.workspace = true
 
 [lib]
 path = "lib.rs"
+crate-type = ["cdylib", "rlib"]
 
 [dependencies.hardware]
 package = "arc-robot-hardware"
