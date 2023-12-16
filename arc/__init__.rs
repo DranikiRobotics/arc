@@ -12,8 +12,8 @@ fn make_err(e: &'static str) -> PyErr {
 
 /// The struct that actually contains the necessary data for the op mode
 /// to run.
-/// 
-/// This struct should only be used for mutating the data outside of the 
+///
+/// This struct should only be used for mutating the data outside of the
 /// op mode thread. For reading the up to date data, use the `Op` struct.
 #[derive(Debug)]
 pub struct OpHolder {
@@ -23,7 +23,7 @@ pub struct OpHolder {
 
 impl OpHolder {
     /// Returns whether the op mode is running
-    /// 
+    ///
     /// This call aquires a lock on the data
     pub fn running(&self) -> bool {
         match self.running.get() {
@@ -32,13 +32,13 @@ impl OpHolder {
         }
     }
     /// Returns a reference to the gamepad
-    /// 
+    ///
     /// This call aquires a lock on the data
     pub fn gamepad(&self) -> &_hardware::gamepad::Gamepad {
         &self.gamepad
     }
     /// Stops the op mode
-    /// 
+    ///
     /// DO NOT CALL THIS FROM THE OP MODE THREAD
     pub fn stop(&self) {
         self.running.get_mut().unwrap().set(false);
@@ -49,20 +49,20 @@ unsafe impl Send for OpHolder {}
 unsafe impl Sync for OpHolder {}
 
 /// The struct that is used to access the data in the op mode
-/// 
+///
 /// This struct internally uses a `ThreadSafe` to access the data.
 /// So feel free to clone it. It is also `Send` and `Sync`.
-/// 
+///
 /// This struct should be used for reading the data in the op mode thread.
 /// For mutating the data outside of the op mode thread, use the `OpHolder`
 /// struct.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```rust,no_run,ignore
 /// let op = pylib::Op::new(gamepad_wrapper);
 /// let op_wrapper = pylib::Op::wrap(&op);
-/// 
+///
 /// // IO Thread
 /// op.get_mut()?
 /// ```
@@ -72,7 +72,7 @@ pub struct Op(ThreadSafe<OpHolder>);
 
 impl Op {
     /// This creates a new `ThreadSafe<OpHolder>` struct. NOT a `Op` struct.
-    /// 
+    ///
     /// You then need to wrap it in a `Op` struct using the [`Op::wrap()`] method.
     pub fn new(gamepad: _hardware::gamepad::Gamepad) -> ThreadSafe<OpHolder> {
         ThreadSafe::new(OpHolder {
@@ -85,20 +85,19 @@ impl Op {
         Self(op.clone())
     }
     /// Returns a new [`Gamepad`] struct that is a clone of the one in the op mode.
-    /// 
+    ///
     /// (It's an `Arc` so it's cheap to clone)
-    /// 
+    ///
     /// [`Gamepad`]: _hardware/gamepad/struct.Gamepad.html
     pub fn get_gamepad(&self) -> threadsafe::TSResult<_hardware::gamepad::Gamepad> {
         self.0.get().map(|g| g.gamepad().clone())
     }
     /// Returns whether the op mode is running
-    /// 
+    ///
     /// This call aquires a lock on the data
     pub fn is_running(&self) -> threadsafe::TSResult<bool> {
         self.0.get().map(|g| g.running())
     }
-    
 }
 
 #[pymethods]
@@ -117,7 +116,7 @@ impl Op {
 }
 
 /// Sleeps for a certain amount of seconds
-/// 
+///
 /// THIS BLOCKS THE CURRENT THREAD
 #[pyfunction]
 #[doc(hidden)]
@@ -127,7 +126,7 @@ fn sleep(seconds: f64) -> PyResult<()> {
 }
 
 /// An Autonomous Annotation (Decorator) for Python
-/// 
+///
 /// This annotation is used to mark a function as an autonomous function.
 #[pyclass]
 #[doc(hidden)]
@@ -152,7 +151,7 @@ impl Auto {
 }
 
 /// A Teleop Annotation (Decorator) for Python
-/// 
+///
 /// This annotation is used to mark a function as a teleop function.
 #[pyclass]
 #[doc(hidden)]
@@ -177,7 +176,7 @@ impl Teleop {
 }
 
 /// Constructs the Python module
-/// 
+///
 /// This function is called by the Python interpreter when the module is imported.
 #[pymodule]
 #[doc(hidden)]

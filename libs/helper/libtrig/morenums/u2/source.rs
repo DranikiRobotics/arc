@@ -101,9 +101,9 @@ impl u2 {
         Self(!self.0, !self.1)
     }
     /// Adds two `u2`s
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// This function is unsafe because it may overflow,
     /// therefore causing undefined behavior.
     /// The developer must ensure that the result is in the range 0..=3.
@@ -132,9 +132,9 @@ impl u2 {
         }
     }
     /// Adds two `u2`s
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// This function is unsafe because it may overflow,
     /// therefore causing undefined behavior.
     /// The developer must ensure that the result is in the range 0..=3.
@@ -156,14 +156,13 @@ impl u2 {
                 return self;
             }
 
-            self.unchecked_add(rhs.bitnot())
-                .unchecked_add(Self::ONE)
+            self.unchecked_add(rhs.bitnot()).unchecked_add(Self::ONE)
         }
     }
     /// Performs an unchecked multiplication of two `u2`s.
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// This function is unsafe because it may overflow,
     /// therefore causing undefined behavior.
     #[must_use]
@@ -186,9 +185,9 @@ impl u2 {
         core::hint::unreachable_unchecked()
     }
     /// Performs an unchecked division of two `u2`s.
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// This function is unsafe because it may overflow,
     /// therefore causing undefined behavior.
     #[must_use]

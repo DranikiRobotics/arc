@@ -144,9 +144,9 @@ impl u3 {
         Self(!self.0, !self.1, !self.2)
     }
     /// Adds two `u3`s.
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// This function is unsafe because it may overflow,
     /// therefore causing undefined behavior.
     /// The developer must ensure that the result is in the range 0..=7.
@@ -177,9 +177,9 @@ impl u3 {
         }
     }
     /// Subtracts two `u3`s.
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// This function is unsafe because it may overflow,
     /// therefore causing undefined behavior.
     /// The developer must ensure that the result is in the range 0..=7.
@@ -202,14 +202,13 @@ impl u3 {
                 core::hint::unreachable_unchecked();
             }
 
-            self.unchecked_add(rhs.bitnot())
-                .unchecked_add(Self::ONE)
+            self.unchecked_add(rhs.bitnot()).unchecked_add(Self::ONE)
         }
     }
     /// Performs an unchecked multiplication of two `u3`s.
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// This function is unsafe because it may overflow,
     /// therefore causing undefined behavior.
     /// The developer must ensure that the result is in the range 0..=7.
@@ -244,9 +243,9 @@ impl u3 {
         core::hint::unreachable_unchecked();
     }
     /// Performs an unchecked division of two `u3`s.
-    /// 
+    ///
     /// # Safety
-    /// 
+    ///
     /// This function is unsafe because it may overflow,
     /// therefore causing undefined behavior.
     /// The developer must ensure that the result is in the range 0..=7.

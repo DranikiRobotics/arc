@@ -40,7 +40,9 @@ impl From<u8> for u3 {
         // In debug mode, this is verified by the debug_assert above.
         // In release mode, this uses `core::hint::unreachable_unchecked` to enable optimizations.
         #[allow(unsafe_code)]
-        unsafe { Self::fromu8(u) }
+        unsafe {
+            Self::fromu8(u)
+        }
     }
 }
 

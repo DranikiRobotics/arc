@@ -24,7 +24,7 @@ pub struct LogitechF310 {
     b: bool,
     x: bool,
     y: bool,
-    
+
     // Bumpers
     left_bumper: bool,
     right_bumper: bool,
@@ -39,7 +39,12 @@ pub struct LogitechF310 {
 impl Gamepad for LogitechF310 {
     #[inline]
     fn dpad(&self) -> GamepadDpad {
-        GamepadDpad::new(self.dpad_up, self.dpad_down, self.dpad_left, self.dpad_right)
+        GamepadDpad::new(
+            self.dpad_up,
+            self.dpad_down,
+            self.dpad_left,
+            self.dpad_right,
+        )
     }
     #[inline]
     fn left_stick(&self) -> GamepadStick {
@@ -47,7 +52,11 @@ impl Gamepad for LogitechF310 {
     }
     #[inline]
     fn right_stick(&self) -> GamepadStick {
-        GamepadStick::new(self.right_stick_x, self.right_stick_y, self.right_stick_button)
+        GamepadStick::new(
+            self.right_stick_x,
+            self.right_stick_y,
+            self.right_stick_button,
+        )
     }
     #[inline]
     fn left_trigger(&self) -> f64 {

@@ -1,5 +1,5 @@
-use hardware::gamepad::MutableGamepad;
 use crate::threadsafe::ThreadSafe;
+use hardware::gamepad::MutableGamepad;
 use pyo3::prelude::*;
 
 #[derive(Debug)]

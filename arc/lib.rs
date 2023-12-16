@@ -1,10 +1,10 @@
 #![doc = include_str!("./README.md")]
 #![warn(missing_docs, unused, clippy::all)]
 
-pub use hardware as hardware;
+pub use hardware;
 
-mod threadsafe;
 mod __init__;
+mod threadsafe;
 
-pub use threadsafe::ThreadSafe;
 pub use __init__::*;
+pub use threadsafe::ThreadSafe;

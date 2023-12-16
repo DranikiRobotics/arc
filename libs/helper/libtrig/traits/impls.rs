@@ -1,5 +1,5 @@
-use crate::*;
 use super::*;
+use crate::*;
 
 macro_rules! n { ($($o:tt)+) => ($(impl Number for $o{})+); }
 
@@ -18,9 +18,15 @@ macro_rules! simpl {
     () => ();
 }
 
-impl Sin for Float64 { simpl!(sin); }
-impl Cos for Float64 { simpl!(cos); }
-impl Sqrt for Float64 { simpl!(sqrt); }
+impl Sin for Float64 {
+    simpl!(sin);
+}
+impl Cos for Float64 {
+    simpl!(cos);
+}
+impl Sqrt for Float64 {
+    simpl!(sqrt);
+}
 
 #[allow(unused)]
 impl Float for Float64 {
@@ -90,9 +96,15 @@ impl Float for Float64 {
     }
 }
 
-impl Sin for Float32 { simpl!(sin => sinf); }
-impl Cos for Float32 { simpl!(cos => cosf); }
-impl Sqrt for Float32 { simpl!(sqrt => sqrtf); }
+impl Sin for Float32 {
+    simpl!(sin => sinf);
+}
+impl Cos for Float32 {
+    simpl!(cos => cosf);
+}
+impl Sqrt for Float32 {
+    simpl!(sqrt => sqrtf);
+}
 
 impl Float for Float32 {
     simpl!(floor => floorf ceil => ceilf round => roundf trunc => truncf

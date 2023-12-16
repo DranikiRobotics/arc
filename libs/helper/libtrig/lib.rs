@@ -26,8 +26,8 @@ pub use vectors::{Vec2D, Vec3D};
 /// Re-exports all the traits.
 #[macro_export]
 macro_rules! prelude {
-    () => (
+    () => {
         #[allow(unused_imports)]
         use $crate::prelude::*;
-    );
+    };
 }

@@ -1,18 +1,18 @@
-use libtrig::{Vec2D, Angle2D};
+use libtrig::{Angle2D, Vec2D};
 
 pub mod impls;
 
 pub trait Gamepad: core::fmt::Debug {
     /// Returns the state of the dpad
-    /// 
+    ///
     /// Includes up, down, left, and right
     fn dpad(&self) -> GamepadDpad;
     /// Returns the state of the left stick
-    /// 
+    ///
     /// Includes x, y, and pressed
     fn left_stick(&self) -> GamepadStick;
     /// Returns the state of the right stick
-    /// 
+    ///
     /// Includes x, y, and pressed
     fn right_stick(&self) -> GamepadStick;
     /// Returns the state of the left trigger
@@ -34,10 +34,14 @@ pub trait Gamepad: core::fmt::Debug {
 
     /// A non-standard 'back' button
     #[inline]
-    fn back(&self) -> bool { false }
+    fn back(&self) -> bool {
+        false
+    }
     /// A non-standard 'start' button
     #[inline]
-    fn start(&self) -> bool { false }
+    fn start(&self) -> bool {
+        false
+    }
 }
 
 /// Allows for the gamepad to be modified
@@ -53,8 +57,8 @@ pub trait MutableGamepad: Gamepad {
     fn set_y(&mut self, value: bool);
     fn set_left_bumper(&mut self, value: bool);
     fn set_right_bumper(&mut self, value: bool);
-    fn set_back(&mut self, _value: bool) { }
-    fn set_start(&mut self, _value: bool) { }
+    fn set_back(&mut self, _value: bool) {}
+    fn set_start(&mut self, _value: bool) {}
 }
 
 #[repr(C)]
@@ -79,9 +83,7 @@ impl GamepadStick {
     #[inline]
     pub fn angle(&self) -> libtrig::Angle2D {
         libtrig::prelude!();
-        libtrig::Angle2D::from_radians(
-            self.y.atan2(self.x)
-        )
+        libtrig::Angle2D::from_radians(self.y.atan2(self.x))
     }
 }
 
@@ -149,7 +151,12 @@ impl GamepadDpad {
     #[inline]
     #[must_use = "This returns a new GamepadDpad"]
     pub const fn new(up: bool, down: bool, left: bool, right: bool) -> Self {
-        Self { up, down, left, right }
+        Self {
+            up,
+            down,
+            left,
+            right,
+        }
     }
     #[inline]
     #[must_use = "This returns a new GamepadDpad"]
@@ -172,4 +179,4 @@ impl From<GamepadDpad> for (bool, bool, bool, bool) {
     fn from(dpad: GamepadDpad) -> Self {
         (dpad.up, dpad.down, dpad.left, dpad.right)
     }
-} 
+}

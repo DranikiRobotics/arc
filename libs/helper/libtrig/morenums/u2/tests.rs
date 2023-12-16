@@ -5,21 +5,21 @@ use crate::u2;
 
 #[test]
 fn test_partial_cmp() {
-    assert!(u2::ZERO  == u2::ZERO);
-    assert!(u2::ZERO  <  u2::ONE );
-    assert!(u2::ZERO  <  u2::TWO );
-    assert!(u2::ZERO  <  u2::THREE);
-    assert!(u2::ONE   >  u2::ZERO );
-    assert!(u2::ONE   == u2::ONE  );
-    assert!(u2::ONE   <  u2::TWO  );
-    assert!(u2::ONE   <  u2::THREE);
-    assert!(u2::TWO   >  u2::ZERO );
-    assert!(u2::TWO   >  u2::ONE  );
-    assert!(u2::TWO   == u2::TWO  );
-    assert!(u2::TWO   <  u2::THREE);
-    assert!(u2::THREE >  u2::ZERO );
-    assert!(u2::THREE >  u2::ONE  );
-    assert!(u2::THREE >  u2::TWO  );
+    assert!(u2::ZERO == u2::ZERO);
+    assert!(u2::ZERO < u2::ONE);
+    assert!(u2::ZERO < u2::TWO);
+    assert!(u2::ZERO < u2::THREE);
+    assert!(u2::ONE > u2::ZERO);
+    assert!(u2::ONE == u2::ONE);
+    assert!(u2::ONE < u2::TWO);
+    assert!(u2::ONE < u2::THREE);
+    assert!(u2::TWO > u2::ZERO);
+    assert!(u2::TWO > u2::ONE);
+    assert!(u2::TWO == u2::TWO);
+    assert!(u2::TWO < u2::THREE);
+    assert!(u2::THREE > u2::ZERO);
+    assert!(u2::THREE > u2::ONE);
+    assert!(u2::THREE > u2::TWO);
     assert!(u2::THREE == u2::THREE);
 }
 
