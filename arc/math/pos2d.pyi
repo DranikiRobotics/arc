@@ -20,12 +20,17 @@ class Pos2D(object):
     
     @staticmethod
     def from_xy(x: float, y: float) -> Pos2D:
-        """Creates a position from x and y."""
+        """Creates a position from x and y. facing 0 degrees."""
         ...
     
     @staticmethod
     def from_vec2d(vec: _Vec2D) -> Pos2D:
-        """Creates a position from a vector."""
+        """Creates a position from a vector. facing 0 degrees."""
+        ...
+    
+    @staticmethod
+    def from_angle(angle: _Angle) -> Pos2D:
+        """Creates a position from an angle. at the origin."""
         ...
     
     @staticmethod
@@ -50,6 +55,8 @@ class Pos2D(object):
     def move(self, delta: Pos2D) -> None:
         """
         Moves the current position by the specified delta.
+
+        This is an impure method, because it mutates the current position.
         """
         ...
     

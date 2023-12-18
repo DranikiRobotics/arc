@@ -1,10 +1,10 @@
-# from arc.hardware import *
-# from arc.math import *
+from arc.hardware import *
+from arc.math import *
 from arc import *
 
 # You are REQUIRED to have a main() function in your program.
 # and you MUST NOT call it yourself.
-@Auto
+@Auto("My Auto")
 def main(op: Op):
     print("Starting...")
 
@@ -18,5 +18,7 @@ def main(op: Op):
             if holding_a:
                 print("A released!")
             holding_a = False
+
+    print("Done!")
 
     return OK

@@ -117,6 +117,44 @@ impl Angle2D {
     }
 }
 
+impl From<Vec2D> for Angle2D {
+    /// Creates a new `Angle2D` from the given `Vec2D`.
+    ///
+    /// This is equivalent to `Angle2D::from_radians(v.y().atan2(v.x()))`.
+    #[inline]
+    #[must_use]
+    fn from(v: Vec2D) -> Self {
+        crate::prelude!();
+        Self::from_radians(v.y().atan2(v.x()))
+    }
+}
+
+impl From<(Float64, Float64)> for Angle2D {
+    /// Creates a new `Angle2D` from the given `(x, y)` pair.
+    ///
+    /// This is equivalent to `Angle2D::from_radians(y.atan2(x))`.
+    #[inline]
+    #[must_use]
+    fn from((x, y): (Float64, Float64)) -> Self {
+        crate::prelude!();
+        Self::from_radians(y.atan2(x))
+    }
+}
+
+impl From<Angle2D> for Vec2D {
+    /// Creates a new `Vec2D` from the given `Angle2D`.
+    ///
+    /// This is equivalent to `Vec2D::new(a.cos(), a.sin())`.
+    ///
+    /// THE VECTOR MAY OR MAY NOT BE NORMALIZED.
+    #[inline]
+    #[must_use]
+    fn from(a: Angle2D) -> Self {
+        crate::prelude!();
+        Self::new(a.cos(), a.sin())
+    }
+}
+
 #[macros::mass_impl(
     $THIS = @ORM Angle2D,
     $OTHER = @ORM Angle2D

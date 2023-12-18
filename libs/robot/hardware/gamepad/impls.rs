@@ -1,6 +1,9 @@
+//! Implementations of the `Gamepad` trait for various gamepads.
+
 use super::*;
 
-// #[repr(C)]
+/// A gamepad with no inputs.
+#[repr(C)]
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
 pub struct LogitechF310 {
     // Dpad
@@ -36,128 +39,180 @@ pub struct LogitechF310 {
     right_stick_button: bool,
 }
 
+impl LogitechF310 {
+    /// Creates a new `LogitechF310` with all values set to their defaults.
+    #[inline]
+    #[must_use = "This returns a new LogitechF310"]
+    pub const fn new() -> Self {
+        Self {
+            dpad_up: false,
+            dpad_down: false,
+            dpad_left: false,
+            dpad_right: false,
+
+            left_stick_x: 0.0,
+            left_stick_y: 0.0,
+            right_stick_x: 0.0,
+            right_stick_y: 0.0,
+
+            left_trigger: 0.0,
+            right_trigger: 0.0,
+
+            a: false,
+            b: false,
+            x: false,
+            y: false,
+
+            left_bumper: false,
+            right_bumper: false,
+
+            back: false,
+            start: false,
+            left_stick_button: false,
+            right_stick_button: false,
+        }
+    }
+}
+
 impl Gamepad for LogitechF310 {
     #[inline]
-    fn dpad(&self) -> GamepadDpad {
-        GamepadDpad::new(
+    fn dpad(&self) -> crate::Result<GamepadDpad> {
+        Ok(GamepadDpad::new(
             self.dpad_up,
             self.dpad_down,
             self.dpad_left,
             self.dpad_right,
-        )
+        ))
     }
     #[inline]
-    fn left_stick(&self) -> GamepadStick {
-        GamepadStick::new(self.left_stick_x, self.left_stick_y, self.left_stick_button)
+    fn left_stick(&self) -> crate::Result<GamepadStick> {
+        Ok(GamepadStick::new(
+            self.left_stick_x,
+            self.left_stick_y,
+            self.left_stick_button,
+        ))
     }
     #[inline]
-    fn right_stick(&self) -> GamepadStick {
-        GamepadStick::new(
+    fn right_stick(&self) -> crate::Result<GamepadStick> {
+        Ok(GamepadStick::new(
             self.right_stick_x,
             self.right_stick_y,
             self.right_stick_button,
-        )
+        ))
     }
     #[inline]
-    fn left_trigger(&self) -> f64 {
-        self.left_trigger
+    fn left_trigger(&self) -> crate::Result<f64> {
+        Ok(self.left_trigger)
     }
     #[inline]
-    fn right_trigger(&self) -> f64 {
-        self.right_trigger
+    fn right_trigger(&self) -> crate::Result<f64> {
+        Ok(self.right_trigger)
     }
     #[inline]
-    fn a(&self) -> bool {
-        self.a
+    fn a(&self) -> crate::Result<bool> {
+        Ok(self.a)
     }
     #[inline]
-    fn b(&self) -> bool {
-        self.b
+    fn b(&self) -> crate::Result<bool> {
+        Ok(self.b)
     }
     #[inline]
-    fn x(&self) -> bool {
-        self.x
+    fn x(&self) -> crate::Result<bool> {
+        Ok(self.x)
     }
     #[inline]
-    fn y(&self) -> bool {
-        self.y
+    fn y(&self) -> crate::Result<bool> {
+        Ok(self.y)
     }
     #[inline]
-    fn left_bumper(&self) -> bool {
-        self.left_bumper
+    fn left_bumper(&self) -> crate::Result<bool> {
+        Ok(self.left_bumper)
     }
     #[inline]
-    fn right_bumper(&self) -> bool {
-        self.right_bumper
+    fn right_bumper(&self) -> crate::Result<bool> {
+        Ok(self.right_bumper)
     }
     #[inline]
-    fn back(&self) -> bool {
-        self.back
+    fn back(&self) -> crate::Result<bool> {
+        Ok(self.back)
     }
     #[inline]
-    fn start(&self) -> bool {
-        self.start
+    fn start(&self) -> crate::Result<bool> {
+        Ok(self.start)
     }
 }
 
 impl MutableGamepad for LogitechF310 {
     #[inline]
-    fn set_dpap(&mut self, dpad: GamepadDpad) {
+    fn set_dpad(&mut self, dpad: GamepadDpad) -> crate::Result {
         self.dpad_up = dpad.up;
         self.dpad_down = dpad.down;
         self.dpad_left = dpad.left;
         self.dpad_right = dpad.right;
+        Ok(())
     }
     #[inline]
-    fn set_left_stick(&mut self, stick: GamepadStick) {
+    fn set_left_stick(&mut self, stick: GamepadStick) -> crate::Result {
         self.left_stick_x = stick.x;
         self.left_stick_y = stick.y;
         self.left_stick_button = stick.pressed;
+        Ok(())
     }
     #[inline]
-    fn set_right_stick(&mut self, stick: GamepadStick) {
+    fn set_right_stick(&mut self, stick: GamepadStick) -> crate::Result {
         self.right_stick_x = stick.x;
         self.right_stick_y = stick.y;
         self.right_stick_button = stick.pressed;
+        Ok(())
     }
     #[inline]
-    fn set_left_trigger(&mut self, trigger: f64) {
+    fn set_left_trigger(&mut self, trigger: f64) -> crate::Result {
         self.left_trigger = trigger;
+        Ok(())
     }
     #[inline]
-    fn set_right_trigger(&mut self, trigger: f64) {
+    fn set_right_trigger(&mut self, trigger: f64) -> crate::Result {
         self.right_trigger = trigger;
+        Ok(())
     }
     #[inline]
-    fn set_a(&mut self, value: bool) {
+    fn set_a(&mut self, value: bool) -> crate::Result {
         self.a = value;
+        Ok(())
     }
     #[inline]
-    fn set_b(&mut self, value: bool) {
+    fn set_b(&mut self, value: bool) -> crate::Result {
         self.b = value;
+        Ok(())
     }
     #[inline]
-    fn set_x(&mut self, value: bool) {
+    fn set_x(&mut self, value: bool) -> crate::Result {
         self.x = value;
+        Ok(())
     }
     #[inline]
-    fn set_y(&mut self, value: bool) {
+    fn set_y(&mut self, value: bool) -> crate::Result {
         self.y = value;
+        Ok(())
     }
     #[inline]
-    fn set_left_bumper(&mut self, value: bool) {
+    fn set_left_bumper(&mut self, value: bool) -> crate::Result {
         self.left_bumper = value;
+        Ok(())
     }
     #[inline]
-    fn set_right_bumper(&mut self, value: bool) {
+    fn set_right_bumper(&mut self, value: bool) -> crate::Result {
         self.right_bumper = value;
+        Ok(())
     }
     #[inline]
-    fn set_back(&mut self, value: bool) {
+    fn set_back(&mut self, value: bool) -> crate::Result {
         self.back = value;
+        Ok(())
     }
     #[inline]
-    fn set_start(&mut self, value: bool) {
+    fn set_start(&mut self, value: bool) -> crate::Result {
         self.start = value;
+        Ok(())
     }
 }

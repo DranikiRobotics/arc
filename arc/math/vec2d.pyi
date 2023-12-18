@@ -19,16 +19,26 @@ class Vec2D(object):
         """Creates a vector from x and y components."""
         ...
     
+    @property
+    def x(self) -> float:
+        """Returns the x component of the vector."""
+        ...
+    
+    @property
+    def y(self) -> float:
+        """Returns the y component of the vector."""
+        ...
+    
     def angle(self) -> Angle:
         """Returns the angle of the vector."""
         ...
     
-    def length(self) -> float:
-        """Returns the length of the vector."""
+    def magnitude(self) -> float:
+        """Returns the magnitude of the vector."""
         ...
     
     def normalize(self) -> Vec2D:
-        """Returns a normalized version of the vector."""
+        """Returns a new normalized version of this vector."""
         ...
     
     def dot(self, other: Vec2D) -> float:
@@ -84,5 +94,13 @@ class Vec2D(object):
         ...
     
     def __repr__(self) -> str:
-        """Returns a string representation of the vector."""
+        """Returns a string representation of the vector. (for debugging)"""
+        ...
+    
+    def __len__(self) -> int:
+        """
+        Returns the magnitude of the vector.
+        
+        This is the same as calling `magnitude`.
+        """
         ...

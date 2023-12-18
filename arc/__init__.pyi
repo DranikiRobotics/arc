@@ -8,9 +8,20 @@ Additionally, it is easy to extend, so that you can add your own functionality t
 """
 
 from .hardware.gamepad import Gamepad as _Gamepad
-from typing import Callable as _Callable
+import typing as _typing
 
-type RunResult = bool | int | str | None
+RunResult = _typing.Union[bool, int, str, None]
+"""
+This type is used to indicate whether or not an `Op` completed successfully.
+
+If the `Op` completed successfully, then it should return `OK` (or `None`).
+
+If the `Op` did not complete successfully, then it should return an object that
+provides information about why it did not complete successfully:
+- If it's a `bool`, then it should be False.
+- If it's an `int`, then it should be the error code.
+- If it's a `str`, then it should be the error message.
+"""
 
 class Op(object):
     """Represents an operation that can be run on the robot."""
@@ -25,11 +36,11 @@ class Op(object):
         """Whether or not the operation is running."""
         ...
 
-def Auto(func: _Callable[[Op], RunResult]) -> _Callable[[Op], RunResult]:
+def Auto(name: str) -> _typing.Callable[[_typing.Callable[[Op], RunResult]], _typing.Callable[[Op], RunResult]]:
     """Decorator for an autonomous operation."""
     ...
 
-def Teleop(func: _Callable[[Op], RunResult]) -> _Callable[[Op], RunResult]:
+def Teleop(name: str) -> _typing.Callable[[_typing.Callable[[Op], RunResult]], _typing.Callable[[Op], RunResult]]:
     """Decorator for a teleop operation."""
     ...
 
@@ -38,3 +49,6 @@ def sleep(seconds: float) -> None:
     ...
 
 OK: RunResult = True
+"""
+A built-in `RunResult` that indicates that the `Op` completed successfully.
+"""

@@ -9,6 +9,31 @@ class Gamepad(object):
     """Represents a gamepad with buttons x, y, a, and b."""
 
     @property
+    def dpad(self) -> GamepadDpad:
+        """The state of the dpad."""
+        ...
+    
+    @property
+    def left_stick(self) -> GamepadStick:
+        """The state of the left stick."""
+        ...
+    
+    @property
+    def right_stick(self) -> GamepadStick:
+        """The state of the right stick."""
+        ...
+    
+    @property
+    def left_trigger(self) -> float:
+        """The state of the left trigger."""
+        ...
+    
+    @property
+    def right_trigger(self) -> float:
+        """The state of the right trigger."""
+        ...
+
+    @property
     def x(self) -> bool:
         """Whether or not the x button is pressed."""
         ...
@@ -23,6 +48,34 @@ class Gamepad(object):
     @property
     def b(self) -> bool:
         """Whether or not the b button is pressed."""
+        ...
+    
+    @property
+    def left_bumper(self) -> bool:
+        """Whether or not the left bumper is pressed."""
+        ...
+    
+    @property
+    def right_bumper(self) -> bool:
+        """Whether or not the right bumper is pressed."""
+        ...
+    
+    @property
+    def back(self) -> bool:
+        """
+        Whether or not the 'back' button is pressed.
+        
+        This is a non-standard button. Use with caution.
+        """
+        ...
+    
+    @property
+    def start(self) -> bool:
+        """
+        Whether or not the 'start' button is pressed.
+        
+        This is a non-standard button. Use with caution.
+        """
         ...
 
 class GamepadDpad(object):

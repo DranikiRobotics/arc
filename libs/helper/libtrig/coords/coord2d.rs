@@ -4,10 +4,8 @@ use crate::*;
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub struct Coord2D {
-    /// The x coordinate.
-    pub x: Float64,
-    /// The y coordinate.
-    pub y: Float64,
+    x: Float64,
+    y: Float64,
 }
 
 impl Coord2D {
@@ -48,6 +46,18 @@ impl Coord2D {
     #[must_use]
     pub fn inverse(&self) -> Self {
         -self
+    }
+    /// Returns the x coordinate.
+    #[inline]
+    #[must_use]
+    pub const fn x(&self) -> Float64 {
+        self.x
+    }
+    /// Returns the y coordinate.
+    #[inline]
+    #[must_use]
+    pub const fn y(&self) -> Float64 {
+        self.y
     }
 }
 
@@ -289,5 +299,21 @@ impl From<Coord2D> for (Float64, Float64) {
     #[must_use]
     fn from(Coord2D { x, y }: Coord2D) -> Self {
         (x, y)
+    }
+}
+
+impl From<crate::Vec2D> for Coord2D {
+    #[inline]
+    #[must_use]
+    fn from(vec: crate::Vec2D) -> Self {
+        Self::new(vec.x(), vec.y())
+    }
+}
+
+impl From<Coord2D> for crate::Vec2D {
+    #[inline]
+    #[must_use]
+    fn from(vec: Coord2D) -> Self {
+        Self::new(vec.x, vec.y)
     }
 }

@@ -1,6 +1,7 @@
 //! A collection of core functionality for the macros.
 
-#![warn(missing_docs, unused, clippy::all)]
+#![warn(missing_docs, unused, clippy::all, unsafe_code)]
+#![deny(missing_debug_implementations)]
 
 use proc_macro2::TokenStream;
 

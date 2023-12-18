@@ -1,7 +1,25 @@
-pub type TSResult<T = (), E = &'static str> = core::result::Result<T, E>;
+//! Thread-safe values.
+//!
+//! This module contains thread-safe values that can be used in a
+//! multi-threaded environment.
+
+macro_rules! thread_safe {
+    ($struct: ident < $($generics: ident),* >) => {
+        #[allow(unsafe_code)]
+        unsafe impl<$($generics),*> Send for $struct<$($generics),*> {}
+        #[allow(unsafe_code)]
+        unsafe impl<$($generics),*> Sync for $struct<$($generics),*> {}
+    };
+    ($struct: ident) => {
+        #[allow(unsafe_code)]
+        unsafe impl Send for $struct {}
+        #[allow(unsafe_code)]
+        unsafe impl Sync for $struct {}
+    };
+}
+pub(crate) use thread_safe;
 
 mod holders {
-    use super::TSResult;
     use std::sync::{Arc, Mutex, MutexGuard};
 
     const POISON_MESSAGE: &str = "Poisoned mutex";
@@ -9,12 +27,14 @@ mod holders {
     #[derive(Debug, Default)]
     pub struct ThreadSafeHolder<T>(Arc<Mutex<T>>);
 
-    pub type GetResult<'a, T> = TSResult<SafeHeld<'a, T>>;
-    pub type GetResultMut<'a, T> = TSResult<SafeHeldMut<'a, T>>;
+    pub type GetResult<'a, T> = core::result::Result<SafeHeld<'a, T>, &'static str>;
+    pub type GetResultMut<'a, T> = core::result::Result<SafeHeldMut<'a, T>, &'static str>;
 
+    #[derive(Debug)]
     #[repr(transparent)]
     pub struct SafeHeld<'a, T>(MutexGuard<'a, T>);
 
+    #[derive(Debug)]
     #[repr(transparent)]
     pub struct SafeHeldMut<'a, T>(MutexGuard<'a, T>);
 
@@ -56,8 +76,7 @@ mod holders {
         }
     }
 
-    unsafe impl<T: Send> Send for ThreadSafeHolder<T> {}
-    unsafe impl<T: Sync> Sync for ThreadSafeHolder<T> {}
+    super::thread_safe!(ThreadSafeHolder<T>);
 }
 
 /// A thread-safe value.
@@ -65,121 +84,125 @@ mod holders {
 /// This is a wrapper around a value that by default is not thread-safe.
 pub type ThreadSafe<T> = holders::ThreadSafeHolder<T>;
 
+/// A thread-safe error.
+pub trait ThreadSafeError: std::error::Error + Send + Sync {}
+
+impl<T: std::error::Error + Send + Sync> ThreadSafeError for T {}
+
 macro_rules! thread_safe_primitive {
     (
         $(#[$outer:meta])*
         pub type $name:ident = $primitive:ty; { $thread_safe_mod_name:ident; $default_value:expr }
         $($rest:tt)*
     ) => (
+$(#[$outer])*
+pub type $name = $thread_safe_mod_name::$name;
+mod $thread_safe_mod_name {
+    use super::*;
 
-        $(#[$outer])*
-        pub type $name = $thread_safe_mod_name::$name;
-        mod $thread_safe_mod_name {
-            use super::*;
+    #[repr(transparent)]
+    #[derive(Default, Debug, Clone)]
+    pub struct $name(ThreadSafe<Primitive>);
 
-            #[repr(transparent)]
-            #[derive(Default, Debug, Clone)]
-            pub struct $name(ThreadSafe<Primitive>);
-
-            impl PartialEq for $name {
-                fn eq(&self, other: &Self) -> bool {
-                    match (self.get(), other.get() ) {
-                        (Ok(a), Ok(b)) => a.get() == b.get(),
-                        _ => false,
-                    }
-                }
-            }
-
-            impl Eq for $name {}
-
-            impl PartialOrd for $name {
-                fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-                    match (self.get(), other.get() ) {
-                        (Ok(a), Ok(b)) => a.get().partial_cmp(&b.get()),
-                        _ => None,
-                    }
-                }
-            }
-
-            impl Ord for $name {
-                fn cmp(&self, other: &Self) -> std::cmp::Ordering {
-                    match (self.get(), other.get() ) {
-                        (Ok(a), Ok(b)) => a.get().cmp(&b.get()),
-                        _ => std::cmp::Ordering::Equal,
-                    }
-                }
-            }
-
-            impl $name {
-                pub fn new(value: $primitive) -> Self {
-                    Self(ThreadSafe::new(Primitive::new(value)))
-                }
-                pub fn get(&self) -> holders::GetResult<'_, Primitive> {
-                    self.0.get()
-                }
-                pub fn get_mut(&self) -> holders::GetResultMut<'_, Primitive> {
-                    self.0.get_mut()
-                }
-            }
-
-            #[repr(transparent)]
-            #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-            pub struct Primitive($primitive);
-
-            impl Primitive {
-                pub fn new(value: $primitive) -> Self {
-                    Self(value)
-                }
-                pub fn get(&self) -> $primitive {
-                    self.0
-                }
-                pub fn set(&mut self, value: $primitive) {
-                    self.0 = value;
-                }
-            }
-
-            impl core::ops::Deref for Primitive {
-                type Target = $primitive;
-                fn deref(&self) -> &Self::Target {
-                    &self.0
-                }
-            }
-
-            impl core::ops::DerefMut for Primitive {
-                fn deref_mut(&mut self) -> &mut Self::Target {
-                    &mut self.0
-                }
-            }
-
-            impl From<$primitive> for Primitive {
-                fn from(value: $primitive) -> Self {
-                    Self(value)
-                }
-            }
-
-            impl From<Primitive> for $primitive {
-                fn from(value: Primitive) -> Self {
-                    value.0
-                }
-            }
-
-            impl From<$primitive> for $name {
-                fn from(value: $primitive) -> Self {
-                    Self::new(value)
-                }
-            }
-
-            impl From<$name> for $primitive {
-                fn from(value: $name) -> Self {
-                    match value.get() {
-                        Ok(b) => b.get(),
-                        Err(_) => $default_value,
-                    }
-                }
+    impl PartialEq for $name {
+        fn eq(&self, other: &Self) -> bool {
+            match (self.get(), other.get() ) {
+                (Ok(a), Ok(b)) => a.get() == b.get(),
+                _ => false,
             }
         }
+    }
 
-        thread_safe_primitive!($($rest)*);
+    impl Eq for $name {}
+
+    impl PartialOrd for $name {
+        fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+            match (self.get(), other.get() ) {
+                (Ok(a), Ok(b)) => a.get().partial_cmp(&b.get()),
+                _ => None,
+            }
+        }
+    }
+
+    impl Ord for $name {
+        fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+            match (self.get(), other.get() ) {
+                (Ok(a), Ok(b)) => a.get().cmp(&b.get()),
+                _ => std::cmp::Ordering::Equal,
+            }
+        }
+    }
+
+    impl $name {
+        pub fn new(value: $primitive) -> Self {
+            Self(ThreadSafe::new(Primitive::new(value)))
+        }
+        pub fn get(&self) -> holders::GetResult<'_, Primitive> {
+            self.0.get()
+        }
+        pub fn get_mut(&self) -> holders::GetResultMut<'_, Primitive> {
+            self.0.get_mut()
+        }
+    }
+
+    #[repr(transparent)]
+    #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct Primitive($primitive);
+
+    impl Primitive {
+        pub fn new(value: $primitive) -> Self {
+            Self(value)
+        }
+        pub fn get(&self) -> $primitive {
+            self.0
+        }
+        pub fn set(&mut self, value: $primitive) {
+            self.0 = value;
+        }
+    }
+
+    impl core::ops::Deref for Primitive {
+        type Target = $primitive;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+
+    impl core::ops::DerefMut for Primitive {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.0
+        }
+    }
+
+    impl From<$primitive> for Primitive {
+        fn from(value: $primitive) -> Self {
+            Self(value)
+        }
+    }
+
+    impl From<Primitive> for $primitive {
+        fn from(value: Primitive) -> Self {
+            value.0
+        }
+    }
+
+    impl From<$primitive> for $name {
+        fn from(value: $primitive) -> Self {
+            Self::new(value)
+        }
+    }
+
+    impl From<$name> for $primitive {
+        fn from(value: $name) -> Self {
+            match value.get() {
+                Ok(b) => b.get(),
+                Err(_) => $default_value,
+            }
+        }
+    }
+}
+
+thread_safe_primitive!($($rest)*);
     );
     () => ();
 }
