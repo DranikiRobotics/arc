@@ -37,9 +37,7 @@ impl Pos2D {
     #[inline]
     #[staticmethod]
     fn from_vec2d(vec: super::vec2d::Vec2D) -> Self {
-        Self(libtrig::Pos2D::new(
-            vec.into(), libtrig::Angle2D::zero()
-        ))
+        Self(libtrig::Pos2D::new(vec.into(), libtrig::Angle2D::zero()))
     }
     #[inline]
     #[staticmethod]
