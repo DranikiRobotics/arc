@@ -13,4 +13,4 @@ path = "lib.rs"
 
 [dependencies.mc]
 package = "macros-core"
-path = "../macros-core"
+path = "./macros-core"

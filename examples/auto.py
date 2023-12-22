@@ -8,16 +8,17 @@ from arc import *
 def main(op: Op):
     print("Starting...")
 
-    holding_a = False
+    # holding_a = False
     while op.running:
         if op.gamepad.a:
-            if not holding_a:
-                print("A pressed!")
-                holding_a = True
-        else:
-            if holding_a:
-                print("A released!")
-            holding_a = False
+            print("A pressed!")
+            # if not holding_a:
+            #     print("A pressed!")
+            #     holding_a = True
+        # else:
+        #     if holding_a:
+        #         print("A released!")
+        #     holding_a = False
 
     print("Done!")
 

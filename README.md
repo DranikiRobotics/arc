@@ -12,3 +12,14 @@ ARC is a feature complete framework for writing robot code. It is designed to be
 For Developers who are planning on using this [read here](./docs/GUIDE.md).
 
 For Developers who are going to be contributing to this [read here](./docs/CONTRIBUTING.md).
+
+<!--
+Colors:
+Complete Black: #000000
+Black: #06070E
+Gray: #2d2d2d
+Blue: #00A7E1
+Green: #84DD63
+Red: #DF2935
+Yellow: #FFA400
+-->

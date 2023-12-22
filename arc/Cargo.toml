@@ -13,11 +13,11 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies.arc_robot_hardware]
 package = "arc-robot-hardware"
-path = "../libs/robot/hardware"
+path = "../robot/hardware"
 
 [dependencies.libtrig]
 package = "libtrig"
-path = "../libs/helper/libtrig"
+path = "../helpers/libtrig"
 
 [dependencies.pyo3]
 #!!! Important - DO NOT ENABLE extension-module FEATURE HERE!!!

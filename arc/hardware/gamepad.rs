@@ -16,6 +16,14 @@ pub struct GamepadHolder {
     gamepad: Box<dyn gp::MutableGamepad>,
 }
 
+impl Default for GamepadHolder {
+    fn default() -> Self {
+        Self {
+            gamepad: Box::new(gp::impls::Stub),
+        }
+    }
+}
+
 macro_rules! i {
     (g $n: ident $ty:ty) => {
         #[inline]
@@ -194,7 +202,7 @@ impl GamepadDpad {
 /// This struct should not be used to modify the gamepad data. For that,
 /// use the `GamepadHolder` struct.
 #[pyclass]
-#[derive(Debug, Clone)]
+#[derive(Default, Debug, Clone)]
 pub struct Gamepad(ThreadSafe<GamepadHolder>);
 
 impl<G: gp::MutableGamepad + 'static> crate::PyWrappedComponent<G> for Gamepad {

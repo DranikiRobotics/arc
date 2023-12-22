@@ -7,24 +7,23 @@ members = [
     # Python interface implementation
     "arc",
     # ARC client (used to control the robot)
-    "libs/client",
+    "client",
     # Code uploader (used to upload code to the robot)
-    "libs/uploader",
-    # Robot [Server] side of the robot (rust)
-    "libs/robot",
+    "uploader",
+    # Robot HTTP server, used to control the robot via HTTP
+    "server",
+    # Robot runtime (used to run the robot code)
+    "robot",
 
     #################################
     ###       Helper crates       ###
     #################################
     # Low level math functions
-    "libs/helper/l2math",
-    # "libs/libodo",
-    # "libs/libpath",
-    # "libs/libtrig",
-    # Core macros functions
-    "libs/helper/macros-core",
+    "helpers/l2math",
+    # Trigonometric abstractions
+    "helpers/libtrig",
     # Macros used to simplify code
-    "libs/helper/macros",
+    "helpers/macros",
 ]
 
 [workspace.package]

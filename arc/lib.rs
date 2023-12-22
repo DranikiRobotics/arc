@@ -35,6 +35,26 @@ fn make_err(e: &'static str) -> pyo3::PyErr {
     pyo3::PyErr::new::<pyo3::exceptions::PyIOError, _>(e)
 }
 
-// pub fn run_op() -> pyo3::PyResult<()> {
-//
-// }
+/// A type that represents a python function.
+/// 
+/// This type is used to call python functions from rust.
+/// 
+/// # Example
+/// 
+/// ```rust
+/// # use pyo3::prelude::*;
+/// # use arc_pylib as pylib;
+/// ```
+#[repr(transparent)]
+#[derive(Debug, Clone)]
+pub struct PyFunction(pyo3::Py<pyo3::PyAny>);
+
+impl PyFunction {
+    /// Calls the python function with the given arguments.
+    pub fn call(&self,
+        py: pyo3::Python<'_>,
+        args: impl pyo3::IntoPy<pyo3::Py<pyo3::types::PyTuple>>
+    ) -> pyo3::PyResult<pyo3::PyObject> {
+        self.0.call1(py, args)
+    }
+}

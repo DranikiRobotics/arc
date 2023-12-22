@@ -1,9 +1,9 @@
-from libs.scripts.build import build
-from libs.scripts.clean import clean
-from libs.scripts.doc import doc
-from libs.scripts.fmt import fmt
-from libs.scripts.run import run
-from libs.scripts.test import test
+from scripts.build import build
+from scripts.clean import clean
+from scripts.doc import doc
+from scripts.fmt import fmt
+from scripts.run import run
+from scripts.test import test
 
 def run_cmd(cmd: str, cwd: str, args: list[str]) -> str | int | None:
     if cmd == "help" or cmd == "--help" or cmd == "-h": return hlp()

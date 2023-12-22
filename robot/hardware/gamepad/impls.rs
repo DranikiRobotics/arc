@@ -216,3 +216,104 @@ impl MutableGamepad for LogitechF310 {
         Ok(())
     }
 }
+
+/// A gamepad with no inputs.
+/// 
+/// This is purely for stubbing.
+#[repr(transparent)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Stub;
+
+impl Gamepad for Stub {
+    #[inline]
+    fn dpad(&self) -> crate::Result<GamepadDpad> {
+        Ok(GamepadDpad::new(false, false, false, false))
+    }
+    #[inline]
+    fn left_stick(&self) -> crate::Result<GamepadStick> {
+        Ok(GamepadStick::new(0.0, 0.0, false))
+    }
+    #[inline]
+    fn right_stick(&self) -> crate::Result<GamepadStick> {
+        Ok(GamepadStick::new(0.0, 0.0, false))
+    }
+    #[inline]
+    fn left_trigger(&self) -> crate::Result<f64> {
+        Ok(0.0)
+    }
+    #[inline]
+    fn right_trigger(&self) -> crate::Result<f64> {
+        Ok(0.0)
+    }
+    #[inline]
+    fn a(&self) -> crate::Result<bool> {
+        Ok(false)
+    }
+    #[inline]
+    fn b(&self) -> crate::Result<bool> {
+        Ok(false)
+    }
+    #[inline]
+    fn x(&self) -> crate::Result<bool> {
+        Ok(false)
+    }
+    #[inline]
+    fn y(&self) -> crate::Result<bool> {
+        Ok(false)
+    }
+    #[inline]
+    fn left_bumper(&self) -> crate::Result<bool> {
+        Ok(false)
+    }
+    #[inline]
+    fn right_bumper(&self) -> crate::Result<bool> {
+        Ok(false)
+    }
+}
+
+impl MutableGamepad for Stub {
+    #[inline]
+    fn set_dpad(&mut self, _dpad: GamepadDpad) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_left_stick(&mut self, _stick: GamepadStick) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_right_stick(&mut self, _stick: GamepadStick) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_left_trigger(&mut self, _trigger: f64) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_right_trigger(&mut self, _trigger: f64) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_a(&mut self, _value: bool) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_b(&mut self, _value: bool) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_x(&mut self, _value: bool) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_y(&mut self, _value: bool) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_left_bumper(&mut self, _value: bool) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+    #[inline]
+    fn set_right_bumper(&mut self, _value: bool) -> crate::Result {
+        Err(crate::HardwareError::Other { message: "Stub gamepad cannot be modified" })
+    }
+}

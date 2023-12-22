@@ -1,4 +1,4 @@
-from libs.scripts import run_cmd, hlp
+from scripts import run_cmd, hlp
 
 # Parse command line arguments
 def get_args() -> tuple[str, list[str]]:

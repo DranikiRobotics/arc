@@ -1,0 +1,66 @@
+:root {
+    --footer-height: 30px;
+    --scrollbar-width: 20px;
+
+    --c-complete-black: #000000;
+    --c-black: #06070E;
+    --c-gray: #2d2d2d;
+    --c-dark-white: #cccccc;
+    --c-blue: #00A7E1;
+    --c-green: #84DD63;
+    --c-red: #DF2935;
+    --c-yellow: #FFA400;
+    --c-transparent: #0000;
+}
+
+@font-face {
+    font-family: 'SourceCodePro-Bold';
+    src: url('./SourceCodePro-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+    background: var(--c-transparent)
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--c-dark-white)
+}
+
+body {
+    font-family: 'SourceCodePro-Bold';
+    background-color: var(--c-gray);
+    color: var(--c-dark-white);
+    position: relative;
+    top: 0px;
+    left: 0px;
+    min-height: calc(99vh - var(--footer-height));
+}
+
+footer {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    align-self: center;
+    align-items: center;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+main {
+    position: relative;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: var(--footer-height);
+    width: 50%;
+    left: 25%;
+}

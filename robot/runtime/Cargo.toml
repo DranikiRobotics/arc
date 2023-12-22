@@ -1,19 +1,19 @@
 [package]
-name = "arc-robot"
-description = "ARC Robot server"
+name = "arc-robot-python-runtime"
+description = "ARC Robot Server Python Runtime"
 repository.workspace = true
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
-[[bin]]
-name = "arc-robot"
-path = "main.rs"
+[lib]
+name = "arc_robot_server_python_runtime"
+path = "lib.rs"
 
 [dependencies.hardware]
 package = "arc-robot-hardware"
-path = "./hardware"
+path = "../hardware"
 
 [dependencies.pylib]
 package = "arc-pylib"
@@ -22,8 +22,3 @@ path = "../../arc"
 [dependencies.pyo3]
 version = "0.20.0"
 features = ["extension-module"]
-
-# [dependencies.rustpython_vm]
-# git = "https://github.com/RustPython/RustPython"
-# rev = "0fab6e606379cfda346c82fa2f3960d0449b40e9"
-# package = "rustpython-vm"

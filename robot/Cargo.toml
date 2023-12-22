@@ -1,0 +1,31 @@
+[package]
+name = "arc-robot"
+description = "ARC Robot"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+name = "arc_robot"
+path = "lib.rs"
+
+[dependencies.hardware]
+package = "arc-robot-hardware"
+path = "./hardware"
+
+[dependencies.pyruntime]
+package = "arc-robot-python-runtime"
+path = "./runtime"
+
+[dependencies.macros]
+path = "../helpers/macros"
+package = "macros"
+
+[dependencies.rocket]
+version = "0.5"
+features = []
+
+[dependencies.log]
+version = "0.4"
