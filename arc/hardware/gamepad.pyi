@@ -5,8 +5,13 @@ This module contains the Gamepad class, and related classes.
 99% of the time, you will only need the Gamepad class.
 """
 
-class Gamepad(object):
+from arc.hardware import HardwareComponent as _HardwareComponent
+
+class Gamepad(_HardwareComponent):
     """Represents a gamepad with buttons x, y, a, and b."""
+
+    @property
+    def uuid(self) -> str: ...
 
     @property
     def dpad(self) -> GamepadDpad:

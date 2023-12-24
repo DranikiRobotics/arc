@@ -1,5 +1,3 @@
-use robot::pyruntime::PyRuntime;
-
 use arc_rs::html::*;
 arc_rs::inc!();
 
@@ -42,9 +40,9 @@ async fn upload<'a>(name: &'a str, input: rocket::Data<'_>) -> Result {
 }
 
 fn main() {
-    let mut python_runtime = PyRuntime::init();
+    // let mut python_runtime = PyRuntime::init();
     
-    python_runtime.start("auto").unwrap();
+    // python_runtime.start("auto").unwrap();
 }
 
 // #[rocket::main]

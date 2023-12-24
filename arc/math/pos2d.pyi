@@ -1,3 +1,4 @@
+from . import Float64 as _Float64, Radian64 as _Radian64
 from .vec2d import Vec2D as _Vec2D
 from .angle import Angle as _Angle
 
@@ -14,12 +15,12 @@ class Pos2D(object):
         ...
     
     @staticmethod
-    def from_xyr(x: float, y: float, radians: float) -> Pos2D:
+    def from_xyr(x: _Float64, y: _Float64, radians: _Radian64) -> Pos2D:
         """Creates a position from x, y, and radians."""
         ...
     
     @staticmethod
-    def from_xy(x: float, y: float) -> Pos2D:
+    def from_xy(x: _Float64, y: _Float64) -> Pos2D:
         """Creates a position from x and y. facing 0 degrees."""
         ...
     
@@ -38,12 +39,12 @@ class Pos2D(object):
         """Creates a position positioned at the origin. facing 0 degrees."""
     
     @property
-    def x(self) -> float:
+    def x(self) -> _Float64:
         """The x component of the position."""
         ...
     
     @property
-    def y(self) -> float:
+    def y(self) -> _Float64:
         """The y component of the position."""
         ...
     

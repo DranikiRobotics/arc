@@ -11,13 +11,9 @@ license.workspace = true
 name = "arc_robot"
 path = "lib.rs"
 
-[dependencies.hardware]
-package = "arc-robot-hardware"
-path = "./hardware"
-
 [dependencies.pyruntime]
 package = "arc-robot-python-runtime"
-path = "./runtime"
+path = "./pyruntime"
 
 [dependencies.macros]
 path = "../helpers/macros"

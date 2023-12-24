@@ -15,12 +15,14 @@
 
 mod core;
 mod types;
+mod consts;
 
 #[path = "macros.rs"]
 mod __macros;
 
 pub use self::core::*;
 pub use self::types::*;
+pub use self::consts::*;
 
 /// Approximate equality with 1 ULP of tolerance
 #[inline]

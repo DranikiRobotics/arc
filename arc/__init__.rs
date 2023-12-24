@@ -28,16 +28,6 @@ pub struct OpHolder {
     start_time: std::time::Instant,
 }
 
-impl Default for OpHolder {
-    fn default() -> Self {
-        Self {
-            running: true.into(),
-            gamepad: hardware::gamepad::Gamepad::default(),
-            start_time: std::time::Instant::now(),
-        }
-    }
-}
-
 impl OpHolder {
     /// Returns whether the op mode is running
     ///
@@ -107,7 +97,7 @@ threadsafe::thread_safe!(OpHolder);
 /// # }
 /// ```
 #[pyclass]
-#[derive(Default, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct Op(ThreadSafe<OpHolder>);
 
 impl crate::PyWrappedComponent<hardware::gamepad::Gamepad> for Op {

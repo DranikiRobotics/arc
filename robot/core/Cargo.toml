@@ -1,6 +1,6 @@
 [package]
-name = "arc-robot-hardware"
-description = "ARC Robot hardware"
+name = "arc-robot-core"
+description = "ARC Robot Core"
 repository.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -15,3 +15,6 @@ path = "../../helpers/l2math"
 
 [dependencies.libtrig]
 path = "../../helpers/libtrig"
+
+[features]
+unstable = ["l2math/unstable", "libtrig/unstable"]

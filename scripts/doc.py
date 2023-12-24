@@ -5,7 +5,7 @@ def doc(cd: str, args: list[str]) -> str | int | None:
 
     PACKAGES = [
         "arc-pylib",
-        "arc-robot-hardware",
+        "arc-robot-core",
         # "libodo",
         # "libpath",
         "libtrig",

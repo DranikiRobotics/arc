@@ -1,4 +1,5 @@
-from .vec2d import Vec2D
+from . import Degree64 as _Degree64, Float64 as _Float64, Radian64 as _Radian64
+from .vec2d import Vec2D as _Vec2D
 
 class Angle(object):
     """
@@ -10,17 +11,17 @@ class Angle(object):
     """
 
     @staticmethod
-    def from_degrees(degrees: float) -> Angle:
+    def from_degrees(degrees: _Degree64) -> Angle:
         """Creates an angle from degrees."""
         ...
     
     @staticmethod
-    def from_radians(radians: float) -> Angle:
+    def from_radians(radians: _Radian64) -> Angle:
         """Creates an angle from radians."""
         ...
     
     @staticmethod
-    def from_vec2d(vec: Vec2D) -> Angle:
+    def from_vec2d(vec: _Vec2D) -> Angle:
         """Creates an angle from a vector."""
         ...
     
@@ -29,23 +30,23 @@ class Angle(object):
         """Creates an angle of zero degrees."""
         ...
     
-    def degrees(self) -> float:
+    def degrees(self) -> _Degree64:
         """Returns the angle in degrees."""
         ...
     
-    def radians(self) -> float:
+    def radians(self) -> _Radian64:
         """Returns the angle in radians."""
         ...
 
-    def sin(self) -> float:
+    def sin(self) -> _Radian64:
         """Returns the sine of the angle."""
         ...
     
-    def cos(self) -> float:
+    def cos(self) -> _Radian64:
         """Returns the cosine of the angle."""
         ...
     
-    def sqrt(self) -> float:
+    def sqrt(self) -> _Float64:
         """Returns the square root of the angle."""
         ...
 
@@ -57,11 +58,11 @@ class Angle(object):
         """Subtracts two angles."""
         ...
     
-    def __mul__(self, other: float) -> Angle:
+    def __mul__(self, other: _Float64) -> Angle:
         """Multiplies an angle by a scalar."""
         ...
     
-    def __truediv__(self, other: float) -> Angle:
+    def __truediv__(self, other: _Float64) -> Angle:
         """Divides an angle by a scalar."""
         ...
     

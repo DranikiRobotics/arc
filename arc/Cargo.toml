@@ -11,13 +11,13 @@ license.workspace = true
 path = "lib.rs"
 crate-type = ["cdylib", "rlib"]
 
-[dependencies.arc_robot_hardware]
-package = "arc-robot-hardware"
-path = "../robot/hardware"
+[dependencies.arc_robot_core]
+package = "arc-robot-core"
+path = "../robot/core"
 
 [dependencies.libtrig]
-package = "libtrig"
 path = "../helpers/libtrig"
+package = "libtrig"
 
 [dependencies.pyo3]
 #!!! Important - DO NOT ENABLE extension-module FEATURE HERE!!!

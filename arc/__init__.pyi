@@ -7,7 +7,9 @@ It is also designed to be modular, so that you can use only the parts you need.
 Additionally, it is easy to extend, so that you can add your own functionality to it.
 """
 
-from .hardware.gamepad import Gamepad as _Gamepad
+from .hardware import HardwareMap as _HardwareMap
+from .hardware import Telemetry as _Telemetry
+from .hardware import Gamepad as _Gamepad
 import typing as _typing
 
 RunResult = _typing.Union[bool, int, str, None]
@@ -35,20 +37,73 @@ class Op(object):
     def running(self) -> bool:
         """Whether or not the operation is running."""
         ...
+    
+    @property
+    def hardwareMap(self) -> _HardwareMap:
+        """The hardware map for the robot."""
+        ...
+    
+    @property
+    def telemetry(self) -> _Telemetry:
+        """The telemetry system for the robot."""
+        ...
+    
+    def debug(self, *message: object) -> None:
+        """
+        Sends a debug message using the telemetry system.
 
-def Auto(name: str) -> _typing.Callable[[_typing.Callable[[Op], RunResult]], _typing.Callable[[Op], RunResult]]:
-    """Decorator for an autonomous operation."""
+        See `op.telemetry.debug` for more information.
+        """
+        self.telemetry.debug(*message)
+    
+    def log(self, *message: object) -> None:
+        """
+        Logs message using the telemetry system.
+
+        See `op.telemetry.log` for more information.
+        """
+        self.telemetry.log(*message)
+
+__OpFunc = _typing.Callable[[Op], RunResult]
+__OpAnnotation = _typing.Callable[[__OpFunc], __OpFunc]
+
+def Auto(name: str) -> __OpAnnotation:
+    """
+    Decorator for an autonomous operation.
+    
+    ### Example:
+    ```python
+    @Auto("My Auto")
+    def main(op: Op):
+        op.log("Hello, world!")
+    ```
+    """
     ...
 
-def Teleop(name: str) -> _typing.Callable[[_typing.Callable[[Op], RunResult]], _typing.Callable[[Op], RunResult]]:
-    """Decorator for a teleop operation."""
+def Teleop(name: str) -> __OpAnnotation:
+    """
+    Decorator for a teleop operation.
+    
+    ### Example:
+    ```python
+    @Teleop("My Teleop")
+    def main(op: Op):
+        op.log("Hello, world!")
+    ```
+    """
     ...
 
 def sleep(seconds: float) -> None:
-    """Sleeps for the specified number of seconds."""
+    """
+    Sleeps for the specified number of seconds.
+    
+    This is a blocking operation, which means NOTHING will happen until the specified time has passed.
+    """
     ...
 
 OK: RunResult = True
 """
 A built-in `RunResult` that indicates that the `Op` completed successfully.
+
+See `RunResult` for more information.
 """

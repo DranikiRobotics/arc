@@ -3,48 +3,48 @@
 #![warn(missing_docs, unused, clippy::all, unsafe_code)]
 #![deny(missing_debug_implementations)]
 
-use pyo3::prelude::*;
+// use pyo3::prelude::*;
 
-#[derive(Debug, Clone)]
-struct RuntimeOpMode {
-    hardware: hardware::HardwareMap,
-    name: String
-}
-
-impl RuntimeOpMode {
-    fn start(&mut self, hardware: &mut hardware::HardwareMap) -> Result<()> {
-        Ok(())
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum Error {
-    OpNotFound,
-}
-
-pub type Result<T = (), E = Error> = core::result::Result<T, E>;
-
-#[derive(Debug)]
-pub struct PyRuntime {
-    ops: Vec<RuntimeOpMode>,
-    thread: Option<std::thread::JoinHandle<()>>,
-}
-
-impl PyRuntime {
-    pub fn init() -> Self {
-        Self {
-            ops: Vec::new(),
-            thread: None,
-        }
-    }
-    pub fn start<Name: ToString>(&mut self, name: Name) -> Result<()> {
-        let name = name.to_string();
-        let op = self.ops.iter_mut()
-            .find(|op| op.name == name)
-            .ok_or(Error::OpNotFound)?;
-        op.start(&mut self.hardware)
-    }
-}
+// #[derive(Debug, Clone)]
+// struct RuntimeOpMode {
+//     hardware: hardware::HardwareMap,
+//     name: String
+// }
+// 
+// impl RuntimeOpMode {
+//     fn start(&mut self, hardware: &mut hardware::HardwareMap) -> Result<()> {
+//         Ok(())
+//     }
+// }
+// 
+// #[derive(Debug, Clone)]
+// pub enum Error {
+//     OpNotFound,
+// }
+// 
+// pub type Result<T = (), E = Error> = core::result::Result<T, E>;
+// 
+// #[derive(Debug)]
+// pub struct PyRuntime {
+//     ops: Vec<RuntimeOpMode>,
+//     thread: Option<std::thread::JoinHandle<()>>,
+// }
+// 
+// impl PyRuntime {
+//     pub fn init() -> Self {
+//         Self {
+//             ops: Vec::new(),
+//             thread: None,
+//         }
+//     }
+//     pub fn start<Name: ToString>(&mut self, name: Name) -> Result<()> {
+//         let name = name.to_string();
+//         let op = self.ops.iter_mut()
+//             .find(|op| op.name == name)
+//             .ok_or(Error::OpNotFound)?;
+//         op.start(&mut self.hardware)
+//     }
+// }
 
 // fn main() -> PyResult<()> {
     // Setup hardware components

@@ -1,22 +1,18 @@
-/// ### O_O
-///
 /// A type that can be used to represent a result that is always `Ok`
+/// 
+/// ### O_O
 ///
 /// It is a shorthand for `Result<(), HardwareError>`.
 pub const IO_OK: Result = Ok(());
 
 /// An error that occurs when reading from or writing to a hardware component
+#[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum HardwareError {
-    /// An IO error occurred
-    ///
-    /// This error is returned when reading from or writing to a hardware component fails.
-    IO,
-    /// Also an IO error, but this one is returned when the hardware component is disconnected.
-    ///
-    /// That means that the hardware component was connected when the program started, but it was
-    /// later disconnected.
-    Disconnected,
+    /// The device was disconnected
+    DeviceDisconnected,
+    /// The device was not found
+    DeviceNotFound,
     /// Some other error occurred
     Other {
         /// The error message
@@ -24,16 +20,31 @@ pub enum HardwareError {
     },
 }
 
+impl HardwareError {
+    /// Creates a new `HardwareError::Other` with the given message
+    #[inline]
+    #[must_use = "This returns a new HardwareError"]
+    pub const fn new(message: &'static str) -> Self {
+        Self::Other { message }
+    }
+    /// Returns the error message
+    #[inline]
+    #[must_use = "This returns a new string slice"]
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            HardwareError::DeviceDisconnected => "Device disconnected",
+            HardwareError::DeviceNotFound => "Device not found",
+            HardwareError::Other { message } => message,
+        }
+    }
+}
+
 /// A result that occurs when reading or writing to a hardware component
 pub type Result<T = (), E = HardwareError> = core::result::Result<T, E>;
 
 impl core::fmt::Display for HardwareError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        match self {
-            Self::IO => write!(f, "IO error"),
-            Self::Disconnected => write!(f, "Gamepad disconnected"),
-            Self::Other { message } => write!(f, "{}", message),
-        }
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -54,11 +65,7 @@ impl From<HardwareError> for String {
 impl From<HardwareError> for &'static str {
     #[inline]
     fn from(error: HardwareError) -> Self {
-        match error {
-            HardwareError::IO => "IO error",
-            HardwareError::Disconnected => "Gamepad disconnected",
-            HardwareError::Other { message } => message,
-        }
+        error.as_str()
     }
 }
 

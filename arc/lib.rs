@@ -3,7 +3,7 @@
 #![deny(missing_debug_implementations)]
 
 #[doc(hidden)]
-pub use arc_robot_hardware;
+pub use arc_robot_core;
 
 pub mod __init__;
 mod macros;

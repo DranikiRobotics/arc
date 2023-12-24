@@ -11,9 +11,9 @@ license.workspace = true
 name = "arc_robot_server_python_runtime"
 path = "lib.rs"
 
-[dependencies.hardware]
-package = "arc-robot-hardware"
-path = "../hardware"
+[dependencies.arc_core]
+package = "arc-robot-core"
+path = "../core"
 
 [dependencies.pylib]
 package = "arc-pylib"
