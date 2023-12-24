@@ -69,9 +69,9 @@ const LG7: Float64 = 1.479819860511658591e-01; /* 3FC2F112 DF3E5244 */
 }
 
 /// Return the natural logarithm of `1+x`.
-#[export_name = "__l2math_log1p"]
+#[export_name = "__l2math_ln1p"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub extern "C" fn log1p(x: Float64) -> Float64 {
+pub extern "C" fn ln1p(x: Float64) -> Float64 {
     let mut ui: u64 = x.to_bits();
     let mut f: Float64 = 0.;
     let mut c: Float64 = 0.;

@@ -1,6 +1,6 @@
 use crate::{Float64, Radian64};
 
-use super::{log, log1p, sqrt};
+use super::{log, ln1p, sqrt};
 
 consts!{
 const LN2: Float64 = 0.693147180559945309417232121458176568; /* 0x3fe62e42,  0xfefa39ef*/
@@ -21,7 +21,7 @@ pub extern "C" fn acosh(x: Float64) -> Radian64 {
 
     if e < 0x3ff + 1 {
         /* |x| < 2, up to 2ulp error in [1,1.125] */
-        return log1p(x - 1.0 + sqrt((x - 1.0) * (x - 1.0) + 2.0 * (x - 1.0)));
+        return ln1p(x - 1.0 + sqrt((x - 1.0) * (x - 1.0) + 2.0 * (x - 1.0)));
     }
     if e < 0x3ff + 26 {
         /* |x| < 0x1p26 */

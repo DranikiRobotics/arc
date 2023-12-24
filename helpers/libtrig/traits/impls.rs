@@ -31,7 +31,7 @@ impl Sqrt for Float64 {
 #[allow(unused)]
 impl Float for Float64 {
     simpl!(floor ceil round trunc abs => fabs exp exp2 ln log2 log10 cbrt
-        tan asin acos atan exp_m1 => expm1 ln_1p => log1p
+        tan asin acos atan exp_m1 => expm1 ln_1p => ln1p
         sinh cosh tanh asinh acosh atanh);
     #[inline]
     #[must_use]
@@ -110,7 +110,7 @@ impl Float for Float32 {
     simpl!(floor => floorf ceil => ceilf round => roundf trunc => truncf
         abs => fabsf exp => expf exp2 => exp2f ln => lnf log2 => log2f
         log10 => log10f cbrt => cbrtf tan => tanf asin => asinf
-        acos => acosf atan => atanf exp_m1 => expm1f ln_1p => log1pf
+        acos => acosf atan => atanf exp_m1 => expm1f ln_1p => ln1pf
         sinh => sinhf cosh => coshf tanh => tanhf asinh => asinhf
         acosh => acoshf atanh => atanhf);
     #[inline]

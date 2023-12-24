@@ -1,6 +1,6 @@
 use crate::{Float64, Float32, Radian64};
 
-use super::log1p;
+use super::ln1p;
 
 /* atanh(x) = log((1+x)/(1-x))/2 = log1p(2x/(1-x))/2 ~= x + x^3/3 + o(x^5) */
 /// Inverse hyperbolic tangent
@@ -25,11 +25,11 @@ pub extern "C" fn atanh(x: Float64) -> Radian64 {
             }
         } else {
             /* |x| < 0.5, up to 1.7ulp error */
-            y = 0.5 * log1p(2.0 * y + 2.0 * y * y / (1.0 - y));
+            y = 0.5 * ln1p(2.0 * y + 2.0 * y * y / (1.0 - y));
         }
     } else {
         /* avoid overflow */
-        y = 0.5 * log1p(2.0 * (y / (1.0 - y)));
+        y = 0.5 * ln1p(2.0 * (y / (1.0 - y)));
     }
 
     if sign {

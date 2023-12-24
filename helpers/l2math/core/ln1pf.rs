@@ -23,9 +23,9 @@ const LG4: Float32 = 0.24279078841; /* 0xf89e26.0p-26 */
 }
 
 /// Return the natural logarithm of `1+x`.
-#[export_name = "__l2math_log1pf"]
+#[export_name = "__l2math_ln1pf"]
 #[cfg_attr(all(test, assert_no_panic), no_panic::no_panic)]
-pub fn log1pf(x: Float32) -> Float32 {
+pub fn ln1pf(x: Float32) -> Float32 {
     let mut ui: u32 = x.to_bits();
     let mut f: Float32 = 0.;
     let mut c: Float32 = 0.;

@@ -1,6 +1,6 @@
 use crate::{Float32, Radian32};
 
-use super::{log1pf, logf, sqrtf};
+use super::{ln1pf, logf, sqrtf};
 
 use core::f32::consts::LN_2;
 
@@ -27,7 +27,7 @@ pub extern "C" fn asinhf(mut x: Float32) -> Radian32 {
         x = logf(2.0 * x + 1.0 / (sqrtf(x * x + 1.0) + x));
     } else if i >= 0x3f800000 - (12 << 23) {
         /* |x| >= 0x1p-12, up to 1.6ulp error in [0.125,0.5] */
-        x = log1pf(x + x * x / (sqrtf(x * x + 1.0) + 1.0));
+        x = ln1pf(x + x * x / (sqrtf(x * x + 1.0) + 1.0));
     } else {
         /* |x| < 0x1p-12, raise inexact if x!=0 */
         let x1p120 = Float32::from_bits(0x7b800000);

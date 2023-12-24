@@ -102,7 +102,7 @@ import!(pub fabs, fabsf, fdim, fdimf, floor, floorf, fma, fmaf, fmax, fmaxf, fmi
 import!(pub hypot, hypotf);
 import!(pub ilogb, ilogbf);
 import!(pub j0, j0f, j1, j1f, jn, jnf);
-import!(pub ldexp, ldexpf, lgamma, lgamma_r, lgammaf, lgammaf_r, ln, lnf, log, log10, log10f, log1p, log1pf, log2, log2f, logf);
+import!(pub ldexp, ldexpf, lgamma, lgamma_r, lgammaf, lgammaf_r, ln, lnf, log, log10, log10f, ln1p, ln1pf, log2, log2f, logf);
 import!(pub modf, modff);
 import!(pub nextafter, nextafterf);
 import!(pub pow, powf);

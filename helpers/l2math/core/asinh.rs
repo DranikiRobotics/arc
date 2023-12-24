@@ -1,6 +1,6 @@
 use crate::{Float64, Radian64};
 
-use super::{log, log1p, sqrt};
+use super::{log, ln1p, sqrt};
 
 consts!{
 const LN2: Float64 = 0.693147180559945309417232121458176568; /* 0x3fe62e42,  0xfefa39ef*/
@@ -30,7 +30,7 @@ pub extern "C" fn asinh(mut x: Float64) -> Radian64 {
         x = log(2.0 * x + 1.0 / (sqrt(x * x + 1.0) + x));
     } else if e >= 0x3ff - 26 {
         /* |x| >= 0x1p-26, up to 1.6ulp error in [0.125,0.5] */
-        x = log1p(x + x * x / (sqrt(x * x + 1.0) + 1.0));
+        x = ln1p(x + x * x / (sqrt(x * x + 1.0) + 1.0));
     } else {
         /* |x| < 0x1p-26, raise inexact if x != 0 */
         let x1p120 = Float64::from_bits(0x4770000000000000);

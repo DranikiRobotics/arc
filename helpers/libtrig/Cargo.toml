@@ -7,11 +7,14 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
+[lib]
+path = "lib.rs"
+
 [dependencies.macros]
 path = "../macros"
 
 [dependencies.l2math]
 path = "../l2math"
 
-[lib]
-path = "lib.rs"
+[features]
+unstable = ["l2math/unstable"]

@@ -1,6 +1,6 @@
 use crate::{Float32, Radian32};
 
-use super::{log1pf, logf, sqrtf};
+use super::{ln1pf, logf, sqrtf};
 
 consts!{
 const LN2: Float32 = 0.693147180559945309417232121458176568;
@@ -20,7 +20,7 @@ pub extern "C" fn acoshf(x: Float32) -> Radian32 {
     if a < 0x3f800000 + (1 << 23) {
         /* |x| < 2, invalid if x < 1 or nan */
         /* up to 2ulp error in [1,1.125] */
-        return log1pf(x - 1.0 + sqrtf((x - 1.0) * (x - 1.0) + 2.0 * (x - 1.0)));
+        return ln1pf(x - 1.0 + sqrtf((x - 1.0) * (x - 1.0) + 2.0 * (x - 1.0)));
     }
     if a < 0x3f800000 + (12 << 23) {
         /* |x| < 0x1p12 */
