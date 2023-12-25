@@ -1,10 +1,11 @@
 from .util.drive import MechanumDrive
 from arc.hardware import *
+from arc.math import *
 from arc import *
 
 # You are REQUIRED to have a main() function in your program.
 # and you MUST NOT call it yourself.
-@Teleop("Basic Mechanum Drive Example")
+@Auto("Mechanum Drive Example Autonomous")
 def main(op: Op):
     op.log("Starting...")
 
@@ -15,10 +16,20 @@ def main(op: Op):
     br = op.hardwareMap[DcMotor]("motor3")
     drive = MechanumDrive(fl, fr, bl, br)
 
-    # While the opmode is running...
-    while op.running:
-        # Drive the robot using the gamepad.
-        drive.moveUsingDefaultSheme(op.gamepad)
+    # Drive forward for 2 seconds.
+    movement = drive.calc(Angle.from_degrees(90), 1, 0)
+    drive.move(movement)
+
+    sleep(2)
+
+    # Drive right for 2 seconds.
+    movement = drive.calc(Angle.from_degrees(0), 1, 0)
+    drive.move(movement)
+
+    sleep(2)
+
+    # Stop
+    drive.stop()
 
     op.log("Done!")
     return OK

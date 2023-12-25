@@ -4,7 +4,7 @@ from arc import *
 
 # You are REQUIRED to have a main() function in your program.
 # and you MUST NOT call it yourself.
-@Teleop("Tank Drive example")
+@Teleop("Tank Drive Example")
 def main(op: Op):
     op.log("Starting...")
 
