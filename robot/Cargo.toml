@@ -1,6 +1,6 @@
 [package]
-name = "arc-robot"
-description = "ARC Robot"
+name = "dranik"
+description = "Dranik Robot"
 repository.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -8,20 +8,21 @@ authors.workspace = true
 license.workspace = true
 
 [lib]
-name = "arc_robot"
+name = "dranik"
 path = "lib.rs"
 
-[dependencies.pyruntime]
-package = "arc-robot-python-runtime"
-path = "./pyruntime"
+[[bin]]
+name = "dranik"
+path = "../dranik.rs"
 
-[dependencies.macros]
-path = "../helpers/macros"
-package = "macros"
+[dependencies]
+# Core of the robot (hardware abstraction layer)
+dranik-core = { path = "./core" }
+# Robot HTTP client, used to control the robot via HTTP
+dranik-web = { path = "./web" }
+# Python runtime for the robot
+dranik-python = { path = "./python" }
+# Async runtime
+tokio = { version = "1.35", features = ["rt", "signal"] }
 
-[dependencies.rocket]
-version = "0.5"
-features = []
-
-[dependencies.log]
-version = "0.4"
+arc = { path = "../arc", package = "arc-pylib" }

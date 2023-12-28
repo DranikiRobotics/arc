@@ -1,4 +1,4 @@
-use crate::HardwareComponent;
+use crate::hardware::HardwareComponent;
 
 /// A trait that allows for reading from a gamepad
 ///

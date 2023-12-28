@@ -11,12 +11,12 @@ license.workspace = true
 path = "lib.rs"
 crate-type = ["cdylib", "rlib"]
 
-[dependencies.arc_robot_core]
-package = "arc-robot-core"
+[dependencies.dranikcore]
+package = "dranik-core"
 path = "../robot/core"
 
 [dependencies.libtrig]
-path = "../helpers/libtrig"
+git = "https://github.com/DranikiRobotics/librobomath"
 package = "libtrig"
 
 [dependencies.pyo3]

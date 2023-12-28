@@ -16,6 +16,8 @@ RunResult = _typing.Union[bool, int, str, None]
 """
 This type is used to indicate whether or not an `Op` completed successfully.
 
+NOTE: This does NOT exist at runtime. It is only used for type checking.
+
 If the `Op` completed successfully, then it should return `OK` (or `None`).
 
 If the `Op` did not complete successfully, then it should return an object that
@@ -67,7 +69,7 @@ class Op(object):
 __OpFunc = _typing.Callable[[Op], RunResult]
 __OpAnnotation = _typing.Callable[[__OpFunc], __OpFunc]
 
-def Auto(name: str) -> __OpAnnotation:
+def Auto(name: str, config: str) -> __OpAnnotation:
     """
     Decorator for an autonomous operation.
     
@@ -80,7 +82,7 @@ def Auto(name: str) -> __OpAnnotation:
     """
     ...
 
-def Teleop(name: str) -> __OpAnnotation:
+def Teleop(name: str, config: str) -> __OpAnnotation:
     """
     Decorator for a teleop operation.
     

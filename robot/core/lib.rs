@@ -1,9 +1,13 @@
-#![doc = include_str!("../README.md")]
+#![doc = include_str!("./README.md")]
 #![warn(missing_docs, unused, clippy::all, unsafe_code)]
 #![deny(missing_debug_implementations)]
 
+pub mod threadsafe;
 pub mod hardware;
 pub mod gamepad;
+pub mod config;
+pub mod io;
+
 mod telemetry;
 mod error;
 
@@ -41,9 +45,18 @@ impl<H, T, G> OpMode<H, T, G> where
 mod __uuid;
 pub use __uuid::HardwareUUID;
 
-/// A trait that represents a hardware component
-pub trait HardwareComponent: core::fmt::Debug {
-    /// Returns the UUID of this component
-    #[allow(non_snake_case)]
-    fn getUUID(&self) -> HardwareUUID;
+#[doc(hidden)]
+pub mod internals;
+
+pub fn setup_io() -> io::IO {
+    io::IO::new()
+}
+
+/// This function is used to take a blocking piece of code and run it in such a way
+/// that it doesn't block the entire runtime.
+pub async fn deblock<F, R>(f: F) -> core::result::Result<R, tokio::task::JoinError> where
+    F: FnOnce() -> R + Send + 'static,
+    R: Send + 'static,
+{
+    tokio::task::spawn_blocking(f).await
 }

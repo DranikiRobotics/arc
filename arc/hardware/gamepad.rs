@@ -3,7 +3,7 @@
 //! Python identifier: `arc.hardware.gamepad`
 
 use crate::threadsafe::ThreadSafe;
-use arc_robot_core::gamepad as gp;
+use dranikcore::gamepad as gp;
 use pyo3::prelude::*;
 
 /// The struct that actually contains the necessary data for the gamepad

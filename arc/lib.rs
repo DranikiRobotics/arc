@@ -2,12 +2,9 @@
 #![warn(missing_docs, unused, clippy::all, unsafe_code)]
 #![deny(missing_debug_implementations)]
 
-#[doc(hidden)]
-pub use arc_robot_core;
-
 pub mod __init__;
-mod macros;
-pub mod threadsafe;
+#[doc(hidden)]
+pub mod macros;
 
 pub use threadsafe::{ThreadSafe, ThreadSafeError};
 
@@ -56,5 +53,24 @@ impl PyFunction {
         args: impl pyo3::IntoPy<pyo3::Py<pyo3::types::PyTuple>>
     ) -> pyo3::PyResult<pyo3::PyObject> {
         self.0.call1(py, args)
+    }
+}
+
+#[doc(hidden)]
+#[allow(non_camel_case_types)]
+#[derive(Default, Debug, Clone, Copy)]
+pub struct __dranik_config;
+
+impl dranikcore::config::RobotConfig for __dranik_config {
+    fn python_preload() {
+        use crate::__init__::arc as __arc_pylib;
+        pyo3::append_to_inittab!(__arc_pylib);
+    }
+    type Args = __init__::Op;
+    fn build_python_main_function_args<'a>(
+        py: &pyo3::Python<'_>,
+        io: &dranikcore::io::IO
+    ) -> (Self::Args, Option<&'a pyo3::types::PyDict>) {
+        (__init__::Op::from(io), None)
     }
 }

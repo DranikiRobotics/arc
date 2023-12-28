@@ -1,29 +1,12 @@
 [workspace]
 resolver = "2" # Resolver version (keep it 2)
 members = [
-    #################################
-    ###        Main crates        ###
-    #################################
     # Python interface implementation
     "arc",
     # ARC client (used to control the robot)
     "client",
-    # Code uploader (used to upload code to the robot)
-    "uploader",
-    # Robot HTTP server, used to control the robot via HTTP
-    "server",
-    # Robot runtime (used to run the robot code)
+    # The robot code (hardware abstractions, python runtime, http server)
     "robot",
-
-    #################################
-    ###       Helper crates       ###
-    #################################
-    # Low level math functions
-    "helpers/l2math",
-    # Trigonometric abstractions
-    "helpers/libtrig",
-    # Macros used to simplify code
-    "helpers/macros",
 ]
 
 [workspace.package]
@@ -36,19 +19,7 @@ repository = "https://github.com/DranikiRobotics/arc"
 # Rust edition (keep it 2021)
 edition = "2021"
 # License of the entire workspace
-license = "MIT"
+license = "BSD-2-Clause"
 
 # Version of the entire workspace
 version = "0.0.1-dev"
-
-[profile.release]
-# Optimization level (keep it 3)
-opt-level = 3
-
-# Emit debug symbols
-debug = true
-# debug = false
-
-# What to do when a panic occurs
-panic = "unwind"
-# panic = "abort"

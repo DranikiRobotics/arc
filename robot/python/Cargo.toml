@@ -1,0 +1,19 @@
+[package]
+name = "dranik-python"
+description = "Dranik Robot Python Runtime"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+name = "dranikpy"
+path = "lib.rs"
+
+[dependencies.dranikcore]
+package = "dranik-core"
+path = "../core"
+
+[dependencies.pyo3]
+version = "0.20.0"

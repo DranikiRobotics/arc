@@ -1,6 +1,6 @@
 [package]
-name = "arc-robot-core"
-description = "ARC Robot Core"
+name = "dranik-core"
+description = "Dranik Robot Core"
 repository.workspace = true
 version.workspace = true
 edition.workspace = true
@@ -8,13 +8,22 @@ authors.workspace = true
 license.workspace = true
 
 [lib]
+name = "dranikcore"
 path = "lib.rs"
 
 [dependencies.l2math]
-path = "../../helpers/l2math"
+git = "https://github.com/DranikiRobotics/librobomath"
+package = "l2math"
 
 [dependencies.libtrig]
-path = "../../helpers/libtrig"
+git = "https://github.com/DranikiRobotics/librobomath"
+package = "libtrig"
+
+[dependencies.tokio]
+version = "1.35"
+
+[dependencies.pyo3]
+version = "0.20.0"
 
 [features]
 unstable = ["l2math/unstable", "libtrig/unstable"]

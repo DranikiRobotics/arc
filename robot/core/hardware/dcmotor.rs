@@ -1,16 +1,10 @@
+use super::HardwareComponent;
+use l2math::Float64;
+
 use crate::*;
 
-#[derive(Debug, Clone)]
-pub struct DcMotor {
-
-}
-
-impl DcMotor {
-    
-}
-
-impl HardwareComponent for DcMotor {
-    fn getUUID(&self) -> HardwareUUID {
-        todo!()
-    }
+/// A simple DC motor
+pub trait DcMotor: HardwareComponent {
+    /// Sets the power of the motor
+    fn set_power(&mut self, power: Float64) -> Result<()>;
 }

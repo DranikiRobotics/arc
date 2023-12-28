@@ -1,0 +1,19 @@
+[package]
+name = "dranik-web"
+description = "Dranik HTTP Server"
+repository.workspace = true
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+name = "dranikweb"
+path = "lib.rs"
+
+[dependencies.rocket]
+version = "0.5"
+features = []
+
+[dependencies.log]
+version = "0.4"

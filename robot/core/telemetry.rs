@@ -1,4 +1,3 @@
-use crate::HardwareComponent;
 use core::fmt::{Debug, Display};
 
 /// A type that allows sending telemetry data to the driver control station
@@ -8,7 +7,7 @@ use core::fmt::{Debug, Display};
 /// 
 /// Even though it is marked as `HardwareComponent`, it is not meant to be loaded.
 /// Infact, it will always return `HardwareError::DeviceNotFound` when loaded.
-pub trait Telemetry: HardwareComponent {
+pub trait Telemetry {
     /// Sends a debug message to the driver control station
     /// 
     /// It will not be displayed to the driver control station if the robot is not in debug mode.

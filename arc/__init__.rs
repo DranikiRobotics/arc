@@ -24,8 +24,8 @@ pub mod math;
 #[derive(Debug)]
 pub struct OpHolder {
     running: threadsafe::ThreadSafeBool,
-    gamepad: hardware::gamepad::Gamepad,
     start_time: std::time::Instant,
+    io: dranikcore::io::IO,
 }
 
 impl OpHolder {
@@ -42,7 +42,7 @@ impl OpHolder {
     ///
     /// This call aquires a lock on the data
     pub fn gamepad(&self) -> &hardware::gamepad::Gamepad {
-        &self.gamepad
+        &self.io.gamepad
     }
     /// Stops the op mode
     ///
@@ -97,20 +97,18 @@ threadsafe::thread_safe!(OpHolder);
 /// # }
 /// ```
 #[pyclass]
-#[derive(Debug, Clone)]
+#[derive(Default, Debug, Clone)]
 pub struct Op(ThreadSafe<OpHolder>);
 
-impl crate::PyWrappedComponent<hardware::gamepad::Gamepad> for Op {
-    type Holder = OpHolder;
-    fn new(gamepad: hardware::gamepad::Gamepad) -> ThreadSafe<Self::Holder> {
-        ThreadSafe::new(OpHolder {
-            start_time: std::time::Instant::now(),
-            running: true.into(),
+impl From<dranikcore::io::IO> for Op {
+    fn from(io: dranikcore::io::IO) -> Self {
+        let gamepad = hardware::gamepad::Gamepad::new(io.gamepad);
+        let holder = OpHolder {
+            running: threadsafe::ThreadSafeBool::new(true),
             gamepad,
-        })
-    }
-    fn wrap(gamepad: &ThreadSafe<Self::Holder>) -> Self {
-        Self(gamepad.clone())
+            start_time: std::time::Instant::now(),
+        };
+        Self(ThreadSafe::new(holder))
     }
 }
 
@@ -166,7 +164,8 @@ struct Auto(String);
 impl Auto {
     #[new]
     #[doc(hidden)]
-    fn __new__(name: &str) -> Self {
+    #[pyo3(signature = (name, **_kwargs))]
+    fn __new__(name: &str, _kwargs: Option<&pyo3::types::PyDict>) -> Self {
         Self(name.to_string())
     }
     #[doc(hidden)]
@@ -192,7 +191,8 @@ struct Teleop(String);
 impl Teleop {
     #[new]
     #[doc(hidden)]
-    fn __new__(name: &str) -> Self {
+    #[pyo3(signature = (name, **_kwargs))]
+    fn __new__(name: &str, _kwargs: Option<&pyo3::types::PyDict>) -> Self {
         Self(name.to_string())
     }
     #[doc(hidden)]
