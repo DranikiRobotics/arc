@@ -9,3 +9,13 @@ pub(crate) mod impls;
 pub struct HardwareComponentLoadMetadata {
     pub uuid: HardwareUUID,
 }
+
+pub mod builtins {
+    use super::*;
+
+    pub type BuiltInHardwareMapImpl = impls::HardwareMapImpl;
+    pub type BuiltInTelemetryImpl = impls::TelemetryImpl;
+    pub type BuiltInGamepadImpl = impls::GamepadImpl;
+
+    pub type BuiltInDcMotorImpl = impls::DcMotorImpl;
+}

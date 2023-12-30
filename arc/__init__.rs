@@ -5,7 +5,7 @@
 //!
 //! [`Op`]: struct.Op.html
 
-use crate::threadsafe::{self, ThreadSafe};
+use dranikcore::RuntimeOp;
 use pyo3::prelude::*;
 
 /// Hardware submodule
@@ -16,51 +16,8 @@ pub mod hardware;
 #[path = "math/__init__.rs"]
 pub mod math;
 
-/// The struct that actually contains the necessary data for the op mode
-/// to run.
-///
-/// This struct should only be used for mutating the data outside of the
-/// op mode thread. For reading the up to date data, use the `Op` struct.
-#[derive(Debug)]
-pub struct OpHolder {
-    running: threadsafe::ThreadSafeBool,
-    start_time: std::time::Instant,
-    io: dranikcore::io::IO,
-}
-
-impl OpHolder {
-    /// Returns whether the op mode is running
-    ///
-    /// This call aquires a lock on the data
-    pub fn running(&self) -> bool {
-        match self.running.get() {
-            Ok(r) => **r,
-            Err(_) => false,
-        }
-    }
-    /// Returns a reference to the gamepad
-    ///
-    /// This call aquires a lock on the data
-    pub fn gamepad(&self) -> &hardware::gamepad::Gamepad {
-        &self.io.gamepad
-    }
-    /// Stops the op mode
-    ///
-    /// DO NOT CALL THIS FROM THE PYTHON THREAD
-    pub fn stop(&self) -> core::result::Result<(), &'static str> {
-        self.running.get_mut()?.set(false);
-        Ok(())
-    }
-    /// Returns the running time of the op mode
-    ///
-    /// This call does not aquire a lock on the data,
-    /// nor does it need to.
-    pub fn running_time(&self) -> core::time::Duration {
-        std::time::Instant::now() - self.start_time
-    }
-}
-
-threadsafe::thread_safe!(OpHolder);
+#[cfg(feature = "dranik-only-builtins")]
+type OpImpl = RuntimeOp;
 
 /// The struct that is used to access the data in the op mode
 ///
@@ -98,17 +55,27 @@ threadsafe::thread_safe!(OpHolder);
 /// ```
 #[pyclass]
 #[derive(Default, Debug, Clone)]
-pub struct Op(ThreadSafe<OpHolder>);
+pub struct Op(OpImpl);
 
-impl From<dranikcore::io::IO> for Op {
-    fn from(io: dranikcore::io::IO) -> Self {
-        let gamepad = hardware::gamepad::Gamepad::new(io.gamepad);
-        let holder = OpHolder {
-            running: threadsafe::ThreadSafeBool::new(true),
-            gamepad,
-            start_time: std::time::Instant::now(),
-        };
-        Self(ThreadSafe::new(holder))
+impl From<OpImpl> for Op {
+    #[inline(always)]
+    #[cfg(feature = "dranik-only-builtins")]
+    fn from(op: OpImpl) -> Self {
+        Self(op)
+    }
+}
+
+impl From<Op> for OpImpl {
+    #[inline(always)]
+    #[cfg(feature = "dranik-only-builtins")]
+    fn from(op: Op) -> Self {
+        op.0
+    }
+}
+
+impl pyo3::IntoPy<pyo3::Py<pyo3::types::PyTuple>> for Op {
+    fn into_py(self, py: Python<'_>) -> pyo3::Py<pyo3::types::PyTuple> {
+        (self, ).into_py(py)
     }
 }
 
@@ -119,7 +86,7 @@ impl Op {
     ///
     /// [`Gamepad`]: _hardware/gamepad/struct.Gamepad.html
     pub fn get_gamepad(&self) -> core::result::Result<hardware::gamepad::Gamepad, &'static str> {
-        self.0.get().map(|g| g.gamepad().clone())
+        self.0.get().map(|g| g.get_gamepad().into())
     }
     /// Returns whether the op mode is running
     ///

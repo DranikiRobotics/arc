@@ -17,3 +17,6 @@ path = "../core"
 
 [dependencies.pyo3]
 version = "0.20.0"
+
+[features]
+dranik-only-builtins = ["dranikcore/only_builtins"]

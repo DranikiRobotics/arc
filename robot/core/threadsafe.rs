@@ -3,6 +3,8 @@
 //! This module contains thread-safe values that can be used in a
 //! multi-threaded environment.
 
+/// Macro for implementing [`Send`] and [`Sync`] for a struct.
+#[macro_export]
 macro_rules! thread_safe {
     ($struct: ident < $($generics: ident),* >) => {
         #[allow(unsafe_code)]
@@ -17,7 +19,6 @@ macro_rules! thread_safe {
         unsafe impl Sync for $struct {}
     };
 }
-pub(crate) use thread_safe;
 
 mod holders {
     use std::sync::{Arc, Mutex, MutexGuard};
@@ -27,21 +28,27 @@ mod holders {
     #[derive(Debug, Default)]
     pub struct ThreadSafeHolder<T>(Arc<Mutex<T>>);
 
+    /// The Standard Result type retuned by the thread-safe holders.
     pub type StandardResult<T> = ::core::result::Result<T, &'static str>;
 
+    /// The result type returned when borrowing from a thread-safe holder.
     pub type GetResult<'a, T> = StandardResult<SafeHeld<'a, T>>;
+    /// The result type returned when mutably borrowing from a thread-safe holder.
     pub type GetResultMut<'a, T> = StandardResult<SafeHeldMut<'a, T>>;
 
+    /// A Holder for immutable thread-safe values.
     #[derive(Debug)]
     #[repr(transparent)]
     pub struct SafeHeld<'a, T>(MutexGuard<'a, T>);
 
+    /// A Holder for mutable thread-safe values.
     #[derive(Debug)]
     #[repr(transparent)]
     pub struct SafeHeldMut<'a, T>(MutexGuard<'a, T>);
 
     impl<'a, T> std::ops::Deref for SafeHeld<'a, T> {
         type Target = T;
+        #[inline]
         fn deref(&self) -> &Self::Target {
             &*self.0
         }
@@ -49,24 +56,28 @@ mod holders {
 
     impl<'a, T> std::ops::Deref for SafeHeldMut<'a, T> {
         type Target = T;
+        #[inline]
         fn deref(&self) -> &Self::Target {
             &*self.0
         }
     }
 
     impl<'a, T> std::ops::DerefMut for SafeHeldMut<'a, T> {
+        #[inline]
         fn deref_mut(&mut self) -> &mut Self::Target {
             &mut *self.0
         }
     }
 
     impl<T> Clone for ThreadSafeHolder<T> {
+        #[inline]
         fn clone(&self) -> Self {
             Self(self.0.clone())
         }
     }
 
     impl<T> ThreadSafeHolder<T> {
+        #[inline]
         pub fn new(value: T) -> Self {
             ThreadSafeHolder(Arc::new(Mutex::new(value)))
         }
@@ -78,10 +89,13 @@ mod holders {
         }
     }
 
-    super::thread_safe!(ThreadSafeHolder<T>);
+    crate::prelude::thread_safe!(ThreadSafeHolder<T>);
 }
 
+#[cfg(not(feature = "internals"))]
 pub(crate) use holders::{GetResult, GetResultMut, SafeHeld, SafeHeldMut, StandardResult};
+#[cfg(feature = "internals")]
+pub use holders::{GetResult, GetResultMut, SafeHeld, SafeHeldMut, StandardResult};
 
 /// A thread-safe value.
 ///
@@ -111,6 +125,7 @@ macro_rules! thread_safe_primitive {
             thread_safe!($name);
 
             impl PartialEq for $name {
+                #[inline]
                 fn eq(&self, other: &Self) -> bool {
                     match (self.get(), other.get() ) {
                         (Ok(a), Ok(b)) => a.get() == b.get(),
@@ -122,6 +137,7 @@ macro_rules! thread_safe_primitive {
             impl Eq for $name {}
 
             impl PartialOrd for $name {
+                #[inline]
                 fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
                     match (self.get(), other.get() ) {
                         (Ok(a), Ok(b)) => a.get().partial_cmp(&b.get()),
@@ -131,6 +147,7 @@ macro_rules! thread_safe_primitive {
             }
 
             impl Ord for $name {
+                #[inline]
                 fn cmp(&self, other: &Self) -> std::cmp::Ordering {
                     match (self.get(), other.get() ) {
                         (Ok(a), Ok(b)) => a.get().cmp(&b.get()),
@@ -140,12 +157,15 @@ macro_rules! thread_safe_primitive {
             }
 
             impl $name {
+                #[inline]
                 pub fn new(value: $primitive) -> Self {
                     Self(ThreadSafe::new(Primitive::new(value)))
                 }
+                #[inline]
                 pub fn get(&self) -> holders::GetResult<'_, Primitive> {
                     self.0.get()
                 }
+                #[inline]
                 pub fn get_mut(&self) -> holders::GetResultMut<'_, Primitive> {
                     self.0.get_mut()
                 }
@@ -158,12 +178,15 @@ macro_rules! thread_safe_primitive {
             thread_safe!(Primitive);
 
             impl Primitive {
-                pub fn new(value: $primitive) -> Self {
+                #[inline]
+                pub const fn new(value: $primitive) -> Self {
                     Self(value)
                 }
+                #[inline]
                 pub fn get(&self) -> $primitive {
                     self.0
                 }
+                #[inline]
                 pub fn set(&mut self, value: $primitive) {
                     self.0 = value;
                 }
@@ -171,36 +194,42 @@ macro_rules! thread_safe_primitive {
 
             impl core::ops::Deref for Primitive {
                 type Target = $primitive;
+                #[inline]
                 fn deref(&self) -> &Self::Target {
                     &self.0
                 }
             }
 
             impl core::ops::DerefMut for Primitive {
+                #[inline]
                 fn deref_mut(&mut self) -> &mut Self::Target {
                     &mut self.0
                 }
             }
 
             impl From<$primitive> for Primitive {
+                #[inline]
                 fn from(value: $primitive) -> Self {
                     Self(value)
                 }
             }
 
             impl From<Primitive> for $primitive {
+                #[inline]
                 fn from(value: Primitive) -> Self {
                     value.0
                 }
             }
 
             impl From<$primitive> for $name {
+                #[inline]
                 fn from(value: $primitive) -> Self {
                     Self::new(value)
                 }
             }
 
             impl From<$name> for $primitive {
+                #[inline]
                 fn from(value: $name) -> Self {
                     match value.get() {
                         Ok(b) => b.get(),

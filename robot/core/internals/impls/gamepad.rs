@@ -7,7 +7,7 @@ pub struct GamepadImpl {
 }
 
 impl GamepadImpl {
-    pub(crate) fn init() -> Self {
+    pub(crate) fn new() -> Self {
         Self {
 
         }
@@ -32,7 +32,7 @@ impl h::HardwareComponent for GamepadImpl {
     }
 }
 
-impl crate::Gamepad for GamepadImpl {
+impl crate::prelude::Gamepad for GamepadImpl {
     fn dpad(&self) -> crate::Result<gamepad::GamepadDpad> {
         todo!()
     }

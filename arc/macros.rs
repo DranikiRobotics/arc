@@ -106,3 +106,15 @@ macro_rules! setup_wrapped_component {
         __setup_wrapped_component_internal::<_, _, $component>($value)
     }};
 }
+
+#[macro_export(local_inner_macros)]
+macro_rules! pyimpl {
+    ($strcut: ident { $($body: tt)* }) => (
+        impl $strcut {
+            $crate::pyimpl!(@INNER $($body)*);
+        }
+    );
+    (@INNER) => (
+
+    )
+}

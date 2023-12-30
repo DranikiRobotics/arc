@@ -25,5 +25,15 @@ version = "1.35"
 [dependencies.pyo3]
 version = "0.20.0"
 
+[[test]]
+name = "rust_only_robot"
+path = "tests/rust_only_robot.rs"
+
 [features]
 unstable = ["l2math/unstable", "libtrig/unstable"]
+
+only_builtins = []
+allow_external_impls = []
+
+reveal_modules = []
+internals = []

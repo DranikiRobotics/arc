@@ -47,7 +47,7 @@ macro_rules! main {
     } );
 }
 
-pub use dranikcore::config::RobotConfig;
+pub use dranikcore::prelude::RobotConfig;
 use std::sync::atomic::AtomicU8;
 use std::sync::atomic::Ordering;
 use tokio::runtime::Builder;
@@ -99,16 +99,19 @@ pub fn main<C: RobotConfig + 'static>() {
         .build()
         .expect("Failed to initialize runtime");
 
-    let io = dranikcore::setup_io();
+    // This isn't how it's supposed to be done, but it works for now
+    //
+    // In the future the http server will be the one creating the OpMode
+    // and then feeding it to the Python thread.
+    let op = dranikcore::Op::init();
 
     // runtime.spawn(dranikweb::main());
-    runtime.spawn(dranikpy::main::<C::Args, C>(io.clone()));
+    runtime.spawn(dranikpy::main::<C::Args, C>(op));
     runtime.block_on(async {
         tokio::signal::ctrl_c().await.expect("Failed to listen for ctrl-c");
         print!("Exiting...");
     });
     runtime.shutdown_timeout(std::time::Duration::from_secs(5));
-    drop(io);
     std::process::exit(0);
 }
 
@@ -119,6 +122,6 @@ pub fn main<C: RobotConfig + 'static>() {
 #[allow(non_camel_case_types)]
 #[derive(Default, Debug, Clone, Copy)]
 pub struct __dranik_config;
-impl dranikcore::config::RobotConfig for __dranik_config {
+impl dranikcore::prelude::RobotConfig for __dranik_config {
     type Args = ();
 }

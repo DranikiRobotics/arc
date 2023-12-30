@@ -25,4 +25,18 @@ dranik-python = { path = "./python" }
 # Async runtime
 tokio = { version = "1.35", features = ["rt", "signal"] }
 
-arc = { path = "../arc", package = "arc-pylib" }
+[dependencies.arc]
+path = "../arc"
+package = "arc-pylib"
+features = [
+    "dranik-only-builtins",
+    "math"
+]
+
+[features]
+default = ["only-builtins"]
+
+only-builtins = [
+    "dranik-core/only_builtins",
+    "dranik-python/dranik-only-builtins",
+]

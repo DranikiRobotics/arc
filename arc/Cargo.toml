@@ -14,19 +14,23 @@ crate-type = ["cdylib", "rlib"]
 [dependencies.dranikcore]
 package = "dranik-core"
 path = "../robot/core"
+features = [
+    "reveal_modules", # More items
+    "internals", # Internal modules
+]
 
 [dependencies.libtrig]
 git = "https://github.com/DranikiRobotics/librobomath"
 package = "libtrig"
+optional = true
 
 [dependencies.pyo3]
-#!!! Important - DO NOT ENABLE extension-module FEATURE HERE!!!
-version = "0.20.0"
+version = "0.20"
 features = [
+    "extension-module", # for standalone extension module
     "abi3-py311" # for python 3.11
 ]
 
 [features]
-# instead extension-module feature for pyo3 is enabled conditionally
-# when we want to build a standalone extension module to test our plugins without "main" program
-extension-module = ["pyo3/extension-module"]
+dranik-only-builtins = ["dranikcore/only_builtins"]
+math = ["dep:libtrig"]

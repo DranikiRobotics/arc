@@ -2,21 +2,9 @@
 //!
 //! Python identifier: `arc.hardware.gamepad`
 
-use crate::threadsafe::ThreadSafe;
-use dranikcore::gamepad as gp;
+use dranikcore::{gamepad as gp, threadsafe::ThreadSafe};
+use gp::Gamepad as _;
 use pyo3::prelude::*;
-
-/// The struct that actually contains the necessary data for the gamepad
-/// to function.
-///
-/// This struct should only be used for mutating the data outside of the
-/// gamepad thread. For reading the up to date data, use the `Gamepad` struct.
-#[derive(Debug)]
-pub struct GamepadHolder {
-    gamepad: Box<dyn gp::MutableGamepad>,
-}
-
-crate::threadsafe::thread_safe!(GamepadHolder);
 
 /// A struct that holds the state of a gamepad stick
 #[pyclass]
@@ -25,22 +13,29 @@ pub struct GamepadStick(gp::GamepadStick);
 
 impl GamepadStick {
     /// Returns the x value of the stick.
+    #[inline(always)]
     pub fn get_x(&self) -> f64 {
         self.0.x
     }
     /// Returns the y value of the stick.
+    #[inline(always)]
     pub fn get_y(&self) -> f64 {
         self.0.y
     }
     /// Returns whether or not the stick is pressed.
+    #[inline(always)]
     pub fn get_pressed(&self) -> bool {
         self.0.pressed
     }
     /// Converts the stick into an angle.
+    #[inline]
+    #[must_use = "This returns a new angle"]
     pub fn into_angle(&self) -> libtrig::Angle2D {
         libtrig::Angle2D::from((self.get_x(), self.get_y()))
     }
     /// Converts the stick into a vector.
+    #[inline]
+    #[must_use = "This returns a new vector"]
     pub fn into_vector(&self) -> libtrig::Vec2D {
         libtrig::Vec2D::from((self.get_x(), self.get_y()))
     }
@@ -83,20 +78,25 @@ impl From<libtrig::Vec2D> for GamepadStick {
 #[pymethods]
 impl GamepadStick {
     #[getter]
+    #[inline(always)]
     fn x(&self) -> PyResult<f64> {
         Ok(self.get_x())
     }
     #[getter]
+    #[inline(always)]
     fn y(&self) -> PyResult<f64> {
         Ok(self.get_y())
     }
     #[getter]
+    #[inline(always)]
     fn pressed(&self) -> PyResult<bool> {
         Ok(self.get_pressed())
     }
+    #[inline(always)]
     fn as_angle(&self) -> PyResult<crate::__init__::math::angle::Angle> {
         Ok(self.into_angle().into())
     }
+    #[inline(always)]
     fn as_vec2d(&self) -> PyResult<crate::__init__::math::vec2d::Vec2D> {
         Ok(self.into_vector().into())
     }
@@ -139,49 +139,34 @@ impl GamepadDpad {
     }
 }
 
+#[cfg(feature = "dranik-only-builtins")]
+type GImpl = ThreadSafe<dranikcore::internals::builtins::BuiltInGamepadImpl>;
+
 /// The struct that is used to access the gamepad data from python.
 ///
 /// This struct is thread safe, and can be used to read the gamepad data
 /// from any thread.
 ///
-/// This struct should not be used to modify the gamepad data. For that,
-/// use the `GamepadHolder` struct.
+/// This struct should not be used to modify the gamepad data.
 #[pyclass]
 #[derive(Debug, Clone)]
-pub struct Gamepad(ThreadSafe<GamepadHolder>);
+pub struct Gamepad(GImpl);
 
-impl<G: gp::MutableGamepad + 'static> crate::PyWrappedComponent<G> for Gamepad {
-    type Holder = GamepadHolder;
-    fn new(gamepad: G) -> ThreadSafe<Self::Holder> {
-        ThreadSafe::new(GamepadHolder {
-            gamepad: Box::new(gamepad),
-        })
-    }
-    fn wrap(gamepad: &ThreadSafe<Self::Holder>) -> Self {
-        Self(gamepad.clone())
+impl From<GImpl> for Gamepad {
+    #[inline(always)]
+    #[cfg(feature = "dranik-only-builtins")]
+    fn from(gamepad: GImpl) -> Self {
+        Self(gamepad)
     }
 }
 
 impl Gamepad {
-    /// This creates a new `ThreadSafe<GamepadHolder>` struct. NOT a `Gamepad` struct.
-    ///
-    /// You then need to wrap it in a `Gamepad` struct using the [`Gamepad::wrap()`] method.
-    pub fn new<G: gp::MutableGamepad + 'static>(gamepad: G) -> ThreadSafe<GamepadHolder> {
-        ThreadSafe::new(GamepadHolder {
-            gamepad: Box::new(gamepad),
-        })
-    }
-    /// Wraps a `ThreadSafe<GamepadHolder>` in a `Gamepad` struct.
-    pub fn wrap(gamepad: &ThreadSafe<GamepadHolder>) -> Self {
-        Self(gamepad.clone())
-    }
     /// Returns the state of the dpad
     ///
     /// Includes up, down, left, and right
     pub fn get_dpad(&self) -> core::result::Result<GamepadDpad, &'static str> {
         self.0
             .get()?
-            .gamepad
             .dpad()
             .map(|d| GamepadDpad(d))
             .map_err(|e| e.into())
@@ -192,7 +177,6 @@ impl Gamepad {
     pub fn get_left_stick(&self) -> core::result::Result<GamepadStick, &'static str> {
         self.0
             .get()?
-            .gamepad
             .left_stick()
             .map(|d| GamepadStick(d))
             .map_err(|e| e.into())
@@ -203,106 +187,118 @@ impl Gamepad {
     pub fn get_right_stick(&self) -> core::result::Result<GamepadStick, &'static str> {
         self.0
             .get()?
-            .gamepad
             .right_stick()
             .map(|d| GamepadStick(d))
             .map_err(|e| e.into())
     }
     /// Returns the state of the left trigger
     pub fn get_left_trigger(&self) -> core::result::Result<f64, &'static str> {
-        self.0.get()?.gamepad.left_trigger().map_err(|e| e.into())
+        self.0.get()?.left_trigger().map_err(|e| e.into())
     }
     /// Returns the state of the right trigger
     pub fn get_right_trigger(&self) -> core::result::Result<f64, &'static str> {
-        self.0.get()?.gamepad.right_trigger().map_err(|e| e.into())
+        self.0.get()?.right_trigger().map_err(|e| e.into())
     }
     /// Is the 'x' button pressed?
     pub fn get_x(&self) -> core::result::Result<bool, &'static str> {
-        self.0.get()?.gamepad.x().map_err(|e| e.into())
+        self.0.get()?.x().map_err(|e| e.into())
     }
     /// Is the 'y' button pressed?
     pub fn get_y(&self) -> core::result::Result<bool, &'static str> {
-        self.0.get()?.gamepad.y().map_err(|e| e.into())
+        self.0.get()?.y().map_err(|e| e.into())
     }
     /// Is the 'a' button pressed?
     pub fn get_a(&self) -> core::result::Result<bool, &'static str> {
-        self.0.get()?.gamepad.a().map_err(|e| e.into())
+        self.0.get()?.a().map_err(|e| e.into())
     }
     /// Is the 'b' button pressed?
     pub fn get_b(&self) -> core::result::Result<bool, &'static str> {
-        self.0.get()?.gamepad.b().map_err(|e| e.into())
+        self.0.get()?.b().map_err(|e| e.into())
     }
     /// Is the left bumper pressed?
     pub fn get_left_bumper(&self) -> core::result::Result<bool, &'static str> {
-        self.0.get()?.gamepad.left_bumper().map_err(|e| e.into())
+        self.0.get()?.left_bumper().map_err(|e| e.into())
     }
     /// Is the right bumper pressed?
     pub fn get_right_bumper(&self) -> core::result::Result<bool, &'static str> {
-        self.0.get()?.gamepad.right_bumper().map_err(|e| e.into())
+        self.0.get()?.right_bumper().map_err(|e| e.into())
     }
 
     /// A non-standard 'back' button
     pub fn get_back(&self) -> core::result::Result<bool, &'static str> {
-        self.0.get()?.gamepad.back().map_err(|e| e.into())
+        self.0.get()?.back().map_err(|e| e.into())
     }
     /// A non-standard 'start' button
     pub fn get_start(&self) -> core::result::Result<bool, &'static str> {
-        self.0.get()?.gamepad.start().map_err(|e| e.into())
+        self.0.get()?.start().map_err(|e| e.into())
     }
 }
 
 #[pymethods]
 impl Gamepad {
     #[getter]
+    #[inline(always)]
     fn dpad(&self) -> PyResult<GamepadDpad> {
         self.get_dpad().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn left_stick(&self) -> PyResult<GamepadStick> {
         self.get_left_stick().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn right_stick(&self) -> PyResult<GamepadStick> {
         self.get_right_stick().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn left_trigger(&self) -> PyResult<f64> {
         self.get_left_trigger().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn right_trigger(&self) -> PyResult<f64> {
         self.get_right_trigger().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn x(&self) -> PyResult<bool> {
         self.get_x().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn y(&self) -> PyResult<bool> {
         self.get_y().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn a(&self) -> PyResult<bool> {
         self.get_a().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn b(&self) -> PyResult<bool> {
         self.get_b().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn left_bumper(&self) -> PyResult<bool> {
         self.get_left_bumper().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn right_bumper(&self) -> PyResult<bool> {
         self.get_right_bumper().map_err(crate::make_err)
     }
 
     #[getter]
+    #[inline(always)]
     fn back(&self) -> PyResult<bool> {
         self.get_back().map_err(crate::make_err)
     }
     #[getter]
+    #[inline(always)]
     fn start(&self) -> PyResult<bool> {
         self.get_start().map_err(crate::make_err)
     }

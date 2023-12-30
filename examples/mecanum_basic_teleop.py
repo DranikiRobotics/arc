@@ -15,7 +15,7 @@ def main(op: Op):
     br = op.hardwareMap[DcMotor]("motor3")
     drive = MechanumDrive(fl, fr, bl, br)
 
-    # While the opmode is running...
+    # While the op is running...
     while op.running:
         # Drive the robot using the gamepad.
         drive.moveUsingDefaultSheme(op.gamepad)

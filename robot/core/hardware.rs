@@ -25,11 +25,14 @@ pub trait HardwareMap {
 }
 
 /// A trait that represents a hardware component
-pub trait HardwareComponent: core::fmt::Debug {
+pub trait HardwareComponent: core::fmt::Debug + Send {
     /// Returns the UUID of this component
     #[allow(non_snake_case)]
     fn getUUID(&self) -> HardwareUUID;
     /// Internal method used to load a component
+    #[inline]
     #[doc(hidden)]
-    fn __load_self(_: internals::HardwareComponentLoadMetadata) -> Result<Self> where Self: Sized;
+    fn __load_self(_: internals::HardwareComponentLoadMetadata) -> Result<Self> where Self: Sized {
+        Err(HardwareError::Other { message: "This component does not support loading" })
+    }
 }

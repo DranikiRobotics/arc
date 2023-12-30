@@ -2,29 +2,15 @@
 #![warn(missing_docs, unused, clippy::all, unsafe_code)]
 #![deny(missing_debug_implementations)]
 
+#[cfg(any(
+    not(feature = "dranik-only-builtins"),
+    not(feature = "math")
+))]
+compile_error!("The `dranik-only-builtins` feature is required to use this crate, as well as the `math` feature.");
+
 pub mod __init__;
 #[doc(hidden)]
 pub mod macros;
-
-pub use threadsafe::{ThreadSafe, ThreadSafeError};
-
-/// A trait for hardware components that can be used in the robot.
-pub trait PyWrappedComponent<Input> {
-    /// The type that holds the hardware component.
-    ///
-    /// This type isn't required to be `Send` or `Sync`.
-    ///
-    /// The holder is what will be written to by the python thread.
-    type Holder;
-    /// Creates a new hardware component.
-    ///
-    /// This function should be called before the python main thread is started.
-    fn new(hardware: Input) -> crate::ThreadSafe<Self::Holder>;
-    /// Wraps the hardware component in a `ThreadSafe` type.
-    ///
-    /// The wrapper is what will be read from by the python thread.
-    fn wrap(hardware_component: &crate::ThreadSafe<Self::Holder>) -> Self;
-}
 
 /// Internal function to translate a static string into a PyIOError.
 #[doc(hidden)]
@@ -61,16 +47,16 @@ impl PyFunction {
 #[derive(Default, Debug, Clone, Copy)]
 pub struct __dranik_config;
 
-impl dranikcore::config::RobotConfig for __dranik_config {
+impl dranikcore::prelude::RobotConfig for __dranik_config {
     fn python_preload() {
         use crate::__init__::arc as __arc_pylib;
         pyo3::append_to_inittab!(__arc_pylib);
     }
     type Args = __init__::Op;
     fn build_python_main_function_args<'a>(
-        py: &pyo3::Python<'_>,
-        io: &dranikcore::io::IO
+        _py: &pyo3::Python<'_>,
+        op: &dranikcore::RuntimeOp
     ) -> (Self::Args, Option<&'a pyo3::types::PyDict>) {
-        (__init__::Op::from(io), None)
+        (__init__::Op::from(op.clone()), None)
     }
 }
