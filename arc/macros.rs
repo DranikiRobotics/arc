@@ -21,9 +21,13 @@
 /// ```
 #[macro_export]
 macro_rules! pymod {
-    (
-        $module_name: ident -> $submodule_func: path, $module_path: literal, $py:ident, $m: ident
-    ) => {
+    // Explanation:
+    //
+    // 1. We create the submodule via PyModule::new
+    // 2. Call that the function that represents the submodule (providing py, so this module)
+    // 3. Then we add the submodule to the parent module. (m.add_submodule(module_name))
+    // 4. Finally, run a python script to add the submodule to sys.modules.
+    ($module_name: ident -> $submodule_func: path, $module_path: literal, $py:ident, $m: ident) => {
         let $module_name = PyModule::new($py, ::core::stringify!($module_name))?;
         $submodule_func($py, $module_name)?;
         $m.add_submodule($module_name)?;
